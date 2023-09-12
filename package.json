@@ -1,0 +1,2539 @@
+{
+  "name": "blocksort",
+  "displayName": "Block Sort",
+  "description": "Sort Blocks instead of lines!",
+  "license": "MIT",
+  "author": "1nVitr0",
+  "publisher": "1nVitr0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/1nVitr0/plugin-vscode-blocksort.git"
+  },
+  "icon": "resources/icon.png",
+  "version": "0.1.2",
+  "engines": {
+    "vscode": "^1.64.0"
+  },
+  "categories": [],
+  "keywords": [],
+  "activationEvents": [
+    "onStartupFinished",
+    "onCommand:format-lists.formatSimpleList",
+    "onCommand:format-lists.formatObjectList"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "format-lists.formatSimpleList",
+        "title": "Simple list",
+        "icon": "symbol-array",
+        "category": "Format List"
+      },
+      {
+        "command": "format-lists.formatObjectList",
+        "title": "Object list",
+        "icon": "symbol-object",
+        "category": "Format List"
+      }
+    ],
+    "configuration": [
+      {
+        "title": "Format Lists",
+        "properties": {
+          "format-lists.additionalFormats": {
+            "description": "additional formatting rules, can extend existing ones by using `base`",
+            "default": {},
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "simpleList": {
+                  "description": "Simple list options, if not specified simple lists are not supported",
+                  "anyOf": [
+                    {
+                      "description": "Options for simple lists",
+                      "type": "object",
+                      "properties": {
+                        "example": {
+                          "description": "Example result shown in quick picks",
+                          "type": "string"
+                        },
+                        "valueEnclosure": {
+                          "description": "Enclosure around each item",
+                          "type": "object",
+                          "properties": {
+                            "string": {
+                              "description": "Enclosure for string values, if char, it's used for both start and end",
+                              "anyOf": [
+                                {
+                                  "description": "Boundary options for value-like items",
+                                  "type": "object",
+                                  "properties": {
+                                    "start": {
+                                      "description": "Start boundary",
+                                      "type": "string"
+                                    },
+                                    "end": {
+                                      "description": "End boundary",
+                                      "type": "string"
+                                    }
+                                  },
+                                  "additionalProperties": false,
+                                  "required": [
+                                    "end",
+                                    "start"
+                                  ]
+                                },
+                                {
+                                  "type": "string"
+                                }
+                              ]
+                            },
+                            "number": {
+                              "description": "Enclosure for number values, if char, it's used for both start and end",
+                              "anyOf": [
+                                {
+                                  "description": "Boundary options for value-like items",
+                                  "type": "object",
+                                  "properties": {
+                                    "start": {
+                                      "description": "Start boundary",
+                                      "type": "string"
+                                    },
+                                    "end": {
+                                      "description": "End boundary",
+                                      "type": "string"
+                                    }
+                                  },
+                                  "additionalProperties": false,
+                                  "required": [
+                                    "end",
+                                    "start"
+                                  ]
+                                },
+                                {
+                                  "type": "string"
+                                }
+                              ]
+                            },
+                            "boolean": {
+                              "description": "Enclosure for boolean values, if char, it's used for both start and end",
+                              "anyOf": [
+                                {
+                                  "description": "Boundary options for value-like items",
+                                  "type": "object",
+                                  "properties": {
+                                    "start": {
+                                      "description": "Start boundary",
+                                      "type": "string"
+                                    },
+                                    "end": {
+                                      "description": "End boundary",
+                                      "type": "string"
+                                    }
+                                  },
+                                  "additionalProperties": false,
+                                  "required": [
+                                    "end",
+                                    "start"
+                                  ]
+                                },
+                                {
+                                  "type": "string"
+                                }
+                              ]
+                            },
+                            "null": {
+                              "description": "Enclosure for null values, if char, it's used for both start and end",
+                              "anyOf": [
+                                {
+                                  "description": "Boundary options for value-like items",
+                                  "type": "object",
+                                  "properties": {
+                                    "start": {
+                                      "description": "Start boundary",
+                                      "type": "string"
+                                    },
+                                    "end": {
+                                      "description": "End boundary",
+                                      "type": "string"
+                                    }
+                                  },
+                                  "additionalProperties": false,
+                                  "required": [
+                                    "end",
+                                    "start"
+                                  ]
+                                },
+                                {
+                                  "type": "string"
+                                }
+                              ]
+                            }
+                          },
+                          "additionalProperties": false
+                        },
+                        "valueEscape": {
+                          "description": "Escape options for each item",
+                          "type": "array",
+                          "items": {
+                            "description": "Escape options for value-like items",
+                            "type": "object",
+                            "properties": {
+                              "pattern": {
+                                "description": "Regular expression, that matches parts of the value to be escaped",
+                                "anyOf": [
+                                  {
+                                    "type": "object",
+                                    "properties": {
+                                      "source": {
+                                        "type": "string"
+                                      },
+                                      "global": {
+                                        "type": "boolean"
+                                      },
+                                      "ignoreCase": {
+                                        "type": "boolean"
+                                      },
+                                      "multiline": {
+                                        "type": "boolean"
+                                      },
+                                      "lastIndex": {
+                                        "type": "number"
+                                      },
+                                      "flags": {
+                                        "type": "string"
+                                      },
+                                      "sticky": {
+                                        "type": "boolean"
+                                      },
+                                      "unicode": {
+                                        "type": "boolean"
+                                      },
+                                      "dotAll": {
+                                        "type": "boolean"
+                                      }
+                                    },
+                                    "additionalProperties": false,
+                                    "required": [
+                                      "dotAll",
+                                      "flags",
+                                      "global",
+                                      "ignoreCase",
+                                      "lastIndex",
+                                      "multiline",
+                                      "source",
+                                      "sticky",
+                                      "unicode"
+                                    ]
+                                  },
+                                  {
+                                    "type": "string"
+                                  }
+                                ]
+                              },
+                              "escape": {
+                                "description": "Escape char",
+                                "type": "string"
+                              },
+                              "replace": {
+                                "description": "Replacement string, indexes like `$1` can be used",
+                                "type": "string"
+                              }
+                            },
+                            "additionalProperties": false,
+                            "required": [
+                              "escape",
+                              "pattern"
+                            ]
+                          }
+                        },
+                        "valueAlias": {
+                          "description": "Alias options for each item",
+                          "type": "object",
+                          "properties": {
+                            "true": {
+                              "description": "Alias for true values",
+                              "type": "string"
+                            },
+                            "false": {
+                              "description": "Alias for false values",
+                              "type": "string"
+                            },
+                            "null": {
+                              "description": "Alias for null values",
+                              "type": "string"
+                            }
+                          },
+                          "additionalProperties": false
+                        },
+                        "header": {
+                          "description": "Header options for csv-like formats, usually noKeys is set to `false`",
+                          "type": "object",
+                          "properties": {
+                            "keyEnclosure": {
+                              "description": "Enclosure around each key",
+                              "type": "array",
+                              "items": {
+                                "description": "Enclosure options for key-like items",
+                                "type": "object",
+                                "properties": {
+                                  "test": {
+                                    "description": "Regular expression, that tests if the key must be enclosed",
+                                    "anyOf": [
+                                      {
+                                        "type": "object",
+                                        "properties": {
+                                          "source": {
+                                            "type": "string"
+                                          },
+                                          "global": {
+                                            "type": "boolean"
+                                          },
+                                          "ignoreCase": {
+                                            "type": "boolean"
+                                          },
+                                          "multiline": {
+                                            "type": "boolean"
+                                          },
+                                          "lastIndex": {
+                                            "type": "number"
+                                          },
+                                          "flags": {
+                                            "type": "string"
+                                          },
+                                          "sticky": {
+                                            "type": "boolean"
+                                          },
+                                          "unicode": {
+                                            "type": "boolean"
+                                          },
+                                          "dotAll": {
+                                            "type": "boolean"
+                                          }
+                                        },
+                                        "additionalProperties": false,
+                                        "required": [
+                                          "dotAll",
+                                          "flags",
+                                          "global",
+                                          "ignoreCase",
+                                          "lastIndex",
+                                          "multiline",
+                                          "source",
+                                          "sticky",
+                                          "unicode"
+                                        ]
+                                      },
+                                      {
+                                        "type": "array",
+                                        "items": {
+                                          "type": "string"
+                                        }
+                                      }
+                                    ]
+                                  },
+                                  "inverse": {
+                                    "description": "Inverse the test",
+                                    "type": "boolean"
+                                  },
+                                  "enclosure": {
+                                    "description": "Enclosure boundaries or char, if char, it's used for both start and end",
+                                    "anyOf": [
+                                      {
+                                        "description": "Boundary options for value-like items",
+                                        "type": "object",
+                                        "properties": {
+                                          "start": {
+                                            "description": "Start boundary",
+                                            "type": "string"
+                                          },
+                                          "end": {
+                                            "description": "End boundary",
+                                            "type": "string"
+                                          }
+                                        },
+                                        "additionalProperties": false,
+                                        "required": [
+                                          "end",
+                                          "start"
+                                        ]
+                                      },
+                                      {
+                                        "type": "string"
+                                      }
+                                    ]
+                                  },
+                                  "replace": {
+                                    "description": "Replacement string, indexes like `$1` can be used",
+                                    "type": "string"
+                                  }
+                                },
+                                "additionalProperties": false,
+                                "required": [
+                                  "enclosure",
+                                  "test"
+                                ]
+                              }
+                            },
+                            "pretty": {
+                              "description": "If true, header may contain line breaks",
+                              "type": [
+                                "number",
+                                "boolean"
+                              ]
+                            },
+                            "enclosure": {
+                              "description": "Enclosure around entire list",
+                              "type": "object",
+                              "properties": {
+                                "start": {
+                                  "description": "Start boundary",
+                                  "type": "string"
+                                },
+                                "end": {
+                                  "description": "End boundary",
+                                  "type": "string"
+                                }
+                              },
+                              "additionalProperties": false,
+                              "required": [
+                                "end",
+                                "start"
+                              ]
+                            },
+                            "delimiter": {
+                              "description": "Delimiter between items",
+                              "type": "string"
+                            },
+                            "itemPrefix": {
+                              "description": "Prefix for each item",
+                              "anyOf": [
+                                {
+                                  "description": "Prefix options for list items",
+                                  "type": "object",
+                                  "properties": {
+                                    "first": {
+                                      "description": "Prefix for the first item",
+                                      "type": "string"
+                                    },
+                                    "rest": {
+                                      "description": "Prefix for the rest of the items",
+                                      "type": "string"
+                                    }
+                                  },
+                                  "additionalProperties": false,
+                                  "required": [
+                                    "first",
+                                    "rest"
+                                  ]
+                                },
+                                {
+                                  "type": "string"
+                                }
+                              ]
+                            },
+                            "indentItems": {
+                              "description": "If true indent items",
+                              "type": [
+                                "number",
+                                "boolean"
+                              ]
+                            }
+                          },
+                          "additionalProperties": false
+                        },
+                        "keyEnclosure": {
+                          "description": "Enclosure around each key",
+                          "type": "array",
+                          "items": {
+                            "description": "Enclosure options for key-like items",
+                            "type": "object",
+                            "properties": {
+                              "test": {
+                                "description": "Regular expression, that tests if the key must be enclosed",
+                                "anyOf": [
+                                  {
+                                    "type": "object",
+                                    "properties": {
+                                      "source": {
+                                        "type": "string"
+                                      },
+                                      "global": {
+                                        "type": "boolean"
+                                      },
+                                      "ignoreCase": {
+                                        "type": "boolean"
+                                      },
+                                      "multiline": {
+                                        "type": "boolean"
+                                      },
+                                      "lastIndex": {
+                                        "type": "number"
+                                      },
+                                      "flags": {
+                                        "type": "string"
+                                      },
+                                      "sticky": {
+                                        "type": "boolean"
+                                      },
+                                      "unicode": {
+                                        "type": "boolean"
+                                      },
+                                      "dotAll": {
+                                        "type": "boolean"
+                                      }
+                                    },
+                                    "additionalProperties": false,
+                                    "required": [
+                                      "dotAll",
+                                      "flags",
+                                      "global",
+                                      "ignoreCase",
+                                      "lastIndex",
+                                      "multiline",
+                                      "source",
+                                      "sticky",
+                                      "unicode"
+                                    ]
+                                  },
+                                  {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string"
+                                    }
+                                  }
+                                ]
+                              },
+                              "inverse": {
+                                "description": "Inverse the test",
+                                "type": "boolean"
+                              },
+                              "enclosure": {
+                                "description": "Enclosure boundaries or char, if char, it's used for both start and end",
+                                "anyOf": [
+                                  {
+                                    "description": "Boundary options for value-like items",
+                                    "type": "object",
+                                    "properties": {
+                                      "start": {
+                                        "description": "Start boundary",
+                                        "type": "string"
+                                      },
+                                      "end": {
+                                        "description": "End boundary",
+                                        "type": "string"
+                                      }
+                                    },
+                                    "additionalProperties": false,
+                                    "required": [
+                                      "end",
+                                      "start"
+                                    ]
+                                  },
+                                  {
+                                    "type": "string"
+                                  }
+                                ]
+                              },
+                              "replace": {
+                                "description": "Replacement string, indexes like `$1` can be used",
+                                "type": "string"
+                              }
+                            },
+                            "additionalProperties": false,
+                            "required": [
+                              "enclosure",
+                              "test"
+                            ]
+                          }
+                        },
+                        "pretty": {
+                          "description": "If true, header may contain line breaks",
+                          "type": [
+                            "number",
+                            "boolean"
+                          ]
+                        },
+                        "enclosure": {
+                          "description": "Enclosure around entire list",
+                          "type": "object",
+                          "properties": {
+                            "start": {
+                              "description": "Start boundary",
+                              "type": "string"
+                            },
+                            "end": {
+                              "description": "End boundary",
+                              "type": "string"
+                            }
+                          },
+                          "additionalProperties": false,
+                          "required": [
+                            "end",
+                            "start"
+                          ]
+                        },
+                        "delimiter": {
+                          "description": "Delimiter between items",
+                          "type": "string"
+                        },
+                        "itemPrefix": {
+                          "description": "Prefix for each item",
+                          "anyOf": [
+                            {
+                              "description": "Prefix options for list items",
+                              "type": "object",
+                              "properties": {
+                                "first": {
+                                  "description": "Prefix for the first item",
+                                  "type": "string"
+                                },
+                                "rest": {
+                                  "description": "Prefix for the rest of the items",
+                                  "type": "string"
+                                }
+                              },
+                              "additionalProperties": false,
+                              "required": [
+                                "first",
+                                "rest"
+                              ]
+                            },
+                            {
+                              "type": "string"
+                            }
+                          ]
+                        },
+                        "indentItems": {
+                          "description": "If true indent items",
+                          "type": [
+                            "number",
+                            "boolean"
+                          ]
+                        }
+                      },
+                      "additionalProperties": false
+                    },
+                    {
+                      "additionalProperties": false,
+                      "type": "object",
+                      "properties": {
+                        "base": {
+                          "description": "Language to use as base config",
+                          "enum": [
+                            "commaSeparatedList",
+                            "cpp",
+                            "csv",
+                            "enclosedCommaSeparatedList",
+                            "enclosedSpaceSeparatedList",
+                            "enclosedTabSeparatedList",
+                            "json",
+                            "markdown",
+                            "newLineSeparatedList",
+                            "php",
+                            "ruby",
+                            "spaceSeparatedList",
+                            "tabSeparatedList",
+                            "yaml"
+                          ],
+                          "type": "string"
+                        },
+                        "example": {
+                          "description": "Example result shown in quick picks",
+                          "type": "string"
+                        },
+                        "valueEnclosure": {
+                          "description": "Enclosure around each item",
+                          "type": "object",
+                          "properties": {
+                            "string": {
+                              "description": "Enclosure for string values, if char, it's used for both start and end",
+                              "anyOf": [
+                                {
+                                  "description": "Same as `PartialDeep`, but accepts only `object`s as inputs. Internal helper for `PartialDeep`.",
+                                  "type": "object",
+                                  "properties": {
+                                    "start": {
+                                      "description": "Start boundary",
+                                      "type": "string"
+                                    },
+                                    "end": {
+                                      "description": "End boundary",
+                                      "type": "string"
+                                    }
+                                  },
+                                  "additionalProperties": false
+                                },
+                                {
+                                  "type": "string"
+                                }
+                              ]
+                            },
+                            "number": {
+                              "description": "Enclosure for number values, if char, it's used for both start and end",
+                              "anyOf": [
+                                {
+                                  "description": "Same as `PartialDeep`, but accepts only `object`s as inputs. Internal helper for `PartialDeep`.",
+                                  "type": "object",
+                                  "properties": {
+                                    "start": {
+                                      "description": "Start boundary",
+                                      "type": "string"
+                                    },
+                                    "end": {
+                                      "description": "End boundary",
+                                      "type": "string"
+                                    }
+                                  },
+                                  "additionalProperties": false
+                                },
+                                {
+                                  "type": "string"
+                                }
+                              ]
+                            },
+                            "boolean": {
+                              "description": "Enclosure for boolean values, if char, it's used for both start and end",
+                              "anyOf": [
+                                {
+                                  "description": "Same as `PartialDeep`, but accepts only `object`s as inputs. Internal helper for `PartialDeep`.",
+                                  "type": "object",
+                                  "properties": {
+                                    "start": {
+                                      "description": "Start boundary",
+                                      "type": "string"
+                                    },
+                                    "end": {
+                                      "description": "End boundary",
+                                      "type": "string"
+                                    }
+                                  },
+                                  "additionalProperties": false
+                                },
+                                {
+                                  "type": "string"
+                                }
+                              ]
+                            },
+                            "null": {
+                              "description": "Enclosure for null values, if char, it's used for both start and end",
+                              "anyOf": [
+                                {
+                                  "description": "Same as `PartialDeep`, but accepts only `object`s as inputs. Internal helper for `PartialDeep`.",
+                                  "type": "object",
+                                  "properties": {
+                                    "start": {
+                                      "description": "Start boundary",
+                                      "type": "string"
+                                    },
+                                    "end": {
+                                      "description": "End boundary",
+                                      "type": "string"
+                                    }
+                                  },
+                                  "additionalProperties": false
+                                },
+                                {
+                                  "type": "string"
+                                }
+                              ]
+                            }
+                          },
+                          "additionalProperties": false
+                        },
+                        "valueEscape": {
+                          "description": "Escape options for each item",
+                          "type": "array",
+                          "items": {
+                            "description": "Escape options for value-like items",
+                            "type": "object",
+                            "properties": {
+                              "pattern": {
+                                "description": "Regular expression, that matches parts of the value to be escaped",
+                                "anyOf": [
+                                  {
+                                    "type": "object",
+                                    "properties": {
+                                      "source": {
+                                        "type": "string"
+                                      },
+                                      "global": {
+                                        "type": "boolean"
+                                      },
+                                      "ignoreCase": {
+                                        "type": "boolean"
+                                      },
+                                      "multiline": {
+                                        "type": "boolean"
+                                      },
+                                      "lastIndex": {
+                                        "type": "number"
+                                      },
+                                      "flags": {
+                                        "type": "string"
+                                      },
+                                      "sticky": {
+                                        "type": "boolean"
+                                      },
+                                      "unicode": {
+                                        "type": "boolean"
+                                      },
+                                      "dotAll": {
+                                        "type": "boolean"
+                                      }
+                                    },
+                                    "additionalProperties": false,
+                                    "required": [
+                                      "dotAll",
+                                      "flags",
+                                      "global",
+                                      "ignoreCase",
+                                      "lastIndex",
+                                      "multiline",
+                                      "source",
+                                      "sticky",
+                                      "unicode"
+                                    ]
+                                  },
+                                  {
+                                    "type": "string"
+                                  }
+                                ]
+                              },
+                              "escape": {
+                                "description": "Escape char",
+                                "type": "string"
+                              },
+                              "replace": {
+                                "description": "Replacement string, indexes like `$1` can be used",
+                                "type": "string"
+                              }
+                            },
+                            "additionalProperties": false,
+                            "required": [
+                              "escape",
+                              "pattern"
+                            ]
+                          }
+                        },
+                        "valueAlias": {
+                          "description": "Alias options for each item",
+                          "type": "object",
+                          "properties": {
+                            "true": {
+                              "description": "Alias for true values",
+                              "type": "string"
+                            },
+                            "false": {
+                              "description": "Alias for false values",
+                              "type": "string"
+                            },
+                            "null": {
+                              "description": "Alias for null values",
+                              "type": "string"
+                            }
+                          },
+                          "additionalProperties": false
+                        },
+                        "header": {
+                          "description": "Header options for csv-like formats, usually noKeys is set to `false`",
+                          "type": "object",
+                          "properties": {
+                            "keyEnclosure": {
+                              "description": "Enclosure around each key",
+                              "type": "array",
+                              "items": {
+                                "description": "Enclosure options for key-like items",
+                                "type": "object",
+                                "properties": {
+                                  "test": {
+                                    "description": "Regular expression, that tests if the key must be enclosed",
+                                    "anyOf": [
+                                      {
+                                        "type": "object",
+                                        "properties": {
+                                          "source": {
+                                            "type": "string"
+                                          },
+                                          "global": {
+                                            "type": "boolean"
+                                          },
+                                          "ignoreCase": {
+                                            "type": "boolean"
+                                          },
+                                          "multiline": {
+                                            "type": "boolean"
+                                          },
+                                          "lastIndex": {
+                                            "type": "number"
+                                          },
+                                          "flags": {
+                                            "type": "string"
+                                          },
+                                          "sticky": {
+                                            "type": "boolean"
+                                          },
+                                          "unicode": {
+                                            "type": "boolean"
+                                          },
+                                          "dotAll": {
+                                            "type": "boolean"
+                                          }
+                                        },
+                                        "additionalProperties": false,
+                                        "required": [
+                                          "dotAll",
+                                          "flags",
+                                          "global",
+                                          "ignoreCase",
+                                          "lastIndex",
+                                          "multiline",
+                                          "source",
+                                          "sticky",
+                                          "unicode"
+                                        ]
+                                      },
+                                      {
+                                        "type": "array",
+                                        "items": {
+                                          "type": "string"
+                                        }
+                                      }
+                                    ]
+                                  },
+                                  "inverse": {
+                                    "description": "Inverse the test",
+                                    "type": "boolean"
+                                  },
+                                  "enclosure": {
+                                    "description": "Enclosure boundaries or char, if char, it's used for both start and end",
+                                    "anyOf": [
+                                      {
+                                        "description": "Boundary options for value-like items",
+                                        "type": "object",
+                                        "properties": {
+                                          "start": {
+                                            "description": "Start boundary",
+                                            "type": "string"
+                                          },
+                                          "end": {
+                                            "description": "End boundary",
+                                            "type": "string"
+                                          }
+                                        },
+                                        "additionalProperties": false,
+                                        "required": [
+                                          "end",
+                                          "start"
+                                        ]
+                                      },
+                                      {
+                                        "type": "string"
+                                      }
+                                    ]
+                                  },
+                                  "replace": {
+                                    "description": "Replacement string, indexes like `$1` can be used",
+                                    "type": "string"
+                                  }
+                                },
+                                "additionalProperties": false,
+                                "required": [
+                                  "enclosure",
+                                  "test"
+                                ]
+                              }
+                            },
+                            "pretty": {
+                              "description": "If true, header may contain line breaks",
+                              "type": [
+                                "number",
+                                "boolean"
+                              ]
+                            },
+                            "enclosure": {
+                              "description": "Enclosure around entire list",
+                              "type": "object",
+                              "properties": {
+                                "start": {
+                                  "description": "Start boundary",
+                                  "type": "string"
+                                },
+                                "end": {
+                                  "description": "End boundary",
+                                  "type": "string"
+                                }
+                              },
+                              "additionalProperties": false
+                            },
+                            "delimiter": {
+                              "description": "Delimiter between items",
+                              "type": "string"
+                            },
+                            "itemPrefix": {
+                              "description": "Prefix for each item",
+                              "anyOf": [
+                                {
+                                  "description": "Same as `PartialDeep`, but accepts only `object`s as inputs. Internal helper for `PartialDeep`.",
+                                  "type": "object",
+                                  "properties": {
+                                    "first": {
+                                      "description": "Prefix for the first item",
+                                      "type": "string"
+                                    },
+                                    "rest": {
+                                      "description": "Prefix for the rest of the items",
+                                      "type": "string"
+                                    }
+                                  },
+                                  "additionalProperties": false
+                                },
+                                {
+                                  "type": "string"
+                                }
+                              ]
+                            },
+                            "indentItems": {
+                              "description": "If true indent items",
+                              "type": [
+                                "number",
+                                "boolean"
+                              ]
+                            }
+                          },
+                          "additionalProperties": false
+                        },
+                        "keyEnclosure": {
+                          "description": "Enclosure around each key",
+                          "type": "array",
+                          "items": {
+                            "description": "Enclosure options for key-like items",
+                            "type": "object",
+                            "properties": {
+                              "test": {
+                                "description": "Regular expression, that tests if the key must be enclosed",
+                                "anyOf": [
+                                  {
+                                    "type": "object",
+                                    "properties": {
+                                      "source": {
+                                        "type": "string"
+                                      },
+                                      "global": {
+                                        "type": "boolean"
+                                      },
+                                      "ignoreCase": {
+                                        "type": "boolean"
+                                      },
+                                      "multiline": {
+                                        "type": "boolean"
+                                      },
+                                      "lastIndex": {
+                                        "type": "number"
+                                      },
+                                      "flags": {
+                                        "type": "string"
+                                      },
+                                      "sticky": {
+                                        "type": "boolean"
+                                      },
+                                      "unicode": {
+                                        "type": "boolean"
+                                      },
+                                      "dotAll": {
+                                        "type": "boolean"
+                                      }
+                                    },
+                                    "additionalProperties": false,
+                                    "required": [
+                                      "dotAll",
+                                      "flags",
+                                      "global",
+                                      "ignoreCase",
+                                      "lastIndex",
+                                      "multiline",
+                                      "source",
+                                      "sticky",
+                                      "unicode"
+                                    ]
+                                  },
+                                  {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string"
+                                    }
+                                  }
+                                ]
+                              },
+                              "inverse": {
+                                "description": "Inverse the test",
+                                "type": "boolean"
+                              },
+                              "enclosure": {
+                                "description": "Enclosure boundaries or char, if char, it's used for both start and end",
+                                "anyOf": [
+                                  {
+                                    "description": "Boundary options for value-like items",
+                                    "type": "object",
+                                    "properties": {
+                                      "start": {
+                                        "description": "Start boundary",
+                                        "type": "string"
+                                      },
+                                      "end": {
+                                        "description": "End boundary",
+                                        "type": "string"
+                                      }
+                                    },
+                                    "additionalProperties": false,
+                                    "required": [
+                                      "end",
+                                      "start"
+                                    ]
+                                  },
+                                  {
+                                    "type": "string"
+                                  }
+                                ]
+                              },
+                              "replace": {
+                                "description": "Replacement string, indexes like `$1` can be used",
+                                "type": "string"
+                              }
+                            },
+                            "additionalProperties": false,
+                            "required": [
+                              "enclosure",
+                              "test"
+                            ]
+                          }
+                        },
+                        "pretty": {
+                          "description": "If true, header may contain line breaks",
+                          "type": [
+                            "number",
+                            "boolean"
+                          ]
+                        },
+                        "enclosure": {
+                          "description": "Enclosure around entire list",
+                          "type": "object",
+                          "properties": {
+                            "start": {
+                              "description": "Start boundary",
+                              "type": "string"
+                            },
+                            "end": {
+                              "description": "End boundary",
+                              "type": "string"
+                            }
+                          },
+                          "additionalProperties": false
+                        },
+                        "delimiter": {
+                          "description": "Delimiter between items",
+                          "type": "string"
+                        },
+                        "itemPrefix": {
+                          "description": "Prefix for each item",
+                          "anyOf": [
+                            {
+                              "description": "Same as `PartialDeep`, but accepts only `object`s as inputs. Internal helper for `PartialDeep`.",
+                              "type": "object",
+                              "properties": {
+                                "first": {
+                                  "description": "Prefix for the first item",
+                                  "type": "string"
+                                },
+                                "rest": {
+                                  "description": "Prefix for the rest of the items",
+                                  "type": "string"
+                                }
+                              },
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "string"
+                            }
+                          ]
+                        },
+                        "indentItems": {
+                          "description": "If true indent items",
+                          "type": [
+                            "number",
+                            "boolean"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "base"
+                      ]
+                    }
+                  ]
+                },
+                "objectList": {
+                  "description": "Object list options, if not specified object lists are not supported",
+                  "anyOf": [
+                    {
+                      "description": "Options for object lists",
+                      "type": "object",
+                      "properties": {
+                        "objectEnclosure": {
+                          "description": "Enclosure around each object",
+                          "type": "object",
+                          "properties": {
+                            "start": {
+                              "description": "Start boundary",
+                              "type": "string"
+                            },
+                            "end": {
+                              "description": "End boundary",
+                              "type": "string"
+                            }
+                          },
+                          "additionalProperties": false,
+                          "required": [
+                            "end",
+                            "start"
+                          ]
+                        },
+                        "objectDelimiter": {
+                          "description": "Delimiter between elements inside objects",
+                          "type": "string"
+                        },
+                        "objectItemPrefix": {
+                          "description": "Prefix for each element inside objects",
+                          "anyOf": [
+                            {
+                              "description": "Prefix options for list items",
+                              "type": "object",
+                              "properties": {
+                                "first": {
+                                  "description": "Prefix for the first item",
+                                  "type": "string"
+                                },
+                                "rest": {
+                                  "description": "Prefix for the rest of the items",
+                                  "type": "string"
+                                }
+                              },
+                              "additionalProperties": false,
+                              "required": [
+                                "first",
+                                "rest"
+                              ]
+                            },
+                            {
+                              "type": "string"
+                            }
+                          ]
+                        },
+                        "objectItemIgnoreIndent": {
+                          "description": "If true ignore indent for elements inside objects",
+                          "type": "boolean"
+                        },
+                        "assignmentOperator": {
+                          "description": "Assignment operator between object key and value",
+                          "type": "string"
+                        },
+                        "assignmentOperatorSpaced": {
+                          "description": "Pretty assignment operator between object key and value",
+                          "type": "string"
+                        },
+                        "objectEnclosureSameLine": {
+                          "description": "If true a new object enclosure starts on the same line as the previous item",
+                          "type": "boolean"
+                        },
+                        "keyEnclosure": {
+                          "description": "Enclosure around each key",
+                          "type": "array",
+                          "items": {
+                            "description": "Enclosure options for key-like items",
+                            "type": "object",
+                            "properties": {
+                              "test": {
+                                "description": "Regular expression, that tests if the key must be enclosed",
+                                "anyOf": [
+                                  {
+                                    "type": "object",
+                                    "properties": {
+                                      "source": {
+                                        "type": "string"
+                                      },
+                                      "global": {
+                                        "type": "boolean"
+                                      },
+                                      "ignoreCase": {
+                                        "type": "boolean"
+                                      },
+                                      "multiline": {
+                                        "type": "boolean"
+                                      },
+                                      "lastIndex": {
+                                        "type": "number"
+                                      },
+                                      "flags": {
+                                        "type": "string"
+                                      },
+                                      "sticky": {
+                                        "type": "boolean"
+                                      },
+                                      "unicode": {
+                                        "type": "boolean"
+                                      },
+                                      "dotAll": {
+                                        "type": "boolean"
+                                      }
+                                    },
+                                    "additionalProperties": false,
+                                    "required": [
+                                      "dotAll",
+                                      "flags",
+                                      "global",
+                                      "ignoreCase",
+                                      "lastIndex",
+                                      "multiline",
+                                      "source",
+                                      "sticky",
+                                      "unicode"
+                                    ]
+                                  },
+                                  {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string"
+                                    }
+                                  }
+                                ]
+                              },
+                              "inverse": {
+                                "description": "Inverse the test",
+                                "type": "boolean"
+                              },
+                              "enclosure": {
+                                "description": "Enclosure boundaries or char, if char, it's used for both start and end",
+                                "anyOf": [
+                                  {
+                                    "description": "Boundary options for value-like items",
+                                    "type": "object",
+                                    "properties": {
+                                      "start": {
+                                        "description": "Start boundary",
+                                        "type": "string"
+                                      },
+                                      "end": {
+                                        "description": "End boundary",
+                                        "type": "string"
+                                      }
+                                    },
+                                    "additionalProperties": false,
+                                    "required": [
+                                      "end",
+                                      "start"
+                                    ]
+                                  },
+                                  {
+                                    "type": "string"
+                                  }
+                                ]
+                              },
+                              "replace": {
+                                "description": "Replacement string, indexes like `$1` can be used",
+                                "type": "string"
+                              }
+                            },
+                            "additionalProperties": false,
+                            "required": [
+                              "enclosure",
+                              "test"
+                            ]
+                          }
+                        },
+                        "noKeys": {
+                          "description": "If true, don't generate keys for objects",
+                          "type": "boolean"
+                        },
+                        "example": {
+                          "description": "Example result shown in quick picks",
+                          "type": "string"
+                        },
+                        "valueEnclosure": {
+                          "description": "Enclosure around each item",
+                          "type": "object",
+                          "properties": {
+                            "string": {
+                              "description": "Enclosure for string values, if char, it's used for both start and end",
+                              "anyOf": [
+                                {
+                                  "description": "Boundary options for value-like items",
+                                  "type": "object",
+                                  "properties": {
+                                    "start": {
+                                      "description": "Start boundary",
+                                      "type": "string"
+                                    },
+                                    "end": {
+                                      "description": "End boundary",
+                                      "type": "string"
+                                    }
+                                  },
+                                  "additionalProperties": false,
+                                  "required": [
+                                    "end",
+                                    "start"
+                                  ]
+                                },
+                                {
+                                  "type": "string"
+                                }
+                              ]
+                            },
+                            "number": {
+                              "description": "Enclosure for number values, if char, it's used for both start and end",
+                              "anyOf": [
+                                {
+                                  "description": "Boundary options for value-like items",
+                                  "type": "object",
+                                  "properties": {
+                                    "start": {
+                                      "description": "Start boundary",
+                                      "type": "string"
+                                    },
+                                    "end": {
+                                      "description": "End boundary",
+                                      "type": "string"
+                                    }
+                                  },
+                                  "additionalProperties": false,
+                                  "required": [
+                                    "end",
+                                    "start"
+                                  ]
+                                },
+                                {
+                                  "type": "string"
+                                }
+                              ]
+                            },
+                            "boolean": {
+                              "description": "Enclosure for boolean values, if char, it's used for both start and end",
+                              "anyOf": [
+                                {
+                                  "description": "Boundary options for value-like items",
+                                  "type": "object",
+                                  "properties": {
+                                    "start": {
+                                      "description": "Start boundary",
+                                      "type": "string"
+                                    },
+                                    "end": {
+                                      "description": "End boundary",
+                                      "type": "string"
+                                    }
+                                  },
+                                  "additionalProperties": false,
+                                  "required": [
+                                    "end",
+                                    "start"
+                                  ]
+                                },
+                                {
+                                  "type": "string"
+                                }
+                              ]
+                            },
+                            "null": {
+                              "description": "Enclosure for null values, if char, it's used for both start and end",
+                              "anyOf": [
+                                {
+                                  "description": "Boundary options for value-like items",
+                                  "type": "object",
+                                  "properties": {
+                                    "start": {
+                                      "description": "Start boundary",
+                                      "type": "string"
+                                    },
+                                    "end": {
+                                      "description": "End boundary",
+                                      "type": "string"
+                                    }
+                                  },
+                                  "additionalProperties": false,
+                                  "required": [
+                                    "end",
+                                    "start"
+                                  ]
+                                },
+                                {
+                                  "type": "string"
+                                }
+                              ]
+                            }
+                          },
+                          "additionalProperties": false
+                        },
+                        "valueEscape": {
+                          "description": "Escape options for each item",
+                          "type": "array",
+                          "items": {
+                            "description": "Escape options for value-like items",
+                            "type": "object",
+                            "properties": {
+                              "pattern": {
+                                "description": "Regular expression, that matches parts of the value to be escaped",
+                                "anyOf": [
+                                  {
+                                    "type": "object",
+                                    "properties": {
+                                      "source": {
+                                        "type": "string"
+                                      },
+                                      "global": {
+                                        "type": "boolean"
+                                      },
+                                      "ignoreCase": {
+                                        "type": "boolean"
+                                      },
+                                      "multiline": {
+                                        "type": "boolean"
+                                      },
+                                      "lastIndex": {
+                                        "type": "number"
+                                      },
+                                      "flags": {
+                                        "type": "string"
+                                      },
+                                      "sticky": {
+                                        "type": "boolean"
+                                      },
+                                      "unicode": {
+                                        "type": "boolean"
+                                      },
+                                      "dotAll": {
+                                        "type": "boolean"
+                                      }
+                                    },
+                                    "additionalProperties": false,
+                                    "required": [
+                                      "dotAll",
+                                      "flags",
+                                      "global",
+                                      "ignoreCase",
+                                      "lastIndex",
+                                      "multiline",
+                                      "source",
+                                      "sticky",
+                                      "unicode"
+                                    ]
+                                  },
+                                  {
+                                    "type": "string"
+                                  }
+                                ]
+                              },
+                              "escape": {
+                                "description": "Escape char",
+                                "type": "string"
+                              },
+                              "replace": {
+                                "description": "Replacement string, indexes like `$1` can be used",
+                                "type": "string"
+                              }
+                            },
+                            "additionalProperties": false,
+                            "required": [
+                              "escape",
+                              "pattern"
+                            ]
+                          }
+                        },
+                        "valueAlias": {
+                          "description": "Alias options for each item",
+                          "type": "object",
+                          "properties": {
+                            "true": {
+                              "description": "Alias for true values",
+                              "type": "string"
+                            },
+                            "false": {
+                              "description": "Alias for false values",
+                              "type": "string"
+                            },
+                            "null": {
+                              "description": "Alias for null values",
+                              "type": "string"
+                            }
+                          },
+                          "additionalProperties": false
+                        },
+                        "header": {
+                          "description": "Header options for csv-like formats, usually noKeys is set to `false`",
+                          "type": "object",
+                          "properties": {
+                            "keyEnclosure": {
+                              "description": "Enclosure around each key",
+                              "type": "array",
+                              "items": {
+                                "description": "Enclosure options for key-like items",
+                                "type": "object",
+                                "properties": {
+                                  "test": {
+                                    "description": "Regular expression, that tests if the key must be enclosed",
+                                    "anyOf": [
+                                      {
+                                        "type": "object",
+                                        "properties": {
+                                          "source": {
+                                            "type": "string"
+                                          },
+                                          "global": {
+                                            "type": "boolean"
+                                          },
+                                          "ignoreCase": {
+                                            "type": "boolean"
+                                          },
+                                          "multiline": {
+                                            "type": "boolean"
+                                          },
+                                          "lastIndex": {
+                                            "type": "number"
+                                          },
+                                          "flags": {
+                                            "type": "string"
+                                          },
+                                          "sticky": {
+                                            "type": "boolean"
+                                          },
+                                          "unicode": {
+                                            "type": "boolean"
+                                          },
+                                          "dotAll": {
+                                            "type": "boolean"
+                                          }
+                                        },
+                                        "additionalProperties": false,
+                                        "required": [
+                                          "dotAll",
+                                          "flags",
+                                          "global",
+                                          "ignoreCase",
+                                          "lastIndex",
+                                          "multiline",
+                                          "source",
+                                          "sticky",
+                                          "unicode"
+                                        ]
+                                      },
+                                      {
+                                        "type": "array",
+                                        "items": {
+                                          "type": "string"
+                                        }
+                                      }
+                                    ]
+                                  },
+                                  "inverse": {
+                                    "description": "Inverse the test",
+                                    "type": "boolean"
+                                  },
+                                  "enclosure": {
+                                    "description": "Enclosure boundaries or char, if char, it's used for both start and end",
+                                    "anyOf": [
+                                      {
+                                        "description": "Boundary options for value-like items",
+                                        "type": "object",
+                                        "properties": {
+                                          "start": {
+                                            "description": "Start boundary",
+                                            "type": "string"
+                                          },
+                                          "end": {
+                                            "description": "End boundary",
+                                            "type": "string"
+                                          }
+                                        },
+                                        "additionalProperties": false,
+                                        "required": [
+                                          "end",
+                                          "start"
+                                        ]
+                                      },
+                                      {
+                                        "type": "string"
+                                      }
+                                    ]
+                                  },
+                                  "replace": {
+                                    "description": "Replacement string, indexes like `$1` can be used",
+                                    "type": "string"
+                                  }
+                                },
+                                "additionalProperties": false,
+                                "required": [
+                                  "enclosure",
+                                  "test"
+                                ]
+                              }
+                            },
+                            "pretty": {
+                              "description": "If true, header may contain line breaks",
+                              "type": [
+                                "number",
+                                "boolean"
+                              ]
+                            },
+                            "enclosure": {
+                              "description": "Enclosure around entire list",
+                              "type": "object",
+                              "properties": {
+                                "start": {
+                                  "description": "Start boundary",
+                                  "type": "string"
+                                },
+                                "end": {
+                                  "description": "End boundary",
+                                  "type": "string"
+                                }
+                              },
+                              "additionalProperties": false,
+                              "required": [
+                                "end",
+                                "start"
+                              ]
+                            },
+                            "delimiter": {
+                              "description": "Delimiter between items",
+                              "type": "string"
+                            },
+                            "itemPrefix": {
+                              "description": "Prefix for each item",
+                              "anyOf": [
+                                {
+                                  "description": "Prefix options for list items",
+                                  "type": "object",
+                                  "properties": {
+                                    "first": {
+                                      "description": "Prefix for the first item",
+                                      "type": "string"
+                                    },
+                                    "rest": {
+                                      "description": "Prefix for the rest of the items",
+                                      "type": "string"
+                                    }
+                                  },
+                                  "additionalProperties": false,
+                                  "required": [
+                                    "first",
+                                    "rest"
+                                  ]
+                                },
+                                {
+                                  "type": "string"
+                                }
+                              ]
+                            },
+                            "indentItems": {
+                              "description": "If true indent items",
+                              "type": [
+                                "number",
+                                "boolean"
+                              ]
+                            }
+                          },
+                          "additionalProperties": false
+                        },
+                        "pretty": {
+                          "description": "If true, header may contain line breaks",
+                          "type": [
+                            "number",
+                            "boolean"
+                          ]
+                        },
+                        "enclosure": {
+                          "description": "Enclosure around entire list",
+                          "type": "object",
+                          "properties": {
+                            "start": {
+                              "description": "Start boundary",
+                              "type": "string"
+                            },
+                            "end": {
+                              "description": "End boundary",
+                              "type": "string"
+                            }
+                          },
+                          "additionalProperties": false,
+                          "required": [
+                            "end",
+                            "start"
+                          ]
+                        },
+                        "delimiter": {
+                          "description": "Delimiter between items",
+                          "type": "string"
+                        },
+                        "itemPrefix": {
+                          "description": "Prefix for each item",
+                          "anyOf": [
+                            {
+                              "description": "Prefix options for list items",
+                              "type": "object",
+                              "properties": {
+                                "first": {
+                                  "description": "Prefix for the first item",
+                                  "type": "string"
+                                },
+                                "rest": {
+                                  "description": "Prefix for the rest of the items",
+                                  "type": "string"
+                                }
+                              },
+                              "additionalProperties": false,
+                              "required": [
+                                "first",
+                                "rest"
+                              ]
+                            },
+                            {
+                              "type": "string"
+                            }
+                          ]
+                        },
+                        "indentItems": {
+                          "description": "If true indent items",
+                          "type": [
+                            "number",
+                            "boolean"
+                          ]
+                        }
+                      },
+                      "additionalProperties": false,
+                      "required": [
+                        "assignmentOperator"
+                      ]
+                    },
+                    {
+                      "additionalProperties": false,
+                      "type": "object",
+                      "properties": {
+                        "base": {
+                          "description": "Language to use as base config",
+                          "enum": [
+                            "commaSeparatedList",
+                            "cpp",
+                            "csv",
+                            "enclosedCommaSeparatedList",
+                            "enclosedSpaceSeparatedList",
+                            "enclosedTabSeparatedList",
+                            "json",
+                            "markdown",
+                            "newLineSeparatedList",
+                            "php",
+                            "ruby",
+                            "spaceSeparatedList",
+                            "tabSeparatedList",
+                            "yaml"
+                          ],
+                          "type": "string"
+                        },
+                        "objectEnclosure": {
+                          "description": "Enclosure around each object",
+                          "type": "object",
+                          "properties": {
+                            "start": {
+                              "description": "Start boundary",
+                              "type": "string"
+                            },
+                            "end": {
+                              "description": "End boundary",
+                              "type": "string"
+                            }
+                          },
+                          "additionalProperties": false
+                        },
+                        "objectDelimiter": {
+                          "description": "Delimiter between elements inside objects",
+                          "type": "string"
+                        },
+                        "objectItemPrefix": {
+                          "description": "Prefix for each element inside objects",
+                          "anyOf": [
+                            {
+                              "description": "Same as `PartialDeep`, but accepts only `object`s as inputs. Internal helper for `PartialDeep`.",
+                              "type": "object",
+                              "properties": {
+                                "first": {
+                                  "description": "Prefix for the first item",
+                                  "type": "string"
+                                },
+                                "rest": {
+                                  "description": "Prefix for the rest of the items",
+                                  "type": "string"
+                                }
+                              },
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "string"
+                            }
+                          ]
+                        },
+                        "objectItemIgnoreIndent": {
+                          "description": "If true ignore indent for elements inside objects",
+                          "type": "boolean"
+                        },
+                        "assignmentOperator": {
+                          "description": "Assignment operator between object key and value",
+                          "type": "string"
+                        },
+                        "assignmentOperatorSpaced": {
+                          "description": "Pretty assignment operator between object key and value",
+                          "type": "string"
+                        },
+                        "objectEnclosureSameLine": {
+                          "description": "If true a new object enclosure starts on the same line as the previous item",
+                          "type": "boolean"
+                        },
+                        "keyEnclosure": {
+                          "description": "Enclosure around each key",
+                          "type": "array",
+                          "items": {
+                            "description": "Enclosure options for key-like items",
+                            "type": "object",
+                            "properties": {
+                              "test": {
+                                "description": "Regular expression, that tests if the key must be enclosed",
+                                "anyOf": [
+                                  {
+                                    "type": "object",
+                                    "properties": {
+                                      "source": {
+                                        "type": "string"
+                                      },
+                                      "global": {
+                                        "type": "boolean"
+                                      },
+                                      "ignoreCase": {
+                                        "type": "boolean"
+                                      },
+                                      "multiline": {
+                                        "type": "boolean"
+                                      },
+                                      "lastIndex": {
+                                        "type": "number"
+                                      },
+                                      "flags": {
+                                        "type": "string"
+                                      },
+                                      "sticky": {
+                                        "type": "boolean"
+                                      },
+                                      "unicode": {
+                                        "type": "boolean"
+                                      },
+                                      "dotAll": {
+                                        "type": "boolean"
+                                      }
+                                    },
+                                    "additionalProperties": false,
+                                    "required": [
+                                      "dotAll",
+                                      "flags",
+                                      "global",
+                                      "ignoreCase",
+                                      "lastIndex",
+                                      "multiline",
+                                      "source",
+                                      "sticky",
+                                      "unicode"
+                                    ]
+                                  },
+                                  {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string"
+                                    }
+                                  }
+                                ]
+                              },
+                              "inverse": {
+                                "description": "Inverse the test",
+                                "type": "boolean"
+                              },
+                              "enclosure": {
+                                "description": "Enclosure boundaries or char, if char, it's used for both start and end",
+                                "anyOf": [
+                                  {
+                                    "description": "Boundary options for value-like items",
+                                    "type": "object",
+                                    "properties": {
+                                      "start": {
+                                        "description": "Start boundary",
+                                        "type": "string"
+                                      },
+                                      "end": {
+                                        "description": "End boundary",
+                                        "type": "string"
+                                      }
+                                    },
+                                    "additionalProperties": false,
+                                    "required": [
+                                      "end",
+                                      "start"
+                                    ]
+                                  },
+                                  {
+                                    "type": "string"
+                                  }
+                                ]
+                              },
+                              "replace": {
+                                "description": "Replacement string, indexes like `$1` can be used",
+                                "type": "string"
+                              }
+                            },
+                            "additionalProperties": false,
+                            "required": [
+                              "enclosure",
+                              "test"
+                            ]
+                          }
+                        },
+                        "noKeys": {
+                          "description": "If true, don't generate keys for objects",
+                          "type": "boolean"
+                        },
+                        "example": {
+                          "description": "Example result shown in quick picks",
+                          "type": "string"
+                        },
+                        "valueEnclosure": {
+                          "description": "Enclosure around each item",
+                          "type": "object",
+                          "properties": {
+                            "string": {
+                              "description": "Enclosure for string values, if char, it's used for both start and end",
+                              "anyOf": [
+                                {
+                                  "description": "Same as `PartialDeep`, but accepts only `object`s as inputs. Internal helper for `PartialDeep`.",
+                                  "type": "object",
+                                  "properties": {
+                                    "start": {
+                                      "description": "Start boundary",
+                                      "type": "string"
+                                    },
+                                    "end": {
+                                      "description": "End boundary",
+                                      "type": "string"
+                                    }
+                                  },
+                                  "additionalProperties": false
+                                },
+                                {
+                                  "type": "string"
+                                }
+                              ]
+                            },
+                            "number": {
+                              "description": "Enclosure for number values, if char, it's used for both start and end",
+                              "anyOf": [
+                                {
+                                  "description": "Same as `PartialDeep`, but accepts only `object`s as inputs. Internal helper for `PartialDeep`.",
+                                  "type": "object",
+                                  "properties": {
+                                    "start": {
+                                      "description": "Start boundary",
+                                      "type": "string"
+                                    },
+                                    "end": {
+                                      "description": "End boundary",
+                                      "type": "string"
+                                    }
+                                  },
+                                  "additionalProperties": false
+                                },
+                                {
+                                  "type": "string"
+                                }
+                              ]
+                            },
+                            "boolean": {
+                              "description": "Enclosure for boolean values, if char, it's used for both start and end",
+                              "anyOf": [
+                                {
+                                  "description": "Same as `PartialDeep`, but accepts only `object`s as inputs. Internal helper for `PartialDeep`.",
+                                  "type": "object",
+                                  "properties": {
+                                    "start": {
+                                      "description": "Start boundary",
+                                      "type": "string"
+                                    },
+                                    "end": {
+                                      "description": "End boundary",
+                                      "type": "string"
+                                    }
+                                  },
+                                  "additionalProperties": false
+                                },
+                                {
+                                  "type": "string"
+                                }
+                              ]
+                            },
+                            "null": {
+                              "description": "Enclosure for null values, if char, it's used for both start and end",
+                              "anyOf": [
+                                {
+                                  "description": "Same as `PartialDeep`, but accepts only `object`s as inputs. Internal helper for `PartialDeep`.",
+                                  "type": "object",
+                                  "properties": {
+                                    "start": {
+                                      "description": "Start boundary",
+                                      "type": "string"
+                                    },
+                                    "end": {
+                                      "description": "End boundary",
+                                      "type": "string"
+                                    }
+                                  },
+                                  "additionalProperties": false
+                                },
+                                {
+                                  "type": "string"
+                                }
+                              ]
+                            }
+                          },
+                          "additionalProperties": false
+                        },
+                        "valueEscape": {
+                          "description": "Escape options for each item",
+                          "type": "array",
+                          "items": {
+                            "description": "Escape options for value-like items",
+                            "type": "object",
+                            "properties": {
+                              "pattern": {
+                                "description": "Regular expression, that matches parts of the value to be escaped",
+                                "anyOf": [
+                                  {
+                                    "type": "object",
+                                    "properties": {
+                                      "source": {
+                                        "type": "string"
+                                      },
+                                      "global": {
+                                        "type": "boolean"
+                                      },
+                                      "ignoreCase": {
+                                        "type": "boolean"
+                                      },
+                                      "multiline": {
+                                        "type": "boolean"
+                                      },
+                                      "lastIndex": {
+                                        "type": "number"
+                                      },
+                                      "flags": {
+                                        "type": "string"
+                                      },
+                                      "sticky": {
+                                        "type": "boolean"
+                                      },
+                                      "unicode": {
+                                        "type": "boolean"
+                                      },
+                                      "dotAll": {
+                                        "type": "boolean"
+                                      }
+                                    },
+                                    "additionalProperties": false,
+                                    "required": [
+                                      "dotAll",
+                                      "flags",
+                                      "global",
+                                      "ignoreCase",
+                                      "lastIndex",
+                                      "multiline",
+                                      "source",
+                                      "sticky",
+                                      "unicode"
+                                    ]
+                                  },
+                                  {
+                                    "type": "string"
+                                  }
+                                ]
+                              },
+                              "escape": {
+                                "description": "Escape char",
+                                "type": "string"
+                              },
+                              "replace": {
+                                "description": "Replacement string, indexes like `$1` can be used",
+                                "type": "string"
+                              }
+                            },
+                            "additionalProperties": false,
+                            "required": [
+                              "escape",
+                              "pattern"
+                            ]
+                          }
+                        },
+                        "valueAlias": {
+                          "description": "Alias options for each item",
+                          "type": "object",
+                          "properties": {
+                            "true": {
+                              "description": "Alias for true values",
+                              "type": "string"
+                            },
+                            "false": {
+                              "description": "Alias for false values",
+                              "type": "string"
+                            },
+                            "null": {
+                              "description": "Alias for null values",
+                              "type": "string"
+                            }
+                          },
+                          "additionalProperties": false
+                        },
+                        "header": {
+                          "description": "Header options for csv-like formats, usually noKeys is set to `false`",
+                          "type": "object",
+                          "properties": {
+                            "keyEnclosure": {
+                              "description": "Enclosure around each key",
+                              "type": "array",
+                              "items": {
+                                "description": "Enclosure options for key-like items",
+                                "type": "object",
+                                "properties": {
+                                  "test": {
+                                    "description": "Regular expression, that tests if the key must be enclosed",
+                                    "anyOf": [
+                                      {
+                                        "type": "object",
+                                        "properties": {
+                                          "source": {
+                                            "type": "string"
+                                          },
+                                          "global": {
+                                            "type": "boolean"
+                                          },
+                                          "ignoreCase": {
+                                            "type": "boolean"
+                                          },
+                                          "multiline": {
+                                            "type": "boolean"
+                                          },
+                                          "lastIndex": {
+                                            "type": "number"
+                                          },
+                                          "flags": {
+                                            "type": "string"
+                                          },
+                                          "sticky": {
+                                            "type": "boolean"
+                                          },
+                                          "unicode": {
+                                            "type": "boolean"
+                                          },
+                                          "dotAll": {
+                                            "type": "boolean"
+                                          }
+                                        },
+                                        "additionalProperties": false,
+                                        "required": [
+                                          "dotAll",
+                                          "flags",
+                                          "global",
+                                          "ignoreCase",
+                                          "lastIndex",
+                                          "multiline",
+                                          "source",
+                                          "sticky",
+                                          "unicode"
+                                        ]
+                                      },
+                                      {
+                                        "type": "array",
+                                        "items": {
+                                          "type": "string"
+                                        }
+                                      }
+                                    ]
+                                  },
+                                  "inverse": {
+                                    "description": "Inverse the test",
+                                    "type": "boolean"
+                                  },
+                                  "enclosure": {
+                                    "description": "Enclosure boundaries or char, if char, it's used for both start and end",
+                                    "anyOf": [
+                                      {
+                                        "description": "Boundary options for value-like items",
+                                        "type": "object",
+                                        "properties": {
+                                          "start": {
+                                            "description": "Start boundary",
+                                            "type": "string"
+                                          },
+                                          "end": {
+                                            "description": "End boundary",
+                                            "type": "string"
+                                          }
+                                        },
+                                        "additionalProperties": false,
+                                        "required": [
+                                          "end",
+                                          "start"
+                                        ]
+                                      },
+                                      {
+                                        "type": "string"
+                                      }
+                                    ]
+                                  },
+                                  "replace": {
+                                    "description": "Replacement string, indexes like `$1` can be used",
+                                    "type": "string"
+                                  }
+                                },
+                                "additionalProperties": false,
+                                "required": [
+                                  "enclosure",
+                                  "test"
+                                ]
+                              }
+                            },
+                            "pretty": {
+                              "description": "If true, header may contain line breaks",
+                              "type": [
+                                "number",
+                                "boolean"
+                              ]
+                            },
+                            "enclosure": {
+                              "description": "Enclosure around entire list",
+                              "type": "object",
+                              "properties": {
+                                "start": {
+                                  "description": "Start boundary",
+                                  "type": "string"
+                                },
+                                "end": {
+                                  "description": "End boundary",
+                                  "type": "string"
+                                }
+                              },
+                              "additionalProperties": false
+                            },
+                            "delimiter": {
+                              "description": "Delimiter between items",
+                              "type": "string"
+                            },
+                            "itemPrefix": {
+                              "description": "Prefix for each item",
+                              "anyOf": [
+                                {
+                                  "description": "Same as `PartialDeep`, but accepts only `object`s as inputs. Internal helper for `PartialDeep`.",
+                                  "type": "object",
+                                  "properties": {
+                                    "first": {
+                                      "description": "Prefix for the first item",
+                                      "type": "string"
+                                    },
+                                    "rest": {
+                                      "description": "Prefix for the rest of the items",
+                                      "type": "string"
+                                    }
+                                  },
+                                  "additionalProperties": false
+                                },
+                                {
+                                  "type": "string"
+                                }
+                              ]
+                            },
+                            "indentItems": {
+                              "description": "If true indent items",
+                              "type": [
+                                "number",
+                                "boolean"
+                              ]
+                            }
+                          },
+                          "additionalProperties": false
+                        },
+                        "pretty": {
+                          "description": "If true, header may contain line breaks",
+                          "type": [
+                            "number",
+                            "boolean"
+                          ]
+                        },
+                        "enclosure": {
+                          "description": "Enclosure around entire list",
+                          "type": "object",
+                          "properties": {
+                            "start": {
+                              "description": "Start boundary",
+                              "type": "string"
+                            },
+                            "end": {
+                              "description": "End boundary",
+                              "type": "string"
+                            }
+                          },
+                          "additionalProperties": false
+                        },
+                        "delimiter": {
+                          "description": "Delimiter between items",
+                          "type": "string"
+                        },
+                        "itemPrefix": {
+                          "description": "Prefix for each item",
+                          "anyOf": [
+                            {
+                              "description": "Same as `PartialDeep`, but accepts only `object`s as inputs. Internal helper for `PartialDeep`.",
+                              "type": "object",
+                              "properties": {
+                                "first": {
+                                  "description": "Prefix for the first item",
+                                  "type": "string"
+                                },
+                                "rest": {
+                                  "description": "Prefix for the rest of the items",
+                                  "type": "string"
+                                }
+                              },
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "string"
+                            }
+                          ]
+                        },
+                        "indentItems": {
+                          "description": "If true indent items",
+                          "type": [
+                            "number",
+                            "boolean"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "base"
+                      ]
+                    }
+                  ]
+                },
+                "pretty": {
+                  "description": "Default pretty print level",
+                  "type": [
+                    "number",
+                    "boolean"
+                  ]
+                },
+                "indent": {
+                  "description": "Default indent level",
+                  "type": [
+                    "number",
+                    "boolean"
+                  ]
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "format-lists.prettyPrint": {
+            "description": "Pretty print depth, true is equivalent to an infinite depth",
+            "default": true,
+            "type": [
+              "number",
+              "boolean"
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run package",
+    "compile": "webpack",
+    "watch": "webpack --watch",
+    "package": "webpack --mode production --devtool hidden-source-map",
+    "test-compile": "tsc -p ./",
+    "test-watch": "tsc -watch -p ./",
+    "pretest": "npm run test-compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js"
+  },
+  "dependencies": {
+    "defaults": "^2.0.1"
+  },
+  "devDependencies": {
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
+    "@types/glob": "^8.1.0",
+    "@types/mocha": "^10.0.1",
+    "@types/node": "^18.6.4",
+    "@types/vscode": "1.64",
+    "@typescript-eslint/eslint-plugin": "^6.4.0",
+    "@typescript-eslint/parser": "^6.4.0",
+    "eslint": "^8.47.0",
+    "eslint-config-prettier": "^9.0.0",
+    "glob": "^10.3.3",
+    "mocha": "^10.2.0",
+    "semantic-release": "^21.0.7",
+    "semantic-release-vsce": "^5.6.1",
+    "ts-loader": "^9.4.4",
+    "type-fest": "^4.3.1",
+    "typescript": "^5.1.6",
+    "typescript-json-schema": "^0.60.0",
+    "vscode-test": "^1.6.1",
+    "webpack": "^5.88.2",
+    "webpack-cli": "^5.1.4"
+  },
+  "release": {
+    "branches": [
+      "main",
+      "develop"
+    ],
+    "plugins": [
+      "@semantic-release/commit-analyzer",
+      "@semantic-release/release-notes-generator",
+      "@semantic-release/changelog",
+      [
+        "@semantic-release/git",
+        {
+          "message": "chore(release): ${nextRelease.version}\n\n${nextRelease.notes}",
+          "assets": [
+            "package.json",
+            "CHANGELOG.md",
+            "README.md"
+          ]
+        }
+      ],
+      [
+        "semantic-release-vsce",
+        {
+          "packageVsix": true
+        }
+      ],
+      [
+        "@semantic-release/github",
+        {
+          "assets": [
+            "*.vsix"
+          ]
+        }
+      ]
+    ]
+  }
+}
