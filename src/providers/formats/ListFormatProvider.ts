@@ -119,35 +119,17 @@ export default class ListFormatProvider {
     if (!this.options.objectList) return null;
 
     const { objectList } = this.options;
-    const {
-      enclosure,
-      objectEnclosure,
-      delimiter = "",
-      itemPrefix = "",
-      objectDelimiter = "",
-      objectItemPrefix = "",
-      objectEnclosureSameLine,
-      objectItemIgnoreIndent,
-      indentItems,
-      objectItemIndentProperties,
-      header,
-    } = objectList;
+    const { itemFormat, delimiter = "", indentItems, header } = objectList;
 
     const mappedItems = items.map((item) => {
       const mappedItem = columns.map((column) => this.encloseKeyValue(column, item[column], objectList, pretty > 0));
 
-      return this.joinList(mappedItem, pretty, objectItemIgnoreIndent ? 0 : indent, 1, {
-        delimiter: objectDelimiter,
-        enclosure: objectEnclosure,
-        itemPrefix: objectItemPrefix,
-        indentItems: objectItemIndentProperties,
-      });
+      return this.joinList(mappedItem, pretty, indentItems === false ? 0 : indent, 1, itemFormat);
     });
 
-    const joinOptions: FormatterListOptions = { delimiter, enclosure, itemPrefix, indentItems };
-    if (objectEnclosureSameLine)
+    if (itemFormat.delimitSameLine)
       mappedItems.splice(0, mappedItems.length, mappedItems.join(pretty > 0 ? `${delimiter} ` : delimiter));
-    const inner = this.joinList(mappedItems, pretty, indent, 0, joinOptions);
+    const inner = this.joinList(mappedItems, pretty, indent, 0, objectList);
 
     const lines = [];
     if (header) lines.push(this.buildHeader(columns, pretty, indent, header));

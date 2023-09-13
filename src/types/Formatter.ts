@@ -77,6 +77,8 @@ export interface FormatterListOptions {
   itemPrefix?: ItemPrefix | string;
   /** If true indent items */
   indentItems?: Indent;
+  /** If false, items are separated by newlines, otherwise next sspaced by given number of spaces */
+  delimitSameLine?: Indent;
 }
 
 export interface FormatterHeaderOptions extends FormatterListOptions {
@@ -102,28 +104,18 @@ export interface FormatterSimpleListOptions extends FormatterHeaderOptions {
 
 /** Options for object lists */
 export interface FormatterObjectListOptions extends FormatterSimpleListOptions {
-  /** Enclosure around each object */
-  objectEnclosure?: FormatterValueBoundary;
-  /** Delimiter between elements inside objects */
-  objectDelimiter?: string;
-  /** If true, generate a delimiter for the last element as well */
-  objectDelimitLastProperty?: boolean;
-  /** Prefix for each element inside objects */
-  objectItemPrefix?: ItemPrefix | string;
-  /** If true ignore indent for elements inside objects */
-  objectItemIgnoreIndent?: boolean;
-  /** If true indent elements inside objects */
-  objectItemIndentProperties?: boolean;
+  /** Format options for each item */
+  itemFormat: FormatterListOptions;
   /** Assignment operator between object key and value */
   assignmentOperator: string;
   /** Pretty assignment operator between object key and value */
   assignmentOperatorSpaced?: string;
-  /** If true a new object enclosure starts on the same line as the previous item */
-  objectEnclosureSameLine?: boolean;
   /** Enclosure around each key */
   keyEnclosure?: FormatterKeyEnclosure[];
   /** If true, don't generate keys for objects */
   noKeys?: boolean;
+  /** If false, item enclosures will be on a new line, otherwise spaced by given number of spaces */
+  itemEnclosureSameLine?: Indent;
 }
 
 /** List options */

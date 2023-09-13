@@ -9,15 +9,16 @@ export const formatCpp: FormatterOptions = {
   },
   objectList: {
     enclosure: { start: "{", end: "}" },
-    objectEnclosure: { start: "{", end: "}" },
     delimiter: ",",
-    objectDelimiter: ",",
     assignmentOperator: "=",
     assignmentOperatorSpaced: " = ",
     keyEnclosure: [{ test: "/.*/", enclosure: { start: "[", end: "] " } }],
     valueEnclosure: { string: '"' },
-    objectEnclosureSameLine: true,
     indentItems: true,
-    objectItemIndentProperties: true,
+    itemFormat: {
+      enclosure: { start: "{", end: "}" },
+      delimiter: ",",
+      indentItems: true,
+    },
   },
 };

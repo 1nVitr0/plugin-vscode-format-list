@@ -9,15 +9,17 @@ export const formatPhp: FormatterOptions = {
   },
   objectList: {
     enclosure: { start: "[", end: "]" },
-    objectEnclosure: { start: "[", end: "]" },
     delimiter: ",",
-    objectDelimiter: ",",
     assignmentOperator: "=>",
     assignmentOperatorSpaced: " => ",
     keyEnclosure: [{ test: "/.*/", enclosure: '"' }],
     valueEnclosure: { string: '"' },
-    objectEnclosureSameLine: true,
     indentItems: true,
-    objectItemIndentProperties: true,
+    itemFormat: {
+      enclosure: { start: "{", end: "}" },
+      delimiter: ",",
+      indentItems: true,
+      delimitSameLine: true,
+    },
   },
 };

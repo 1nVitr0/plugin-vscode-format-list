@@ -13,7 +13,9 @@ export const formatCsv: FormatterOptions = {
   },
   objectList: {
     delimiter: "\n",
-    objectDelimiter: ",",
+    itemFormat: {
+      delimiter: ",",
+    },
     assignmentOperator: "",
     noKeys: true,
     header: {
