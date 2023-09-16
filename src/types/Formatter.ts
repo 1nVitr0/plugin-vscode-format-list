@@ -114,8 +114,6 @@ export interface FormatterObjectListOptions extends FormatterSimpleListOptions {
   keyEnclosure?: FormatterKeyEnclosure[];
   /** If true, don't generate keys for objects */
   noKeys?: boolean;
-  /** If false, item enclosures will be on a new line, otherwise spaced by given number of spaces */
-  itemEnclosureSameLine?: Indent;
 }
 
 /** List options */

@@ -119,7 +119,7 @@ export default class ListFormatProvider {
     if (!this.options.objectList) return null;
 
     const { objectList } = this.options;
-    const { itemFormat, delimiter = "", indentItems, header } = objectList;
+    const { itemFormat, indentItems, header } = objectList;
 
     const mappedItems = items.map((item) => {
       const mappedItem = columns.map((column) => this.encloseKeyValue(column, item[column], objectList, pretty > 0));
@@ -127,13 +127,11 @@ export default class ListFormatProvider {
       return this.joinList(mappedItem, pretty, indentItems === false ? 0 : indent, 1, itemFormat);
     });
 
-    if (itemFormat.delimitSameLine)
-      mappedItems.splice(0, mappedItems.length, mappedItems.join(pretty > 0 ? `${delimiter} ` : delimiter));
-    const inner = this.joinList(mappedItems, pretty, indent, 0, objectList);
+    const body = this.joinList(mappedItems, pretty, indent, 0, objectList);
 
     const lines = [];
     if (header) lines.push(this.buildHeader(columns, pretty, indent, header));
-    lines.push(inner);
+    lines.push(body);
 
     return pretty > 0 ? lines.join("\n") : lines.join("");
   }
@@ -143,7 +141,7 @@ export default class ListFormatProvider {
     pretty: number = 0,
     indent: number = 0,
     level: number = 0,
-    { delimiter, delimitLastItem, enclosure, indentItems, itemPrefix = "" }: FormatterListOptions
+    { delimiter, delimitLastItem, delimitSameLine, enclosure, indentItems, itemPrefix = "" }: FormatterListOptions
   ): string {
     const breakLine = pretty > level && !delimiter?.includes("\n");
     const indentEnclosure = pretty >= level ? " ".repeat(indent * level) : "";
@@ -155,15 +153,20 @@ export default class ListFormatProvider {
     lines.push(
       ...items.map(
         (item, index) =>
-          `${indentItem}${index === 0 ? first : rest}${item}${
+          `${index === 0 || !delimitSameLine ? indentItem : ""}${index === 0 ? first : rest}${item}${
             delimitLastItem || index < items.length - 1 ? delimiter : ""
           }`
       )
     );
     if (enclosure?.end) lines.push(`${indentEnclosure}${enclosure.end}`);
 
-    if (breakLine) return lines.join("\n");
-    else if (pretty > 0 && !delimiter?.includes("\n")) return lines.join(" ");
+    if (breakLine && delimitSameLine) {
+      lines[0] += "\n";
+      lines[lines.length - 1] = `\n${lines[lines.length - 1]}`;
+    }
+
+    if (breakLine && !delimitSameLine) return lines.join("\n");
+    else if (pretty > level && (!delimiter?.includes("\n") || delimitSameLine)) return lines.join(" ");
     else return lines.join("");
   }
 
@@ -201,7 +204,7 @@ export default class ListFormatProvider {
     for (const keyEnclosureOption of keyEnclosure) {
       let { test, inverse, enclosure, replace } = keyEnclosureOption;
       const { start, end } = typeof enclosure === "string" ? { start: enclosure, end: enclosure } : enclosure;
-      const regex = typeof test === "string" ? new RegExp(test) : test;
+      const regex = typeof test === "string" ? new RegExp(test.replace(/^\/(.*)\/$/, "$1")) : test;
 
       if (inverse) return regex.test(key) ? key : `${start}${key}${end}`;
       else if (replace) return key.replace(regex, replace);

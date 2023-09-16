@@ -19,7 +19,6 @@ export const formatPhp: FormatterOptions = {
       enclosure: { start: "{", end: "}" },
       delimiter: ",",
       indentItems: true,
-      delimitSameLine: true,
     },
   },
 };

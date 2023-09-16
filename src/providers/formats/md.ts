@@ -11,10 +11,9 @@ export const formatMarkdown: FormatterOptions = {
     assignmentOperator: ": ",
     delimiter: "\n",
     itemPrefix: "- Item:",
-    indentItems: true,
     itemFormat: {
       delimiter: "\n",
-      itemPrefix: "- ",
+      itemPrefix: "  - ",
     },
   },
 };

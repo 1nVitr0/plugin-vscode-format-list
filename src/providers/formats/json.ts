@@ -9,16 +9,17 @@ export const formatJson: FormatterOptions = {
   },
   objectList: {
     enclosure: { start: "[", end: "]" },
-    itemFormat: {
-      enclosure: { start: "{", end: "}" },
-      delimiter: ",",
-      indentItems: true,
-    },
     delimiter: ",",
     assignmentOperator: ":",
     assignmentOperatorSpaced: ": ",
     keyEnclosure: [{ test: "/.*/", enclosure: '"' }],
     valueEnclosure: { string: '"' },
     indentItems: true,
+    delimitSameLine: true,
+    itemFormat: {
+      enclosure: { start: "{", end: "}" },
+      delimiter: ",",
+      indentItems: true,
+    },
   },
 };

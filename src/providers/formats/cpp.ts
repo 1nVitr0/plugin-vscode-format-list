@@ -12,7 +12,7 @@ export const formatCpp: FormatterOptions = {
     delimiter: ",",
     assignmentOperator: "=",
     assignmentOperatorSpaced: " = ",
-    keyEnclosure: [{ test: "/.*/", enclosure: { start: "[", end: "] " } }],
+    keyEnclosure: [{ test: "/.*/", enclosure: { start: "[", end: "]" } }],
     valueEnclosure: { string: '"' },
     indentItems: true,
     itemFormat: {
