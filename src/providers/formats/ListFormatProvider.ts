@@ -119,12 +119,12 @@ export default class ListFormatProvider {
     if (!this.options.objectList) return null;
 
     const { objectList } = this.options;
-    const { itemFormat, indentItems, header } = objectList;
+    const { itemFormat, header } = objectList;
 
     const mappedItems = items.map((item) => {
       const mappedItem = columns.map((column) => this.encloseKeyValue(column, item[column], objectList, pretty > 0));
 
-      return this.joinList(mappedItem, pretty, indentItems === false ? 0 : indent, 1, itemFormat);
+      return this.joinList(mappedItem, pretty, indent, 1, itemFormat);
     });
 
     const body = this.joinList(mappedItems, pretty, indent, 0, objectList);
@@ -141,11 +141,21 @@ export default class ListFormatProvider {
     pretty: number = 0,
     indent: number = 0,
     level: number = 0,
-    { delimiter, delimitLastItem, delimitSameLine, enclosure, indentItems, itemPrefix = "" }: FormatterListOptions
+    {
+      delimiter,
+      delimitLastItem,
+      delimitSameLine,
+      enclosure,
+      indentItems,
+      indentEnclosure,
+      itemPrefix = "",
+    }: FormatterListOptions
   ): string {
+    indentItems = indentItems && indent * (indentItems === true ? level + 1 : indentItems);
+    indentEnclosure = indentEnclosure && indent * (indentEnclosure === true ? level : indentEnclosure);
     const breakLine = pretty > level && !delimiter?.includes("\n");
-    const indentEnclosure = pretty >= level ? " ".repeat(indent * level) : "";
-    const indentItem = indentItems && pretty > level ? " ".repeat(indent * (level + 1)) : "";
+    const itemIndent = indentItems && pretty > level ? " ".repeat(indentItems) : "";
+    const enclosureIndent = indentEnclosure && pretty > level ? " ".repeat(indentEnclosure) : "";
     const { first, rest } = typeof itemPrefix === "string" ? { first: itemPrefix, rest: itemPrefix } : itemPrefix;
 
     const lines = [];
@@ -153,12 +163,12 @@ export default class ListFormatProvider {
     lines.push(
       ...items.map(
         (item, index) =>
-          `${index === 0 || !delimitSameLine ? indentItem : ""}${index === 0 ? first : rest}${item}${
-            delimitLastItem || index < items.length - 1 ? delimiter : ""
-          }`
+          `${index === 0 || !delimitSameLine ? itemIndent : ""}${this.templateString(index === 0 ? first : rest, {
+            index,
+          })}${item}${delimitLastItem || index < items.length - 1 ? delimiter : ""}`
       )
     );
-    if (enclosure?.end) lines.push(`${indentEnclosure}${enclosure.end}`);
+    if (enclosure?.end) lines.push(`${enclosureIndent}${enclosure.end}`);
 
     if (breakLine && delimitSameLine) {
       lines[0] += "\n";
@@ -259,6 +269,34 @@ export default class ListFormatProvider {
     });
 
     return escapedValue;
+  }
+
+  private templateString(template: string, data: Record<string, string | number>): string {
+    return template.replace(/\${(.*?)}/g, (_, template) => {
+      const [tmp, key, modifier, factor] = /([a-z0-9_]+)\s*([+\-\*\/])?\s*(\d+)?/i.exec(template) ?? [];
+      const value = key && data[key];
+
+      if (!key || value === undefined) return template;
+      if (modifier && factor) {
+        const numericValue = Number(value);
+        const numericFactor = Number(factor);
+
+        switch (modifier) {
+          case "+":
+            return (numericValue + numericFactor).toString();
+          case "-":
+            return (numericValue - numericFactor).toString();
+          case "*":
+            return (numericValue * numericFactor).toString();
+          case "/":
+            return (numericValue / numericFactor).toString();
+          default:
+            return template;
+        }
+      }
+
+      return value.toString();
+    });
   }
 
   private buildHeader(

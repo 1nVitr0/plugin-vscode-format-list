@@ -20,6 +20,7 @@ export const formatRb: FormatterOptions = {
       delimiter: ",",
       indentItems: true,
       delimitSameLine: true,
+      indentEnclosure: true,
     },
   },
 };

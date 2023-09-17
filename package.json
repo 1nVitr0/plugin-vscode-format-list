@@ -407,6 +407,10 @@
                               "description": "Delimiter between items",
                               "type": "string"
                             },
+                            "delimitLastItem": {
+                              "description": "If true, generate a delimiter for the last item as well",
+                              "type": "boolean"
+                            },
                             "itemPrefix": {
                               "description": "Prefix for each item",
                               "anyOf": [
@@ -436,6 +440,20 @@
                             },
                             "indentItems": {
                               "description": "If true indent items",
+                              "type": [
+                                "number",
+                                "boolean"
+                              ]
+                            },
+                            "indentEnclosure": {
+                              "description": "If true, indent enclosure",
+                              "type": [
+                                "number",
+                                "boolean"
+                              ]
+                            },
+                            "delimitSameLine": {
+                              "description": "If false, items are separated by newlines, otherwise next spaced by given number of spaces",
                               "type": [
                                 "number",
                                 "boolean"
@@ -579,6 +597,10 @@
                           "description": "Delimiter between items",
                           "type": "string"
                         },
+                        "delimitLastItem": {
+                          "description": "If true, generate a delimiter for the last item as well",
+                          "type": "boolean"
+                        },
                         "itemPrefix": {
                           "description": "Prefix for each item",
                           "anyOf": [
@@ -612,6 +634,20 @@
                             "number",
                             "boolean"
                           ]
+                        },
+                        "indentEnclosure": {
+                          "description": "If true, indent enclosure",
+                          "type": [
+                            "number",
+                            "boolean"
+                          ]
+                        },
+                        "delimitSameLine": {
+                          "description": "If false, items are separated by newlines, otherwise next spaced by given number of spaces",
+                          "type": [
+                            "number",
+                            "boolean"
+                          ]
                         }
                       },
                       "additionalProperties": false
@@ -629,6 +665,7 @@
                             "enclosedCommaSeparatedList",
                             "enclosedSpaceSeparatedList",
                             "enclosedTabSeparatedList",
+                            "js",
                             "json",
                             "markdown",
                             "newLineSeparatedList",
@@ -972,6 +1009,10 @@
                               "description": "Delimiter between items",
                               "type": "string"
                             },
+                            "delimitLastItem": {
+                              "description": "If true, generate a delimiter for the last item as well",
+                              "type": "boolean"
+                            },
                             "itemPrefix": {
                               "description": "Prefix for each item",
                               "anyOf": [
@@ -997,6 +1038,20 @@
                             },
                             "indentItems": {
                               "description": "If true indent items",
+                              "type": [
+                                "number",
+                                "boolean"
+                              ]
+                            },
+                            "indentEnclosure": {
+                              "description": "If true, indent enclosure",
+                              "type": [
+                                "number",
+                                "boolean"
+                              ]
+                            },
+                            "delimitSameLine": {
+                              "description": "If false, items are separated by newlines, otherwise next spaced by given number of spaces",
                               "type": [
                                 "number",
                                 "boolean"
@@ -1136,6 +1191,10 @@
                           "description": "Delimiter between items",
                           "type": "string"
                         },
+                        "delimitLastItem": {
+                          "description": "If true, generate a delimiter for the last item as well",
+                          "type": "boolean"
+                        },
                         "itemPrefix": {
                           "description": "Prefix for each item",
                           "anyOf": [
@@ -1165,6 +1224,20 @@
                             "number",
                             "boolean"
                           ]
+                        },
+                        "indentEnclosure": {
+                          "description": "If true, indent enclosure",
+                          "type": [
+                            "number",
+                            "boolean"
+                          ]
+                        },
+                        "delimitSameLine": {
+                          "description": "If false, items are separated by newlines, otherwise next spaced by given number of spaces",
+                          "type": [
+                            "number",
+                            "boolean"
+                          ]
                         }
                       },
                       "required": [
@@ -1180,59 +1253,87 @@
                       "description": "Options for object lists",
                       "type": "object",
                       "properties": {
-                        "objectEnclosure": {
-                          "description": "Enclosure around each object",
+                        "itemFormat": {
+                          "description": "Format options for each item",
                           "type": "object",
                           "properties": {
-                            "start": {
-                              "description": "Start boundary",
-                              "type": "string"
-                            },
-                            "end": {
-                              "description": "End boundary",
-                              "type": "string"
-                            }
-                          },
-                          "additionalProperties": false,
-                          "required": [
-                            "end",
-                            "start"
-                          ]
-                        },
-                        "objectDelimiter": {
-                          "description": "Delimiter between elements inside objects",
-                          "type": "string"
-                        },
-                        "objectItemPrefix": {
-                          "description": "Prefix for each element inside objects",
-                          "anyOf": [
-                            {
-                              "description": "Prefix options for list items",
+                            "enclosure": {
+                              "description": "Enclosure around entire list",
                               "type": "object",
                               "properties": {
-                                "first": {
-                                  "description": "Prefix for the first item",
+                                "start": {
+                                  "description": "Start boundary",
                                   "type": "string"
                                 },
-                                "rest": {
-                                  "description": "Prefix for the rest of the items",
+                                "end": {
+                                  "description": "End boundary",
                                   "type": "string"
                                 }
                               },
                               "additionalProperties": false,
                               "required": [
-                                "first",
-                                "rest"
+                                "end",
+                                "start"
                               ]
                             },
-                            {
+                            "delimiter": {
+                              "description": "Delimiter between items",
                               "type": "string"
+                            },
+                            "delimitLastItem": {
+                              "description": "If true, generate a delimiter for the last item as well",
+                              "type": "boolean"
+                            },
+                            "itemPrefix": {
+                              "description": "Prefix for each item",
+                              "anyOf": [
+                                {
+                                  "description": "Prefix options for list items",
+                                  "type": "object",
+                                  "properties": {
+                                    "first": {
+                                      "description": "Prefix for the first item",
+                                      "type": "string"
+                                    },
+                                    "rest": {
+                                      "description": "Prefix for the rest of the items",
+                                      "type": "string"
+                                    }
+                                  },
+                                  "additionalProperties": false,
+                                  "required": [
+                                    "first",
+                                    "rest"
+                                  ]
+                                },
+                                {
+                                  "type": "string"
+                                }
+                              ]
+                            },
+                            "indentItems": {
+                              "description": "If true indent items",
+                              "type": [
+                                "number",
+                                "boolean"
+                              ]
+                            },
+                            "indentEnclosure": {
+                              "description": "If true, indent enclosure",
+                              "type": [
+                                "number",
+                                "boolean"
+                              ]
+                            },
+                            "delimitSameLine": {
+                              "description": "If false, items are separated by newlines, otherwise next spaced by given number of spaces",
+                              "type": [
+                                "number",
+                                "boolean"
+                              ]
                             }
-                          ]
-                        },
-                        "objectItemIgnoreIndent": {
-                          "description": "If true ignore indent for elements inside objects",
-                          "type": "boolean"
+                          },
+                          "additionalProperties": false
                         },
                         "assignmentOperator": {
                           "description": "Assignment operator between object key and value",
@@ -1241,10 +1342,6 @@
                         "assignmentOperatorSpaced": {
                           "description": "Pretty assignment operator between object key and value",
                           "type": "string"
-                        },
-                        "objectEnclosureSameLine": {
-                          "description": "If true a new object enclosure starts on the same line as the previous item",
-                          "type": "boolean"
                         },
                         "keyEnclosure": {
                           "description": "Enclosure around each key",
@@ -1707,6 +1804,10 @@
                               "description": "Delimiter between items",
                               "type": "string"
                             },
+                            "delimitLastItem": {
+                              "description": "If true, generate a delimiter for the last item as well",
+                              "type": "boolean"
+                            },
                             "itemPrefix": {
                               "description": "Prefix for each item",
                               "anyOf": [
@@ -1736,6 +1837,20 @@
                             },
                             "indentItems": {
                               "description": "If true indent items",
+                              "type": [
+                                "number",
+                                "boolean"
+                              ]
+                            },
+                            "indentEnclosure": {
+                              "description": "If true, indent enclosure",
+                              "type": [
+                                "number",
+                                "boolean"
+                              ]
+                            },
+                            "delimitSameLine": {
+                              "description": "If false, items are separated by newlines, otherwise next spaced by given number of spaces",
                               "type": [
                                 "number",
                                 "boolean"
@@ -1774,6 +1889,10 @@
                           "description": "Delimiter between items",
                           "type": "string"
                         },
+                        "delimitLastItem": {
+                          "description": "If true, generate a delimiter for the last item as well",
+                          "type": "boolean"
+                        },
                         "itemPrefix": {
                           "description": "Prefix for each item",
                           "anyOf": [
@@ -1807,11 +1926,26 @@
                             "number",
                             "boolean"
                           ]
+                        },
+                        "indentEnclosure": {
+                          "description": "If true, indent enclosure",
+                          "type": [
+                            "number",
+                            "boolean"
+                          ]
+                        },
+                        "delimitSameLine": {
+                          "description": "If false, items are separated by newlines, otherwise next spaced by given number of spaces",
+                          "type": [
+                            "number",
+                            "boolean"
+                          ]
                         }
                       },
                       "additionalProperties": false,
                       "required": [
-                        "assignmentOperator"
+                        "assignmentOperator",
+                        "itemFormat"
                       ]
                     },
                     {
@@ -1827,6 +1961,7 @@
                             "enclosedCommaSeparatedList",
                             "enclosedSpaceSeparatedList",
                             "enclosedTabSeparatedList",
+                            "js",
                             "json",
                             "markdown",
                             "newLineSeparatedList",
@@ -1838,51 +1973,79 @@
                           ],
                           "type": "string"
                         },
-                        "objectEnclosure": {
-                          "description": "Enclosure around each object",
+                        "itemFormat": {
+                          "description": "Format options for each item",
                           "type": "object",
                           "properties": {
-                            "start": {
-                              "description": "Start boundary",
-                              "type": "string"
-                            },
-                            "end": {
-                              "description": "End boundary",
-                              "type": "string"
-                            }
-                          },
-                          "additionalProperties": false
-                        },
-                        "objectDelimiter": {
-                          "description": "Delimiter between elements inside objects",
-                          "type": "string"
-                        },
-                        "objectItemPrefix": {
-                          "description": "Prefix for each element inside objects",
-                          "anyOf": [
-                            {
-                              "description": "Same as `PartialDeep`, but accepts only `object`s as inputs. Internal helper for `PartialDeep`.",
+                            "enclosure": {
+                              "description": "Enclosure around entire list",
                               "type": "object",
                               "properties": {
-                                "first": {
-                                  "description": "Prefix for the first item",
+                                "start": {
+                                  "description": "Start boundary",
                                   "type": "string"
                                 },
-                                "rest": {
-                                  "description": "Prefix for the rest of the items",
+                                "end": {
+                                  "description": "End boundary",
                                   "type": "string"
                                 }
                               },
                               "additionalProperties": false
                             },
-                            {
+                            "delimiter": {
+                              "description": "Delimiter between items",
                               "type": "string"
+                            },
+                            "delimitLastItem": {
+                              "description": "If true, generate a delimiter for the last item as well",
+                              "type": "boolean"
+                            },
+                            "itemPrefix": {
+                              "description": "Prefix for each item",
+                              "anyOf": [
+                                {
+                                  "description": "Same as `PartialDeep`, but accepts only `object`s as inputs. Internal helper for `PartialDeep`.",
+                                  "type": "object",
+                                  "properties": {
+                                    "first": {
+                                      "description": "Prefix for the first item",
+                                      "type": "string"
+                                    },
+                                    "rest": {
+                                      "description": "Prefix for the rest of the items",
+                                      "type": "string"
+                                    }
+                                  },
+                                  "additionalProperties": false
+                                },
+                                {
+                                  "type": "string"
+                                }
+                              ]
+                            },
+                            "indentItems": {
+                              "description": "If true indent items",
+                              "type": [
+                                "number",
+                                "boolean"
+                              ]
+                            },
+                            "indentEnclosure": {
+                              "description": "If true, indent enclosure",
+                              "type": [
+                                "number",
+                                "boolean"
+                              ]
+                            },
+                            "delimitSameLine": {
+                              "description": "If false, items are separated by newlines, otherwise next spaced by given number of spaces",
+                              "type": [
+                                "number",
+                                "boolean"
+                              ]
                             }
-                          ]
-                        },
-                        "objectItemIgnoreIndent": {
-                          "description": "If true ignore indent for elements inside objects",
-                          "type": "boolean"
+                          },
+                          "additionalProperties": false
                         },
                         "assignmentOperator": {
                           "description": "Assignment operator between object key and value",
@@ -1891,10 +2054,6 @@
                         "assignmentOperatorSpaced": {
                           "description": "Pretty assignment operator between object key and value",
                           "type": "string"
-                        },
-                        "objectEnclosureSameLine": {
-                          "description": "If true a new object enclosure starts on the same line as the previous item",
-                          "type": "boolean"
                         },
                         "keyEnclosure": {
                           "description": "Enclosure around each key",
@@ -2337,6 +2496,10 @@
                               "description": "Delimiter between items",
                               "type": "string"
                             },
+                            "delimitLastItem": {
+                              "description": "If true, generate a delimiter for the last item as well",
+                              "type": "boolean"
+                            },
                             "itemPrefix": {
                               "description": "Prefix for each item",
                               "anyOf": [
@@ -2362,6 +2525,20 @@
                             },
                             "indentItems": {
                               "description": "If true indent items",
+                              "type": [
+                                "number",
+                                "boolean"
+                              ]
+                            },
+                            "indentEnclosure": {
+                              "description": "If true, indent enclosure",
+                              "type": [
+                                "number",
+                                "boolean"
+                              ]
+                            },
+                            "delimitSameLine": {
+                              "description": "If false, items are separated by newlines, otherwise next spaced by given number of spaces",
                               "type": [
                                 "number",
                                 "boolean"
@@ -2396,6 +2573,10 @@
                           "description": "Delimiter between items",
                           "type": "string"
                         },
+                        "delimitLastItem": {
+                          "description": "If true, generate a delimiter for the last item as well",
+                          "type": "boolean"
+                        },
                         "itemPrefix": {
                           "description": "Prefix for each item",
                           "anyOf": [
@@ -2421,6 +2602,20 @@
                         },
                         "indentItems": {
                           "description": "If true indent items",
+                          "type": [
+                            "number",
+                            "boolean"
+                          ]
+                        },
+                        "indentEnclosure": {
+                          "description": "If true, indent enclosure",
+                          "type": [
+                            "number",
+                            "boolean"
+                          ]
+                        },
+                        "delimitSameLine": {
+                          "description": "If false, items are separated by newlines, otherwise next spaced by given number of spaces",
                           "type": [
                             "number",
                             "boolean"

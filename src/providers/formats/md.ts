@@ -10,10 +10,12 @@ export const formatMarkdown: FormatterOptions = {
   objectList: {
     assignmentOperator: ": ",
     delimiter: "\n",
-    itemPrefix: "- Item:",
+    itemPrefix: "- Item ${index + 1}:\n",
+    indentItems: false,
     itemFormat: {
       delimiter: "\n",
-      itemPrefix: "  - ",
+      itemPrefix: "- ",
+      indentItems: 1,
     },
   },
 };

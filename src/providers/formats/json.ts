@@ -20,6 +20,7 @@ export const formatJson: FormatterOptions = {
       enclosure: { start: "{", end: "}" },
       delimiter: ",",
       indentItems: true,
+      indentEnclosure: true,
     },
   },
 };

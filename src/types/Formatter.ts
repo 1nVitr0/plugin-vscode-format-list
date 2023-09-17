@@ -77,7 +77,9 @@ export interface FormatterListOptions {
   itemPrefix?: ItemPrefix | string;
   /** If true indent items */
   indentItems?: Indent;
-  /** If false, items are separated by newlines, otherwise next sspaced by given number of spaces */
+  /** If true, indent enclosure */
+  indentEnclosure?: Indent;
+  /** If false, items are separated by newlines, otherwise next spaced by given number of spaces */
   delimitSameLine?: Indent;
 }
 
@@ -147,6 +149,7 @@ export interface CustomFormatters {
 }
 
 export type DefaultFormatterLanguages =
+  | "js"
   | "json"
   | "yaml"
   | "markdown"

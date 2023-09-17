@@ -1,20 +1,21 @@
 import { FormatterOptions } from "../../types/Formatter";
 
-export const formatCpp: FormatterOptions = {
+export const formatJson: FormatterOptions = {
   simpleList: {
-    enclosure: { start: "{", end: "}" },
+    enclosure: { start: "[", end: "]" },
     delimiter: ",",
     valueEnclosure: { string: '"' },
     indentItems: true,
   },
   objectList: {
-    enclosure: { start: "{", end: "}" },
+    enclosure: { start: "[", end: "]" },
     delimiter: ",",
-    assignmentOperator: "=",
-    assignmentOperatorSpaced: " = ",
-    keyEnclosure: [{ test: "/.*/", enclosure: { start: "[", end: "]" } }],
+    assignmentOperator: ":",
+    assignmentOperatorSpaced: ": ",
+    keyEnclosure: [{ test: "/[^A-Za-z0-9_$]|^[0-9]/", enclosure: '"' }],
     valueEnclosure: { string: '"' },
     indentItems: true,
+    delimitSameLine: true,
     itemFormat: {
       enclosure: { start: "{", end: "}" },
       delimiter: ",",

@@ -18,6 +18,7 @@ import { formatRb } from "./rb";
 import { formatYaml } from "./yaml";
 
 export const listFormatProviders: Record<DefaultFormatterLanguages, ListFormatProvider> = {
+  js: new ListFormatProvider("JavaScript", formatJson),
   json: new ListFormatProvider("JSON", formatJson),
   yaml: new ListFormatProvider("yaml", formatYaml),
   markdown: new ListFormatProvider("Markdown", formatMarkdown),
