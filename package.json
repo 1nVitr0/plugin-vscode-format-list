@@ -1,47 +1,57 @@
 {
-  "name": "blocksort",
-  "displayName": "Block Sort",
-  "description": "Sort Blocks instead of lines!",
+  "name": "list-tools",
+  "displayName": "List Tools (Convert / Extract List Data)",
+  "description": "Convert and extract list data across languages",
   "license": "MIT",
   "author": "1nVitr0",
   "publisher": "1nVitr0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/1nVitr0/plugin-vscode-blocksort.git"
+    "url": "https://github.com/1nVitr0/plugin-vscode-format-list.git"
   },
   "icon": "resources/icon.png",
   "version": "0.1.2",
   "engines": {
     "vscode": "^1.64.0"
   },
-  "categories": [],
-  "keywords": [],
+  "categories": [
+    "Formatters",
+    "Programming Languages",
+    "Other"
+  ],
+  "keywords": [
+    "format",
+    "list",
+    "convert",
+    "csv",
+    "extract"
+  ],
   "activationEvents": [
     "onStartupFinished",
-    "onCommand:format-lists.formatSimpleList",
-    "onCommand:format-lists.formatObjectList"
+    "onCommand:list-tools.formatSimpleList",
+    "onCommand:list-tools.formatObjectList"
   ],
   "main": "./dist/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "format-lists.formatSimpleList",
+        "command": "list-tools.formatSimpleList",
         "title": "Simple list",
         "icon": "symbol-array",
-        "category": "Format List"
+        "category": "List Tools"
       },
       {
-        "command": "format-lists.formatObjectList",
+        "command": "list-tools.formatObjectList",
         "title": "Object list",
         "icon": "symbol-object",
-        "category": "Format List"
+        "category": "List Tools"
       }
     ],
     "configuration": [
       {
-        "title": "Format Lists",
+        "title": "List Tools",
         "properties": {
-          "format-lists.additionalFormats": {
+          "list-tools.additionalFormats": {
             "description": "additional formatting rules, can extend existing ones by using `base`",
             "default": {},
             "type": "object",
@@ -2648,7 +2658,7 @@
               "additionalProperties": false
             }
           },
-          "format-lists.prettyPrint": {
+          "list-tools.prettyPrint": {
             "description": "Pretty print depth, true is equivalent to an infinite depth",
             "default": true,
             "type": [

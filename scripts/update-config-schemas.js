@@ -4,10 +4,10 @@ const TJS = require("typescript-json-schema");
 
 console.info("Loading TypeScript compiler...");
 
-/** @type Record<`format-lists.${string}`, string> */
+/** @type Record<`list-tools.${string}`, string> */
 const schemaTypes = {
-  "format-lists.additionalFormats": "CustomFormatters",
-  "format-lists.prettyPrint": "Pretty"
+  "list-tools.additionalFormats": "CustomFormatters",
+  "list-tools.prettyPrint": "Pretty"
 };
 
 /** @type TJS.PartialArgs */
