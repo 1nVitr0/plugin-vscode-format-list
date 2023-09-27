@@ -5,6 +5,11 @@ on:
     branches:
       - 'main'
 
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
 jobs:
   bump_version:
     name: Bump version
