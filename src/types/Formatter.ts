@@ -149,14 +149,15 @@ export interface CustomFormatters {
 }
 
 export type DefaultFormatterLanguages =
-  | "js"
+  | "javascript"
   | "json"
   | "yaml"
   | "markdown"
   | "php"
+  | "c"
   | "cpp"
   | "csv"
-  | "ruby"
+  | "java"
   | "commaSeparatedList"
   | "tabSeparatedList"
   | "spaceSeparatedList"
@@ -164,3 +165,5 @@ export type DefaultFormatterLanguages =
   | "enclosedCommaSeparatedList"
   | "enclosedTabSeparatedList"
   | "enclosedSpaceSeparatedList";
+
+export type DefaultDataLanguages = "javascript" | "typescript" | "json" | "yaml" | "php" | "c" | "cpp" | "csv" | "java";

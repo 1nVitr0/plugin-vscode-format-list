@@ -659,18 +659,19 @@
                         "base": {
                           "description": "Language to use as base config",
                           "enum": [
+                            "c",
                             "commaSeparatedList",
                             "cpp",
                             "csv",
                             "enclosedCommaSeparatedList",
                             "enclosedSpaceSeparatedList",
                             "enclosedTabSeparatedList",
-                            "js",
+                            "java",
+                            "javascript",
                             "json",
                             "markdown",
                             "newLineSeparatedList",
                             "php",
-                            "ruby",
                             "spaceSeparatedList",
                             "tabSeparatedList",
                             "yaml"
@@ -1955,18 +1956,19 @@
                         "base": {
                           "description": "Language to use as base config",
                           "enum": [
+                            "c",
                             "commaSeparatedList",
                             "cpp",
                             "csv",
                             "enclosedCommaSeparatedList",
                             "enclosedSpaceSeparatedList",
                             "enclosedTabSeparatedList",
-                            "js",
+                            "java",
+                            "javascript",
                             "json",
                             "markdown",
                             "newLineSeparatedList",
                             "php",
-                            "ruby",
                             "spaceSeparatedList",
                             "tabSeparatedList",
                             "yaml"

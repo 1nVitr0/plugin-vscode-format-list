@@ -1,25 +1,24 @@
 import { FormatterOptions } from "../../types/Formatter";
 
-export const formatRb: FormatterOptions = {
+export const formatC: FormatterOptions = {
   simpleList: {
-    enclosure: { start: "[", end: "]" },
+    enclosure: { start: "{", end: "}" },
     delimiter: ",",
     valueEnclosure: { string: '"' },
     indentItems: true,
   },
   objectList: {
-    enclosure: { start: "[", end: "]" },
+    enclosure: { start: "{", end: "}" },
     delimiter: ",",
-    assignmentOperator: "=>",
-    assignmentOperatorSpaced: " => ",
-    keyEnclosure: [{ test: "/:[A-Za-z_$]+|\\d+(\\.\\d+)?|\\.\\d+|true|false/", inverse: true, enclosure: '"' }],
+    assignmentOperator: "=",
+    assignmentOperatorSpaced: " = ",
+    keyEnclosure: [{ test: "/.*/", enclosure: { start: ".", end: "" } }],
     valueEnclosure: { string: '"' },
     indentItems: true,
     itemFormat: {
       enclosure: { start: "{", end: "}" },
       delimiter: ",",
       indentItems: true,
-      delimitSameLine: true,
       indentEnclosure: true,
     },
   },

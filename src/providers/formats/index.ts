@@ -1,7 +1,9 @@
 import { DefaultFormatterLanguages } from "../../types/Formatter";
 import ListFormatProvider from "./ListFormatProvider";
+import { formatC } from "./c";
 import { formatCpp } from "./cpp";
 import { formatCsv } from "./csv";
+import { formatJava } from "./java";
 import { formatJson } from "./json";
 import {
   formatCommaSeparatedList,
@@ -14,18 +16,18 @@ import {
 } from "./list";
 import { formatMarkdown } from "./md";
 import { formatPhp } from "./php";
-import { formatRb } from "./rb";
 import { formatYaml } from "./yaml";
 
 export const listFormatProviders: Record<DefaultFormatterLanguages, ListFormatProvider> = {
-  js: new ListFormatProvider("JavaScript", formatJson),
+  javascript: new ListFormatProvider("JavaScript", formatJson),
   json: new ListFormatProvider("JSON", formatJson),
   yaml: new ListFormatProvider("yaml", formatYaml),
   markdown: new ListFormatProvider("Markdown", formatMarkdown),
   php: new ListFormatProvider("PHP Array", formatPhp),
+  c: new ListFormatProvider("C Array", formatC),
   cpp: new ListFormatProvider("C++ Array", formatCpp),
   csv: new ListFormatProvider("CSV", formatCsv),
-  ruby: new ListFormatProvider("Ruby Array", formatRb),
+  java: new ListFormatProvider("Java Array", formatJava),
   commaSeparatedList: new ListFormatProvider("Comma separated list", formatCommaSeparatedList),
   tabSeparatedList: new ListFormatProvider("Tab separated list", formatTabSeparatedList),
   spaceSeparatedList: new ListFormatProvider("Space separated list", formatSpaceSeparatedList),

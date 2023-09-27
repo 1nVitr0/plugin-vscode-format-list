@@ -1,6 +1,6 @@
 import { FormatterOptions } from "../../types/Formatter";
 
-export const formatCpp: FormatterOptions = {
+export const formatJava: FormatterOptions = {
   simpleList: {
     enclosure: { start: "{", end: "}" },
     delimiter: ",",
