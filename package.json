@@ -9,8 +9,7 @@
     "type": "git",
     "url": "https://github.com/1nVitr0/plugin-vscode-format-list.git"
   },
-  "icon": "resources/icon.png",
-  "version": "0.1.2",
+  "version": "1.0.0",
   "engines": {
     "vscode": "^1.64.0"
   },
