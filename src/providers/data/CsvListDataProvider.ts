@@ -9,20 +9,26 @@ interface CsvListDataParams extends ListDataParams {
 
 export default class CsvListDataProvider implements ListDataProvider<CsvListDataParams> {
   protected quickPickTitle = "CSV Data Format";
-  protected delimiters = [",", ";", "\t"];
+  protected delimiters = {
+    ", (comma)": ",",
+    "; (semicolon)": ";",
+    "\\t (tab)": "\t",
+    "\\s (space)": " ",
+  };
 
   public async provideColumns(document: TextDocument, selection: Selection, token: CancellationToken) {
     const options = await this.queryOptions(token);
     if (!options) return;
 
-    const { delimiter, hasHeader } = options;
+    const { delimiterKey, hasHeader } = options;
+    const delimiter = this.delimiters[delimiterKey];
     const firstLineParts = document.lineAt(selection.start.line).text.split(delimiter);
     const secondLineParts = document
       .lineAt(Math.min(selection.start.line + 1, selection.end.line))
       .text.split(delimiter);
     const columns = firstLineParts.map<ListColumn>((column, index) => {
       const example = secondLineParts[index];
-      const name = hasHeader ? column : `column_${index}`;
+      const name = hasHeader ? this.extractString(column) : `column_${index}`;
 
       return { name, example };
     });
@@ -37,7 +43,7 @@ export default class CsvListDataProvider implements ListDataProvider<CsvListData
     token: CancellationToken
   ) {
     const text = document.getText(selection);
-    const lines = text.split("\n");
+    const lines = text.split(/\r?\n/);
 
     if (hasHeader) lines.shift();
 
@@ -53,12 +59,12 @@ export default class CsvListDataProvider implements ListDataProvider<CsvListData
   }
 
   protected async queryOptions(token: CancellationToken) {
-    const delimiter = await window.showQuickPick(this.delimiters, {
+    const delimiterKey = (await window.showQuickPick(Object.keys(this.delimiters), {
       title: this.quickPickTitle,
       placeHolder: "Select a delimiter",
-    });
+    })) as keyof typeof this.delimiters | undefined;
 
-    if (!delimiter || token.isCancellationRequested) return null;
+    if (!delimiterKey || token.isCancellationRequested) return null;
 
     const hasHeader = await window.showQuickPick(["Yes", "No"], {
       title: this.quickPickTitle,
@@ -67,7 +73,7 @@ export default class CsvListDataProvider implements ListDataProvider<CsvListData
 
     if (hasHeader === undefined || token.isCancellationRequested) return null;
 
-    return { delimiter, hasHeader: hasHeader === "Yes" };
+    return { delimiterKey, hasHeader: hasHeader === "Yes" };
   }
 
   protected parseValue(value: string): string | number | boolean | null {
@@ -77,6 +83,10 @@ export default class CsvListDataProvider implements ListDataProvider<CsvListData
     if (!isNaN(Number(value))) return Number(value);
     if (/^".*"$/.test(value) || /^'.*'$/.test(value)) return value.slice(1, -1);
 
-    return value;
+    return this.extractString(value);
+  }
+
+  protected extractString(value: string): string {
+    return /^".*"$/.test(value) || /^'.*'$/.test(value) ? value.slice(1, -1) : value;
   }
 }
