@@ -2,6 +2,7 @@
   "name": "list-tools",
   "displayName": "List Tools (Convert / Extract List Data)",
   "description": "Convert and extract list data across languages",
+  "icon": "resources/icon.png",
   "license": "MIT",
   "author": "1nVitr0",
   "publisher": "1nVitr0",
@@ -26,7 +27,6 @@
     "extract"
   ],
   "activationEvents": [
-    "onStartupFinished",
     "onCommand:list-tools.formatSimpleList",
     "onCommand:list-tools.formatObjectList"
   ],

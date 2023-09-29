@@ -5,7 +5,7 @@ export const formatPhp: FormatterOptions = {
     enclosure: { start: "[", end: "]" },
     delimiter: ",",
     valueEnclosure: { string: '"' },
-    indentItems: true,
+    indentItems: -1,
   },
   objectList: {
     enclosure: { start: "[", end: "]" },
@@ -14,12 +14,12 @@ export const formatPhp: FormatterOptions = {
     assignmentOperatorSpaced: " => ",
     keyEnclosure: [{ test: "/.*/", enclosure: '"' }],
     valueEnclosure: { string: '"' },
-    indentItems: true,
+    indentItems: -1,
     itemFormat: {
       enclosure: { start: "{", end: "}" },
       delimiter: ",",
-      indentItems: true,
-      indentEnclosure: true,
+      indentItems: -1,
+      indentEnclosure: -1,
     },
   },
 };

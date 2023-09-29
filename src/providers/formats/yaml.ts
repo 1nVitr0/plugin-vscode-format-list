@@ -14,7 +14,7 @@ export const formatYaml: FormatterOptions = {
     itemFormat: {
       delimiter: "\n",
       itemPrefix: { first: "", rest: "  " },
-      indentItems: false,
+      indentItems: 0,
     },
   },
 };

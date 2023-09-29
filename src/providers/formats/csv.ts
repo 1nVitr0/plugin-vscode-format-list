@@ -8,7 +8,7 @@ export const formatCsv: FormatterOptions = {
     header: {
       delimiter: ",",
       keyEnclosure: [{ test: "/[A-Za-z_$]+|\\d+(\\.\\d+)?|\\.\\d+|true|false/", inverse: true, enclosure: '"' }],
-      pretty: false,
+      pretty: 0,
     },
   },
   objectList: {
@@ -21,7 +21,7 @@ export const formatCsv: FormatterOptions = {
     header: {
       delimiter: ",",
       keyEnclosure: [{ test: "/[A-Za-z_$]+|\\d+(\\.\\d+)?|\\.\\d+|true|false/", inverse: true, enclosure: '"' }],
-      pretty: false,
+      pretty: 0,
     },
   },
 };

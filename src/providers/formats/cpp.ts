@@ -5,6 +5,6 @@ export const formatCpp: FormatterOptions = {
     enclosure: { start: "{", end: "}" },
     delimiter: ",",
     valueEnclosure: { string: '"' },
-    indentItems: true,
+    indentItems: -1,
   },
 };
