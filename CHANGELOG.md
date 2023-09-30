@@ -1,3 +1,12 @@
+## [1.0.1](https://github.com/1nVitr0/plugin-vscode-format-list/compare/v1.0.0...v1.0.1) (2023-09-30)
+
+
+### Bug Fixes
+
+* add extension icon ([aede5a9](https://github.com/1nVitr0/plugin-vscode-format-list/commit/aede5a9687fc968b7cdc91fec92c5ec402e6f47c))
+* simplify settings ([3906ca8](https://github.com/1nVitr0/plugin-vscode-format-list/commit/3906ca829a413fe431106cdc5f54a0d944d2aa54))
+* strip quotes from keys ([9b7fbda](https://github.com/1nVitr0/plugin-vscode-format-list/commit/9b7fbda84ee2c2c391fefe1cd9b7677af5897b65))
+
 # 1.0.0 (2023-09-27)
 
 
