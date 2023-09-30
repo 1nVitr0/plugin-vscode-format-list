@@ -11,7 +11,7 @@ export const formatMarkdown: FormatterOptions = {
     assignmentOperator: ": ",
     delimiter: "\n",
     itemPrefix: "- Item ${index + 1}:\n",
-    indentItems: false,
+    indentItems: 0,
     itemFormat: {
       delimiter: "\n",
       itemPrefix: "- ",

@@ -33,7 +33,7 @@ export class ListFormattingProvider {
     this.listDataProviders = listDataProviders;
     this.formatProviders = listFormatProviders;
     this.customFormatProviders = Object.entries(
-      workspace.getConfiguration("format-lists.additionalFormats") ?? {}
+      workspace.getConfiguration("list-tools.additionalFormats") ?? {}
     ).reduce<Record<string, ListFormatProvider>>((providers, [name, options]) => {
       const { simpleList, objectList } = options;
       const simpleListProvider = simpleList && "base" in simpleList ? providers[simpleList.base] : null;
@@ -185,11 +185,11 @@ export class ListFormattingProvider {
     if (!selectedFormatter || !selectedFormatter.provider) return null;
 
     const context = selectedFormatter.languageId ? { languageId: selectedFormatter.languageId } : undefined;
-    const prettyPrint = workspace.getConfiguration("format-lists", context).get<Pretty>("prettyPrint", false);
+    const prettyPrint = workspace.getConfiguration("list-tools", context).get<Pretty>("prettyPrint", 0);
     const tabSize = workspace.getConfiguration("editor", context).get<number>("tabSize", 2);
 
     const pretty =
-      (forcePretty ?? prettyPrint) === true
+      forcePretty || prettyPrint === -1
         ? Infinity
         : (forcePretty ?? prettyPrint) === false
         ? 0

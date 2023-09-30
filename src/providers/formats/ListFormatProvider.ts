@@ -151,8 +151,8 @@ export default class ListFormatProvider {
       itemPrefix = "",
     }: FormatterListOptions
   ): string {
-    indentItems = indentItems && indent * (indentItems === true ? level + 1 : indentItems);
-    indentEnclosure = indentEnclosure && indent * (indentEnclosure === true ? level : indentEnclosure);
+    indentItems = indentItems && indent * (indentItems === -1 ? level + 1 : indentItems);
+    indentEnclosure = indentEnclosure && indent * (indentEnclosure === -1 ? level : indentEnclosure);
     const breakLine = pretty > level && !delimiter?.includes("\n");
     const itemIndent = indentItems && pretty > level ? " ".repeat(indentItems) : "";
     const enclosureIndent = indentEnclosure && pretty > level ? " ".repeat(indentEnclosure) : "";

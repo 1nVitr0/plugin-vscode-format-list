@@ -27,7 +27,7 @@ export default abstract class JSONLikeListDataProvider implements ListDataProvid
     const columns: Record<string, ListColumn> = {};
     for (const [match] of text.matchAll(parseObject)) {
       const entries = Array.from(match.matchAll(parseObjectEntries));
-      for (const [entry, key, doubleQuotes, singleQuotes, backTicks, value] of entries) {
+      for (const [entry, enclosed, key, doubleQuotes, singleQuotes, backTicks, value] of entries) {
         const name = backTicks ?? singleQuotes ?? doubleQuotes ?? key;
         if (!columns[name]) columns[name] = { name, example: value };
       }
@@ -64,12 +64,12 @@ export default abstract class JSONLikeListDataProvider implements ListDataProvid
       const entries = Array.from(match.matchAll(parseObjectEntries));
       for (const [
         entry,
-        keyEnclosure,
+        keyEnclosed,
         key,
         keyDoubleQuoted,
         keySingleQuoted,
         keyBackTicked,
-        valueEnclosure,
+        valueEnclosed,
         value,
         valueDoubleQuoted,
         valueSingleQuoted,

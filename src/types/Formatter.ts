@@ -1,10 +1,10 @@
 import { PartialDeep } from "type-fest";
 
 /** Indentation width, true is equivalent to 2 spaces */
-export type Indent = number | boolean;
+export type Indent = number;
 
 /** Pretty print depth, true is equivalent to an infinite depth */
-export type Pretty = number | boolean;
+export type Pretty = 0 | 1 | 2 | -1;
 
 /** Boundary options for value-like items */
 export interface FormatterValueBoundary {
