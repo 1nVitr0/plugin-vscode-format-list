@@ -1,3 +1,11 @@
+# [1.1.0](https://github.com/1nVitr0/plugin-vscode-format-list/compare/v1.0.1...v1.1.0) (2023-10-02)
+
+
+### Features
+
+* add parameter support for formats ([de76ee0](https://github.com/1nVitr0/plugin-vscode-format-list/commit/de76ee02fedd4e779acc29051def040a1ca09656))
+* add xml format support ([ea8fe95](https://github.com/1nVitr0/plugin-vscode-format-list/commit/ea8fe958b21e0bf389c12bfa6e6643ff0899bcc6))
+
 ## [1.0.1](https://github.com/1nVitr0/plugin-vscode-format-list/compare/v1.0.0...v1.0.1) (2023-09-30)
 
 
