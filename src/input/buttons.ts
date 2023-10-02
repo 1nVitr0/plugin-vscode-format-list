@@ -31,4 +31,14 @@ export class TogglePrettyButton implements QuickInputButton {
   }
 }
 
-export type ListFormattingButton = ObjectListButton | SimpleListButton | TogglePrettyButton; 
+export class ChangeDataProviderButton implements QuickInputButton {
+  public readonly iconPath: Uri | { light: Uri; dark: Uri } | ThemeIcon;
+  public readonly tooltip: string;
+
+  constructor() {
+    this.iconPath = new ThemeIcon("files");
+    this.tooltip = "Change data provider";
+  }
+}
+
+export type ListFormattingButton = ObjectListButton | SimpleListButton | TogglePrettyButton | ChangeDataProviderButton; 

@@ -15,13 +15,28 @@ import ListFormatProvider from "./formats/ListFormatProvider";
 import { listDataProviders } from "./data";
 import { listFormatProviders } from "./formats";
 import { ListDataParams } from "../types/List";
-import { ListFormattingButton, ObjectListButton, SimpleListButton, TogglePrettyButton } from "../input/buttons";
+import {
+  ChangeDataProviderButton,
+  ListFormattingButton,
+  ObjectListButton,
+  SimpleListButton,
+  TogglePrettyButton,
+} from "../input/buttons";
 import { DefaultFormatterLanguages, FormatterListTypes, CustomFormatters, Pretty } from "../types/Formatter";
 import { workspace } from "vscode";
+import { SetRequired } from "type-fest";
 
 interface QuickPickProviderItem extends QuickPickItem {
   languageId?: string;
   provider?: ListFormatProvider;
+}
+
+interface QueryFormatterResult {
+  listType: keyof FormatterListTypes;
+  pretty: number;
+  indent: number;
+  provider: ListFormatProvider;
+  action?: "changeDataProvider";
 }
 
 export class ListFormattingProvider {
@@ -70,35 +85,45 @@ export class ListFormattingProvider {
     document: TextDocument,
     selection: Selection,
     preferredListType: keyof FormatterListTypes,
-    token: CancellationToken
-  ) {
-    const { columns, listData } = (await this.getListData(document, selection, token)) ?? {};
+    token: CancellationToken,
+    customDataProvider?: boolean
+  ): Promise<string | null> {
+    const { columns, listData } = (await this.getListData(document, selection, token, customDataProvider)) ?? {};
     if (!listData || !columns || token.isCancellationRequested) return null;
 
-    const { listType, pretty, indent, provider } = (await this.queryListFormatter(preferredListType, token)) ?? {};
+    const { listType, pretty, indent, provider, action } =
+      (await this.queryListFormatter(preferredListType, token)) ?? {};
+    if (action === "changeDataProvider")
+      return await this.provideList(document, selection, preferredListType, token, true);
     if (!provider || !listType || token.isCancellationRequested) return null;
 
     switch (listType) {
       case "simpleList":
         const selectedColumn = await this.queryColumn(columns, token);
         if (!selectedColumn || token.isCancellationRequested) return null;
-        return provider.formatSimpleList(listData, selectedColumn, pretty, indent);
+        return await provider.formatSimpleList(listData, selectedColumn, pretty, indent);
       case "objectList":
         const selectedColumns = await this.queryColumns(columns, token);
         if (!selectedColumns || token.isCancellationRequested) return null;
-        return provider.formatObjectList(listData, selectedColumns, pretty, indent);
+        return await provider.formatObjectList(listData, selectedColumns, pretty, indent);
     }
   }
 
-  private async getListData(document: TextDocument, selection: Selection, token: CancellationToken) {
+  private async getListData(
+    document: TextDocument,
+    selection: Selection,
+    token: CancellationToken,
+    customDataProvider?: boolean
+  ) {
     const provider =
-      this.listDataProviders[document.languageId] ??
-      (
-        await window.showQuickPick(
-          Object.entries(this.listDataProviders).map(([label, provider]) => ({ label, provider })),
-          { title: "Data format could not be determined automatically", placeHolder: "Select a data provider" }
-        )
-      )?.provider;
+      customDataProvider || !this.listDataProviders[document.languageId]
+        ? (
+            await window.showQuickPick(
+              Object.entries(this.listDataProviders).map(([label, provider]) => ({ label, provider })),
+              { title: "Data format could not be determined automatically", placeHolder: "Select a data provider" }
+            )
+          )?.provider
+        : this.listDataProviders[document.languageId] ?? null;
     if (!provider) {
       window.showErrorMessage(`List formatting is not supported for ${document.languageId} files`);
       return;
@@ -139,12 +164,9 @@ export class ListFormattingProvider {
     listType: keyof FormatterListTypes,
     token: CancellationToken,
     forcePretty?: boolean
-  ): Promise<{
-    listType: keyof FormatterListTypes;
-    pretty: number;
-    indent: number;
-    provider: ListFormatProvider;
-  } | null> {
+  ): Promise<
+    QueryFormatterResult | (Partial<QueryFormatterResult> & Required<Pick<QueryFormatterResult, "action">>) | null
+  > {
     const providers = { ...this.formatProviders, ...this.customFormatProviders };
     const quickPick = window.createQuickPick();
     quickPick.title =
@@ -176,6 +198,7 @@ export class ListFormattingProvider {
     });
 
     if (token.isCancellationRequested) return null;
+    if (selectedFormatter instanceof ChangeDataProviderButton) return { action: "changeDataProvider" };
     if (selectedFormatter instanceof SimpleListButton)
       return await this.queryListFormatter("simpleList", token, forcePretty);
     if (selectedFormatter instanceof ObjectListButton)
@@ -227,8 +250,8 @@ export class ListFormattingProvider {
       const items = formatters.map<QuickPickProviderItem>(([name, provider]) => ({
         label:
           (forcePretty !== undefined && !provider.supportsPretty() ? "$(bracket-error) " : "") + provider.custom
-            ? `$(file-add)$(${name}) ${name}`
-            : `$(${name}) ${name}`,
+            ? `$(file-add)$(${name}) ${provider.name}`
+            : `$(${name}) ${provider.name}`,
         languageId: name,
         provider,
         detail: provider.options[listType]?.example,
@@ -249,7 +272,7 @@ export class ListFormattingProvider {
   }
 
   private getQuickPickButton(listType: keyof FormatterListTypes, pretty = false): ListFormattingButton[] {
-    const buttons: ListFormattingButton[] = [new TogglePrettyButton(!pretty)];
+    const buttons: ListFormattingButton[] = [new TogglePrettyButton(!pretty), new ChangeDataProviderButton()];
 
     switch (listType) {
       case "simpleList":

@@ -1,4 +1,4 @@
-import { PartialDeep } from "type-fest";
+import { PartialDeep, RequireAtLeastOne, Simplify } from "type-fest";
 
 /** Indentation width, true is equivalent to 2 spaces */
 export type Indent = number;
@@ -66,6 +66,35 @@ export interface ItemPrefix {
   rest: string;
 }
 
+/** Formatter query parameters, can be used to expand formatter strings */
+interface FormatterParameterBase<T extends string | number | boolean> {
+  /** Type of the parameter */
+  type: T extends string ? "string" : T extends number ? "number" : "boolean";
+  /** Default value, if no query is specified this will always be set */
+  default?: T;
+  /** Query options, if specified, the user will be prompted to enter a value */
+  query?: RequireAtLeastOne<
+    {
+      /** If true, the user can enter any value, otherwise the user can only select from the given options */
+      allowInput?: boolean;
+      /** Prompt shown to the user */
+      prompt: string;
+      /** Placeholder shown in the input field */
+      placeholder?: string;
+      /** Options for the user to select from */
+      options?: Record<string, T>;
+    },
+    "allowInput" | "options"
+  >;
+}
+
+/** Formatter query parameters, can be used to expand formatter strings */
+export type FormatterParameter = Simplify<
+  | RequireAtLeastOne<FormatterParameterBase<string>, "default" | "query">
+  | RequireAtLeastOne<FormatterParameterBase<number>, "default" | "query">
+  | RequireAtLeastOne<FormatterParameterBase<boolean>, "default" | "query">
+>;
+
 export interface FormatterListOptions {
   /** Enclosure around entire list */
   enclosure?: FormatterValueBoundary;
@@ -81,6 +110,8 @@ export interface FormatterListOptions {
   indentEnclosure?: Indent;
   /** If false, items are separated by newlines, otherwise next spaced by given number of spaces */
   delimitSameLine?: Indent;
+  /** Keyed List of available parameters queried when formatting the lst */
+  parameters?: Record<string, FormatterParameter>;
 }
 
 export interface FormatterHeaderOptions extends FormatterListOptions {
@@ -95,7 +126,7 @@ export interface FormatterSimpleListOptions extends FormatterHeaderOptions {
   /** Example result shown in quick picks */
   example?: string;
   /** Enclosure around each item */
-  valueEnclosure?: FormatterValueEnclosure;
+  valueEnclosure?: FormatterValueEnclosure | FormatterValueBoundary | string;
   /** Escape options for each item */
   valueEscape?: FormatterValueEscape[];
   /** Alias options for each item */
@@ -152,18 +183,14 @@ export type DefaultFormatterLanguages =
   | "javascript"
   | "json"
   | "yaml"
+  | "xml"
   | "markdown"
   | "php"
   | "c"
   | "cpp"
   | "csv"
+  | "csvCustom"
   | "java"
-  | "commaSeparatedList"
-  | "tabSeparatedList"
-  | "spaceSeparatedList"
-  | "newLineSeparatedList"
-  | "enclosedCommaSeparatedList"
-  | "enclosedTabSeparatedList"
-  | "enclosedSpaceSeparatedList";
+  | "textList";
 
 export type DefaultDataLanguages = "javascript" | "typescript" | "json" | "yaml" | "php" | "c" | "cpp" | "csv" | "java";

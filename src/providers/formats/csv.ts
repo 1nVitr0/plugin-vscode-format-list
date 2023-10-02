@@ -1,6 +1,8 @@
+import defaults from "defaults";
 import { FormatterOptions } from "../../types/Formatter";
+import { PartialDeep } from "type-fest";
 
-export const formatCsv: FormatterOptions = {
+export const formatCsvDefault: FormatterOptions = {
   pretty: 0,
   indent: 0,
   simpleList: {
@@ -25,3 +27,28 @@ export const formatCsv: FormatterOptions = {
     },
   },
 };
+
+export const formatCsvCustom: FormatterOptions = defaults(
+  {
+    simpleList: {
+      header: {
+        delimiter: "${delimiter}",
+        keyEnclosure: [
+          { test: "/[A-Za-z_$]+|\\d+(\\.\\d+)?|\\.\\d+|true|false/", inverse: true, enclosure: "${enclosure}" },
+        ],
+      },
+    },
+    objectList: {
+      itemFormat: {
+        delimiter: "${delimiter}",
+      },
+      header: {
+        delimiter: "${delimiter}",
+        keyEnclosure: [
+          { test: "/[A-Za-z_$]+|\\d+(\\.\\d+)?|\\.\\d+|true|false/", inverse: true, enclosure: "${enclosure}" },
+        ],
+      },
+    },
+  },
+  formatCsvDefault as Partial<FormatterOptions>
+) as FormatterOptions;

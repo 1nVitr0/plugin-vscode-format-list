@@ -2659,7 +2659,7 @@
           },
           "list-tools.prettyPrint": {
             "description": "Pretty print depth, true is equivalent to an infinite depth",
-            "default": true,
+            "default": -1,
             "type": [
               "number",
               "boolean"
