@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/1nVitr0/plugin-vscode-format-list/compare/v1.1.0...v1.2.0) (2023-10-03)
+
+
+### Features
+
+* add repeat last action command ([a0a990f](https://github.com/1nVitr0/plugin-vscode-format-list/commit/a0a990f94bb27bc64dbbebef4eb2040aec436d6d))
+
 # [1.1.0](https://github.com/1nVitr0/plugin-vscode-format-list/compare/v1.0.1...v1.1.0) (2023-10-02)
 
 
