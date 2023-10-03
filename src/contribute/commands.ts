@@ -11,5 +11,9 @@ export default function contributeCommands(formattingProvider: ListFormattingPro
       "list-tools.formatObjectList",
       formattingProvider.provideObjectListFormattingEdit.bind(formattingProvider)
     ),
+    commands.registerTextEditorCommand(
+      "list-tools.repeatLastAction",
+      formattingProvider.provideRepeatFormattingEdit.bind(formattingProvider)
+    ),
   ];
 }

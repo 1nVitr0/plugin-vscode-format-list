@@ -8,6 +8,7 @@ import {
   TextDocument,
   TextEditor,
   TextEditorEdit,
+  commands,
   window,
 } from "vscode";
 import { ListDataProvider } from "../types/Providers";
@@ -39,10 +40,29 @@ interface QueryFormatterResult {
   action?: "changeDataProvider";
 }
 
+interface StoredListOptions<T extends ListDataParams = ListDataParams> extends Omit<QueryFormatterResult, "provider"> {
+  dataProvider: ListDataProvider<T>;
+  formatProvider: ListFormatProvider;
+  selectedColumns: string[];
+  dataParameters?: any;
+  formatParameters: Record<string, string | number | boolean>;
+}
+
 export class ListFormattingProvider {
   private listDataProviders: Record<string, ListDataProvider<any>>;
   private formatProviders: Record<DefaultFormatterLanguages, ListFormatProvider>;
   private customFormatProviders: Record<string, ListFormatProvider>;
+  /** @internal Should only be used with `lastListOptions` getter / setter */
+  private _lastListOptions: StoredListOptions | null = null;
+
+  private set lastListOptions(action: StoredListOptions) {
+    commands.executeCommand("setContext", "list-tools.lastAction", true);
+    this._lastListOptions = action;
+  }
+
+  private get lastListOptions(): StoredListOptions | null {
+    return this._lastListOptions;
+  }
 
   public constructor() {
     this.listDataProviders = listDataProviders;
@@ -81,6 +101,47 @@ export class ListFormattingProvider {
     });
   }
 
+  public async provideRepeatFormattingEdit(textEditor: TextEditor) {
+    const { document, selection } = textEditor;
+    const cancellation = new CancellationTokenSource();
+    const formattedList = await this.provideRepeatLastList(document, selection, cancellation.token);
+    if (!formattedList) return;
+
+    textEditor.edit((editBuilder: TextEditorEdit) => {
+      editBuilder.replace(selection, formattedList);
+    });
+  }
+
+  private async provideRepeatLastList(document: TextDocument, selection: Selection, token: CancellationToken) {
+    if (!this.lastListOptions) return null;
+
+    const {
+      indent,
+      listType,
+      formatParameters,
+      pretty,
+      formatProvider,
+      dataProvider,
+      selectedColumns,
+      dataParameters,
+    } = this.lastListOptions;
+
+    const { columns, listData } =
+      (await this.getListData(document, selection, token, dataProvider, dataParameters)) ?? {};
+
+    if (!listData || !columns || selectedColumns?.some((column) => !columns.some((col) => col.name === column))) {
+      window.showErrorMessage("Not all columns are available in the current selection");
+      return;
+    }
+
+    switch (listType) {
+      case "simpleList":
+        return await formatProvider.formatSimpleList(listData, selectedColumns[0], pretty, indent, formatParameters);
+      case "objectList":
+        return await formatProvider.formatObjectList(listData, selectedColumns, pretty, indent, formatParameters);
+    }
+  }
+
   private async provideList(
     document: TextDocument,
     selection: Selection,
@@ -88,54 +149,97 @@ export class ListFormattingProvider {
     token: CancellationToken,
     customDataProvider?: boolean
   ): Promise<string | null> {
-    const { columns, listData } = (await this.getListData(document, selection, token, customDataProvider)) ?? {};
+    const {
+      columns,
+      listData,
+      provider: dataProvider,
+      parameters: dataParameters,
+    } = (await this.getListData(document, selection, token, customDataProvider)) ?? {};
     if (!listData || !columns || token.isCancellationRequested) return null;
 
-    const { listType, pretty, indent, provider, action } =
-      (await this.queryListFormatter(preferredListType, token)) ?? {};
+    const {
+      pretty = 0,
+      indent = 0,
+      listType,
+      provider: formatProvider,
+      action,
+    } = (await this.queryListFormatter(preferredListType, token)) ?? {};
     if (action === "changeDataProvider")
       return await this.provideList(document, selection, preferredListType, token, true);
-    if (!provider || !listType || token.isCancellationRequested) return null;
+    if (!formatProvider || !listType || !dataProvider || token.isCancellationRequested) return null;
 
     switch (listType) {
       case "simpleList":
         const selectedColumn = await this.queryColumn(columns, token);
-        if (!selectedColumn || token.isCancellationRequested) return null;
-        return await provider.formatSimpleList(listData, selectedColumn, pretty, indent);
+        const simpleListParameters = await formatProvider.queryParameters("simpleList", token);
+        if (!selectedColumn || !simpleListParameters || token.isCancellationRequested) return null;
+        this.lastListOptions = {
+          dataProvider,
+          formatProvider,
+          pretty,
+          indent,
+          listType,
+          selectedColumns: [selectedColumn],
+          formatParameters: simpleListParameters,
+          dataParameters,
+        };
+        return await formatProvider.formatSimpleList(listData, selectedColumn, pretty, indent, simpleListParameters);
       case "objectList":
         const selectedColumns = await this.queryColumns(columns, token);
-        if (!selectedColumns || token.isCancellationRequested) return null;
-        return await provider.formatObjectList(listData, selectedColumns, pretty, indent);
+        const objectListParameters = await formatProvider.queryParameters("objectList", token);
+        if (!selectedColumns || !objectListParameters || token.isCancellationRequested) return null;
+        this.lastListOptions = {
+          dataProvider,
+          formatProvider,
+          pretty,
+          indent,
+          listType,
+          selectedColumns,
+          formatParameters: objectListParameters,
+          dataParameters,
+        };
+        return await formatProvider.formatObjectList(listData, selectedColumns, pretty, indent, objectListParameters);
     }
   }
 
-  private async getListData(
+  private async getListData<T>(
     document: TextDocument,
     selection: Selection,
     token: CancellationToken,
-    customDataProvider?: boolean
+    customDataProvider?: ListDataProvider<T> | boolean,
+    dataParameters?: T
   ) {
     const provider =
-      customDataProvider || !this.listDataProviders[document.languageId]
-        ? (
-            await window.showQuickPick(
-              Object.entries(this.listDataProviders).map(([label, provider]) => ({ label, provider })),
-              { title: "Data format could not be determined automatically", placeHolder: "Select a data provider" }
-            )
-          )?.provider
+      typeof customDataProvider === "object"
+        ? customDataProvider
+        : customDataProvider === true || !this.listDataProviders[document.languageId]
+        ? await this.queryDataProvider(token)
         : this.listDataProviders[document.languageId] ?? null;
     if (!provider) {
       window.showErrorMessage(`List formatting is not supported for ${document.languageId} files`);
       return;
     }
 
-    const options: ListDataParams = await provider.provideColumns(document, selection, token);
+    const options = await provider.provideColumns(document, selection, token, dataParameters);
     if (!options || token.isCancellationRequested) return;
 
     const listData = await provider.provideListData(document, selection, options, token);
     if (!listData || token.isCancellationRequested) return;
 
-    return { columns: options.columns, listData };
+    return { columns: options.columns, listData, provider, parameters: options.parameters };
+  }
+
+  private async queryDataProvider<T extends ListDataParams = ListDataParams>(
+    token: CancellationToken
+  ): Promise<ListDataProvider<T> | null> {
+    const response = await window.showQuickPick(
+      Object.entries(this.listDataProviders).map(([label, provider]) => ({ label, provider })),
+      { title: "Data format could not be determined automatically", placeHolder: "Select a data provider" }
+    );
+
+    if (!response || token.isCancellationRequested) return null;
+
+    return response.provider;
   }
 
   private async queryColumn(columns: { name: string; example?: string }[], token: CancellationToken) {

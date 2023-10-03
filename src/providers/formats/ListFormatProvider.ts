@@ -1,4 +1,4 @@
-import { QuickPickItem, window } from "vscode";
+import { CancellationToken, QuickPickItem, window } from "vscode";
 import {
   ExtendFormatterOptions,
   FormatterHeaderOptions,
@@ -101,21 +101,22 @@ export default class ListFormatProvider {
     items: ListData[],
     column: string,
     pretty: number = 0,
-    indent: number = 0
+    indent: number = 0,
+    parameters?: Record<string, string | number | boolean>
   ): Promise<string | null> {
     if (!this.options.simpleList) return null;
 
     const { simpleList } = this.options;
     const { valueEnclosure, valueAlias, valueEscape } = simpleList;
-    const parameters = await this.queryParameters(simpleList);
+    const _parameters = parameters ?? (await this.queryParameters("simpleList"));
 
-    if (!parameters) return null;
+    if (!_parameters) return null;
 
     const mappedItems = items.map((item) =>
-      this.encloseValue(item[column], valueAlias, valueEnclosure, valueEscape, parameters)
+      this.encloseValue(item[column], valueAlias, valueEnclosure, valueEscape, _parameters)
     );
 
-    return this.joinList(mappedItems, pretty, indent, 0, simpleList, parameters);
+    return this.joinList(mappedItems, pretty, indent, 0, simpleList, _parameters);
   }
 
   /**
@@ -131,37 +132,39 @@ export default class ListFormatProvider {
     items: ListData[],
     columns: string[],
     pretty: number = 0,
-    indent: number = 0
+    indent: number = 0,
+    parameters?: Record<string, string | number | boolean>
   ): Promise<string | null> {
     if (!this.options.objectList) return null;
 
     const { objectList } = this.options;
     const { itemFormat, header } = objectList;
-    const parameters = await this.queryParameters(objectList);
+    const _parameters = parameters ?? (await this.queryParameters("objectList"));
 
-    if (!parameters) return null;
+    if (!_parameters) return null;
 
     const mappedItems = items.map((item) => {
       const mappedItem = columns.map((column) =>
-        this.encloseKeyValue(column, item[column], objectList, pretty > 0, parameters)
+        this.encloseKeyValue(column, item[column], objectList, pretty > 0, _parameters)
       );
 
-      return this.joinList(mappedItem, pretty, indent, 1, itemFormat, parameters);
+      return this.joinList(mappedItem, pretty, indent, 1, itemFormat, _parameters);
     });
 
-    const body = this.joinList(mappedItems, pretty, indent, 0, objectList, parameters);
+    const body = this.joinList(mappedItems, pretty, indent, 0, objectList, _parameters);
 
     const lines = [];
-    if (header) lines.push(this.buildHeader(columns, pretty, indent, header, parameters));
+    if (header) lines.push(this.buildHeader(columns, pretty, indent, header, _parameters));
     lines.push(body);
 
     return pretty > 0 ? lines.join("\n") : lines.join("");
   }
 
-  private async queryParameters(
-    options: FormatterListOptions
+  public async queryParameters(
+    type: "simpleList" | "objectList",
+    token?: CancellationToken
   ): Promise<Record<string, string | number | boolean> | null> {
-    const { parameters = {} } = options;
+    const { parameters = {} } = this.options[type] ?? {};
 
     const result: Record<string, string | number | boolean> = {};
 
@@ -197,9 +200,15 @@ export default class ListFormatProvider {
             quickPick.dispose();
           });
           quickPick.show();
+
+          token?.onCancellationRequested(() => {
+            resolve(null);
+            quickPick.hide();
+          });
         });
 
-        if (option !== null) result[key] = option;
+        if (token?.isCancellationRequested) return null;
+        else if (option !== null) result[key] = option;
         else return null; // User cancelled
       } else {
         result[key] = defaultValue ?? -1;

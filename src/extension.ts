@@ -1,4 +1,4 @@
-import { ExtensionContext, workspace } from "vscode";
+import { ExtensionContext, commands, workspace } from "vscode";
 import contributeCommands from "./contribute/commands";
 import { ListFormattingProvider } from "./providers/ListFormattingProvider";
 
@@ -9,5 +9,6 @@ export function activate(context: ExtensionContext) {
 }
 
 function deactivate(context: ExtensionContext) {
+  commands.executeCommand("setContext", "list-tools.lastAction", false);
   context.subscriptions.forEach((subscription) => subscription.dispose());
 }

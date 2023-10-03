@@ -2,12 +2,12 @@ import { Selection, TextDocument, CancellationToken, window } from "vscode";
 import { ListColumn, ListData, ListDataParams } from "../../types/List";
 import { ListDataProvider } from "../../types/Providers";
 
-interface CsvListDataParams extends ListDataParams {
+interface CsvParameters {
   delimiter: string;
   hasHeader: boolean;
 }
 
-export default class CsvListDataProvider implements ListDataProvider<CsvListDataParams> {
+export default class CsvListDataProvider implements ListDataProvider<CsvParameters> {
   protected quickPickTitle = "CSV Data Format";
   protected delimiters = {
     ", (comma)": ",",
@@ -16,12 +16,16 @@ export default class CsvListDataProvider implements ListDataProvider<CsvListData
     "\\s (space)": " ",
   };
 
-  public async provideColumns(document: TextDocument, selection: Selection, token: CancellationToken) {
-    const options = await this.queryOptions(token);
-    if (!options) return;
+  public async provideColumns(
+    document: TextDocument,
+    selection: Selection,
+    token: CancellationToken,
+    parameters?: CsvParameters
+  ) {
+    const _parameters = parameters ?? (await this.queryOptions(token));
+    if (!_parameters) return;
 
-    const { delimiterKey, hasHeader } = options;
-    const delimiter = this.delimiters[delimiterKey];
+    const { delimiter, hasHeader } = _parameters;
     const firstLineParts = document.lineAt(selection.start.line).text.split(delimiter);
     const secondLineParts = document
       .lineAt(Math.min(selection.start.line + 1, selection.end.line))
@@ -33,15 +37,16 @@ export default class CsvListDataProvider implements ListDataProvider<CsvListData
       return { name, example };
     });
 
-    return { hasHeader, delimiter, columns };
+    return { columns, parameters: _parameters };
   }
 
   public async provideListData(
     document: TextDocument,
     selection: Selection,
-    { columns, delimiter, hasHeader }: ListDataParams & { delimiter: string; hasHeader: boolean },
+    { columns, parameters }: ListDataParams<CsvParameters>,
     token: CancellationToken
   ) {
+    const { delimiter, hasHeader } = parameters ?? { delimiter: ",", hasHeader: false };
     const text = document.getText(selection);
     const lines = text.split(/\r?\n/);
 
@@ -58,7 +63,7 @@ export default class CsvListDataProvider implements ListDataProvider<CsvListData
     });
   }
 
-  protected async queryOptions(token: CancellationToken) {
+  protected async queryOptions(token: CancellationToken): Promise<CsvParameters | null> {
     const delimiterKey = (await window.showQuickPick(Object.keys(this.delimiters), {
       title: this.quickPickTitle,
       placeHolder: "Select a delimiter",
@@ -73,7 +78,7 @@ export default class CsvListDataProvider implements ListDataProvider<CsvListData
 
     if (hasHeader === undefined || token.isCancellationRequested) return null;
 
-    return { delimiterKey, hasHeader: hasHeader === "Yes" };
+    return { delimiter: this.delimiters[delimiterKey], hasHeader: hasHeader === "Yes" };
   }
 
   protected parseValue(value: string): string | number | boolean | null {

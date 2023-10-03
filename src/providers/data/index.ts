@@ -1,4 +1,5 @@
 import { DefaultDataLanguages } from "../../types/Formatter";
+import { ListDataParams } from "../../types/List";
 import { ListDataProvider } from "../../types/Providers";
 import CListDataProvider from "./CListDataProvider";
 import CsvListDataProvider from "./CsvListDataProvider";
@@ -9,7 +10,7 @@ import PhpListDataProvider from "./PhpListDataProvider";
 import TypeScriptListDataProvider from "./TypeScriptListDataProvider";
 import YamlListDataProvider from "./YamlListDataProvider";
 
-export const listDataProviders: Record<DefaultDataLanguages, ListDataProvider<any>> = {
+export const listDataProviders: Record<DefaultDataLanguages, ListDataProvider<any, ListDataParams<any>>> = {
   csv: new CsvListDataProvider(),
   json: new JSONListDataProvider(),
   javascript: new JavaScriptListDataProvider(),

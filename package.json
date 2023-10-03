@@ -28,22 +28,32 @@
   ],
   "activationEvents": [
     "onCommand:list-tools.formatSimpleList",
-    "onCommand:list-tools.formatObjectList"
+    "onCommand:list-tools.formatObjectList",
+    "onCommand:list-tools.repeatLastAction"
   ],
   "main": "./dist/extension.js",
   "contributes": {
     "commands": [
       {
         "command": "list-tools.formatSimpleList",
-        "title": "Simple list",
+        "title": "Convert single column to simple list",
         "icon": "symbol-array",
-        "category": "List Tools"
+        "category": "List Tools",
+        "enablement": "editorHasSelection"
       },
       {
         "command": "list-tools.formatObjectList",
-        "title": "Object list",
+        "title": "Convert multiple columns",
         "icon": "symbol-object",
-        "category": "List Tools"
+        "category": "List Tools",
+        "enablement": "editorHasSelection"
+      },
+      {
+        "command": "list-tools.repeatLastAction",
+        "title": "Repeat last action",
+        "icon": "timeline-open",
+        "category": "List Tools",
+        "enablement": "editorHasSelection && list-tools.lastAction"
       }
     ],
     "configuration": [

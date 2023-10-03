@@ -13,7 +13,8 @@ export interface ListColumn {
 }
 
 /** List data params */
-export interface ListDataParams {
+export interface ListDataParams<T = undefined> {
   /** List columns provided previously */
   columns: ListColumn[];
+  parameters?: T;
 }
