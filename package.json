@@ -43,7 +43,7 @@
       },
       {
         "command": "list-tools.formatObjectList",
-        "title": "Convert multiple columns",
+        "title": "Convert multiple columns to object list",
         "icon": "symbol-object",
         "category": "List Tools",
         "enablement": "editorHasSelection"

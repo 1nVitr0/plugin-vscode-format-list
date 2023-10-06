@@ -191,6 +191,7 @@ export type DefaultFormatterLanguages =
   | "csv"
   | "csvCustom"
   | "java"
-  | "textList";
+  | "textList"
+  | "sql";
 
 export type DefaultDataLanguages = "javascript" | "typescript" | "json" | "yaml" | "php" | "c" | "cpp" | "csv" | "java";
