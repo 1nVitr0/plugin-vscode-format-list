@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/1nVitr0/plugin-vscode-format-list/compare/v1.2.0...v1.3.0) (2023-10-06)
+
+
+### Features
+
+* add sql format support ([c97721a](https://github.com/1nVitr0/plugin-vscode-format-list/commit/c97721a0b84f8aab2ffcb88fa6a10d5c28c7d993))
+
 # [1.2.0](https://github.com/1nVitr0/plugin-vscode-format-list/compare/v1.1.0...v1.2.0) (2023-10-03)
 
 
