@@ -8,12 +8,12 @@ export const formatMarkdown: FormatterOptions = {
     itemPrefix: "- ",
   },
   objectList: {
-    assignmentOperator: ": ",
     delimiter: "\n",
     itemPrefix: "- Item ${index + 1}:\n",
     indentItems: 0,
     itemFormat: {
       delimiter: "\n",
+      assignmentOperator: ": ",
       itemPrefix: "- ",
       indentItems: 1,
     },

@@ -15,33 +15,33 @@ export const formatXml: FormatterOptions = {
   },
   objectList: {
     delimiter: "",
-    assignmentOperator: "",
     indentItems: -1,
     enclosure: {
       start: "<root>",
       end: "</root>",
     },
-    valueEnclosure: {
-      start: "",
-      end: "</${key}>",
-    },
-    keyEnclosure: [
-      {
-        test: "/.*/",
-        enclosure: {
-          start: "<",
-          end: ">",
-        },
-      },
-    ],
     itemFormat: {
       delimiter: "",
-      indentItems: -1,
-      indentEnclosure: -1,
       enclosure: {
         start: "<item>",
         end: "</item>",
       },
+      keyEnclosure: [
+        {
+          test: "/.*/",
+          enclosure: {
+            start: "<",
+            end: ">",
+          },
+        },
+      ],
+      valueEnclosure: {
+        start: "",
+        end: "</${key}>",
+      },
+      assignmentOperator: "",
+      indentItems: -1,
+      indentEnclosure: -1,
     },
   },
 };

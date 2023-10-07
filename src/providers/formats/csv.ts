@@ -1,5 +1,5 @@
-import defaults from "defaults";
-import { FormatterOptions, FormatterParameter } from "../../types/Formatter";
+import * as deepMerge from "deepmerge";
+import { FormatterOptions, FormatterParameter, FormatterSimpleListOptions } from "../../types/Formatter";
 import { PartialDeep } from "type-fest";
 
 export const csvParameters: Record<string, FormatterParameter> = {
@@ -36,55 +36,60 @@ export const csvParameters: Record<string, FormatterParameter> = {
   },
 };
 
+const csvSimpleListOptions: FormatterSimpleListOptions = {
+  delimiter: "\n",
+  header: {
+    delimiter: ",",
+    keyEnclosure: '"',
+    enclosure: {
+      start: "",
+      end: "\n",
+    },
+    itemEnclosure: [{ test: "/\\d+(\\.\\d+)?|\\.\\d+|true|false/", inverse: true, enclosure: '"' }],
+    delimitSameLine: 1,
+  },
+};
+
 export const formatCsvDefault: FormatterOptions = {
   pretty: 0,
   indent: 0,
-  simpleList: {
-    delimiter: "\n",
-    header: {
-      delimiter: ",",
-      keyEnclosure: [{ test: "/[A-Za-z_$]+|\\d+(\\.\\d+)?|\\.\\d+|true|false/", inverse: true, enclosure: '"' }],
-      pretty: 0,
-    },
-  },
+  simpleList: csvSimpleListOptions,
   objectList: {
-    delimiter: "\n",
+    ...csvSimpleListOptions,
     itemFormat: {
       delimiter: ",",
-    },
-    assignmentOperator: "",
-    noKeys: true,
-    header: {
-      delimiter: ",",
-      keyEnclosure: [{ test: "/[A-Za-z_$]+|\\d+(\\.\\d+)?|\\.\\d+|true|false/", inverse: true, enclosure: '"' }],
-      pretty: 0,
+      valueEnclosure: {
+        string: '"',
+      },
+      assignmentOperator: "",
+      noKeys: true,
     },
   },
 };
 
-export const formatCsvCustom: FormatterOptions = defaults(
-  {
-    simpleList: {
-      header: {
-        delimiter: "${delimiter}",
-        keyEnclosure: [
-          { test: "/[A-Za-z_$]+|\\d+(\\.\\d+)?|\\.\\d+|true|false/", inverse: true, enclosure: "${enclosure}" },
-        ],
-      },
-      parameters: csvParameters,
+export const formatCsvCustom: FormatterOptions = deepMerge(formatCsvDefault, {
+  simpleList: {
+    header: {
+      delimiter: "${delimiter}",
+      keyEnclosure: [
+        { test: "/\\d+(\\.\\d+)?|\\.\\d+|true|false/", inverse: true, enclosure: "${enclosure}" },
+      ],
     },
-    objectList: {
-      itemFormat: {
-        delimiter: "${delimiter}",
-      },
-      header: {
-        delimiter: "${delimiter}",
-        keyEnclosure: [
-          { test: "/[A-Za-z_$]+|\\d+(\\.\\d+)?|\\.\\d+|true|false/", inverse: true, enclosure: "${enclosure}" },
-        ],
-      },
-      parameters: csvParameters,
-    },
+    parameters: csvParameters,
   },
-  formatCsvDefault as Partial<FormatterOptions>
-) as FormatterOptions;
+  objectList: {
+    itemFormat: {
+      delimiter: "${delimiter}",
+      valueEnclosure: {
+        string: "${enclosure}",
+      }
+    },
+    header: {
+      delimiter: "${delimiter}",
+      keyEnclosure: [
+        { test: "/\\d+(\\.\\d+)?|\\.\\d+|true|false/", inverse: true, enclosure: "${enclosure}" },
+      ],
+    },
+    parameters: csvParameters,
+  },
+} as PartialDeep<FormatterOptions>) as FormatterOptions;

@@ -7,7 +7,7 @@ export type Indent = number;
 export type Pretty = 0 | 1 | 2 | -1;
 
 /** Boundary options for value-like items */
-export interface FormatterValueBoundary {
+export interface FormatterBoundaryEnclosure {
   /** Start boundary */
   start: string;
   /** End boundary */
@@ -15,13 +15,13 @@ export interface FormatterValueBoundary {
 }
 
 /** Enclosure options for key-like items */
-export interface FormatterKeyEnclosure {
+export interface FormatterRegexEnclosure {
   /** Regular expression, that tests if the key must be enclosed */
   test: RegExp | `/${string}/${string}`;
   /** Inverse the test */
   inverse?: boolean;
   /** Enclosure boundaries or char, if char, it's used for both start and end */
-  enclosure: FormatterValueBoundary | string;
+  enclosure: FormatterBoundaryEnclosure | string;
   /** Replacement string, indexes like `$1` can be used */
   replace?: string;
 }
@@ -29,14 +29,20 @@ export interface FormatterKeyEnclosure {
 /** Enclosure options for value types */
 export interface FormatterValueEnclosure {
   /** Enclosure for string values, if char, it's used for both start and end */
-  string?: FormatterValueBoundary | string;
+  string?: FormatterBoundaryEnclosure | string;
   /** Enclosure for number values, if char, it's used for both start and end */
-  number?: FormatterValueBoundary | string;
+  number?: FormatterBoundaryEnclosure | string;
   /** Enclosure for boolean values, if char, it's used for both start and end */
-  boolean?: FormatterValueBoundary | string;
+  boolean?: FormatterBoundaryEnclosure | string;
   /** Enclosure for null values, if char, it's used for both start and end */
-  null?: FormatterValueBoundary | string;
+  null?: FormatterBoundaryEnclosure | string;
 }
+
+export type FormatterEnclosure =
+  | FormatterBoundaryEnclosure
+  | FormatterValueEnclosure
+  | FormatterRegexEnclosure[]
+  | string;
 
 /** Escape options for value-like items */
 export interface FormatterValueEscape {
@@ -95,58 +101,86 @@ export type FormatterParameter = Simplify<
   | RequireAtLeastOne<FormatterParameterBase<boolean>, "default" | "query">
 >;
 
+/** Base options for lists */
 export interface FormatterListOptions {
   /** Enclosure around entire list */
-  enclosure?: FormatterValueBoundary;
+  enclosure?: FormatterBoundaryEnclosure;
   /** Delimiter between items */
   delimiter?: string;
   /** If true, generate a delimiter for the last item as well */
   delimitLastItem?: boolean;
   /** Prefix for each item */
   itemPrefix?: ItemPrefix | string;
+  /** Enclosure around each item */
+  itemEnclosure?: FormatterEnclosure;
   /** If true indent items */
   indentItems?: Indent;
   /** If true, indent enclosure */
   indentEnclosure?: Indent;
   /** If false, items are separated by newlines, otherwise next spaced by given number of spaces */
   delimitSameLine?: Indent;
-  /** Keyed List of available parameters queried when formatting the lst */
-  parameters?: Record<string, FormatterParameter>;
 }
 
-export interface FormatterHeaderOptions extends FormatterListOptions {
-  /** Enclosure around each key */
-  keyEnclosure?: FormatterKeyEnclosure[];
-  /** If true, header may contain line breaks */
-  pretty?: Pretty;
-}
-
-/** Options for simple lists */
-export interface FormatterSimpleListOptions extends FormatterHeaderOptions {
-  /** Example result shown in quick picks */
-  example?: string;
+/** Options for values */
+export interface FormatterListValueOptions {
   /** Enclosure around each item */
-  valueEnclosure?: FormatterValueEnclosure | FormatterValueBoundary | string;
+  valueEnclosure?: FormatterEnclosure;
   /** Escape options for each item */
   valueEscape?: FormatterValueEscape[];
   /** Alias options for each item */
   valueAlias?: FormatterValueAlias;
-  /** Header options for csv-like formats, usually noKeys is set to `false` */
-  header?: FormatterHeaderOptions;
 }
 
-/** Options for object lists */
-export interface FormatterObjectListOptions extends FormatterSimpleListOptions {
-  /** Format options for each item */
-  itemFormat: FormatterListOptions;
+/** Options for keys */
+export interface FormatterListKeyOptions {
+  /** Enclosure around each key */
+  keyEnclosure?: FormatterEnclosure;
+  /** Escape options for each key */
+  keyEscape?: FormatterValueEscape[];
+  /** Alias options for each key */
+  keyAlias?: FormatterValueAlias;
+  /** If true, don't generate keys for objects */
+  noKeys?: boolean;
+}
+
+/** Options for assignment between key value pairs */
+export interface FormatterListAssignmentOptions {
   /** Assignment operator between object key and value */
   assignmentOperator: string;
   /** Pretty assignment operator between object key and value */
   assignmentOperatorSpaced?: string;
-  /** Enclosure around each key */
-  keyEnclosure?: FormatterKeyEnclosure[];
-  /** If true, don't generate keys for objects */
-  noKeys?: boolean;
+}
+
+/** Options for object list items */
+export interface FormatterListObjectItemOptions
+  extends FormatterListOptions,
+    FormatterListKeyOptions,
+    FormatterListAssignmentOptions,
+    FormatterListValueOptions {}
+
+/** Options for list headers */
+export interface FormatterListHeaderOptions extends FormatterListOptions, FormatterListKeyOptions {}
+
+/** Options for output of generated lists */
+export interface GeneratedListOptions {
+  /** Example result shown in quick picks */
+  example?: string;
+  /** Keyed List of available parameters queried when formatting the lst */
+  parameters?: Record<string, FormatterParameter>;
+  /** Header options for csv-like formats, usually noKeys is set to `false` */
+  header?: FormatterListHeaderOptions;
+}
+
+/** Options for simple lists */
+export interface FormatterSimpleListOptions
+  extends FormatterListOptions,
+    GeneratedListOptions,
+    FormatterListValueOptions {}
+
+/** Options for object lists */
+export interface FormatterObjectListOptions extends FormatterListOptions, GeneratedListOptions {
+  /** Format options for each item */
+  itemFormat: FormatterListObjectItemOptions;
 }
 
 /** List options */
@@ -165,7 +199,7 @@ export interface FormatterOptions extends FormatterListTypes {
   indent?: Indent;
 }
 
-type ExtendableFormatterListOptions<T extends FormatterSimpleListOptions> = {
+export type ExtendableFormatterListOptions<T extends FormatterSimpleListOptions> = {
   /** Language to use as base config */
   base: DefaultFormatterLanguages;
 } & PartialDeep<T>;

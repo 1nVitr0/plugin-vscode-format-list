@@ -10,14 +10,14 @@ export const formatC: FormatterOptions = {
   objectList: {
     enclosure: { start: "{", end: "}" },
     delimiter: ",",
-    assignmentOperator: "=",
-    assignmentOperatorSpaced: " = ",
-    keyEnclosure: [{ test: "/.*/", enclosure: { start: ".", end: "" } }],
-    valueEnclosure: { string: '"' },
     indentItems: -1,
     itemFormat: {
       enclosure: { start: "{", end: "}" },
       delimiter: ",",
+      keyEnclosure: [{ test: "/.*/", enclosure: { start: ".", end: "" } }],
+      valueEnclosure: { string: '"' },
+      assignmentOperator: "=",
+      assignmentOperatorSpaced: " = ",
       indentItems: -1,
       indentEnclosure: -1,
     },

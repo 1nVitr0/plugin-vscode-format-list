@@ -3,26 +3,28 @@ import { FormatterOptions } from "../../types/Formatter";
 export const formatSql: FormatterOptions = {
   objectList: {
     delimiter: ",",
-    assignmentOperator: "",
-    noKeys: true,
     indentItems: -1,
-    valueEnclosure: {
-      string: '"'
-    },
+    indentEnclosure: 0,
     enclosure: {
-      start: "VALUES",
+      start: ") VALUES",
       end: ";",
     },
     header: {
-      enclosure: {
-        start: "INSERT${ignore}INTO (",
-        end: ")",
-      },
       delimiter: ",",
-      keyEnclosure: [{ test: "/.*/", enclosure: '`' }],
+      enclosure: {
+        start: "INSERT${ignore}INTO ${tableName} (",
+        end: "",
+      },
+      keyEnclosure: [{ test: "/.*/", enclosure: "`" }],
+      indentItems: -1,
     },
     itemFormat: {
       delimiter: ",",
+      valueEnclosure: {
+        string: '"',
+      },
+      assignmentOperator: "",
+      noKeys: true,
       indentItems: -1,
       indentEnclosure: -1,
       enclosure: {
@@ -35,14 +37,23 @@ export const formatSql: FormatterOptions = {
         type: "string",
         default: "",
         query: {
-          prompt: "Ignore",
+          prompt: "Ignore duplicates?",
           placeholder: "Ignore",
           options: {
-            "Yes": " IGNORE ",
-            "No": " ",
+            Yes: " IGNORE ",
+            No: " ",
           },
         },
-      }
-    }
+      },
+      tableName: {
+        type: "string",
+        default: "t",
+        query: {
+          prompt: "Table name",
+          placeholder: "Table name",
+          allowInput: true,
+        },
+      },
+    },
   },
 };

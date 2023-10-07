@@ -4,6 +4,7 @@ import { formatC } from "./c";
 import { formatCpp } from "./cpp";
 import { formatCsvCustom, formatCsvDefault } from "./csv";
 import { formatJava } from "./java";
+import { formatJavaScript } from "./javascript";
 import { formatJson } from "./json";
 import { formatTextList } from "./list";
 import { formatMarkdown } from "./md";
@@ -21,7 +22,7 @@ export const listFormatProviders: Record<DefaultFormatterLanguages, ListFormatPr
   textList: new ListFormatProvider("Separated list", formatTextList),
   sql: new ListFormatProvider("SQL", formatSql),
   markdown: new ListFormatProvider("Markdown", formatMarkdown),
-  javascript: new ListFormatProvider("JavaScript", formatJson),
+  javascript: new ListFormatProvider("JavaScript", formatJavaScript),
   php: new ListFormatProvider("PHP Array", formatPhp),
   c: new ListFormatProvider("C Array", formatC),
   cpp: new ListFormatProvider("C++ Array", formatCpp),

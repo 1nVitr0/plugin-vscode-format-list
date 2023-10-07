@@ -8,11 +8,11 @@ export const formatYaml: FormatterOptions = {
     itemPrefix: "- ",
   },
   objectList: {
-    assignmentOperator: ": ",
     delimiter: "\n",
     itemPrefix: "- ",
     itemFormat: {
       delimiter: "\n",
+      assignmentOperator: ": ",
       itemPrefix: { first: "", rest: "  " },
       indentItems: 0,
     },
