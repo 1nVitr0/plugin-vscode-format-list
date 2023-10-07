@@ -1,3 +1,11 @@
+## [1.3.1](https://github.com/1nVitr0/plugin-vscode-format-list/compare/v1.3.0...v1.3.1) (2023-10-07)
+
+
+### Bug Fixes
+
+* fix csv failing wih trailing newline ([c205efc](https://github.com/1nVitr0/plugin-vscode-format-list/commit/c205efc34eaeaf8cb0e6fe096540d4fc1821e612))
+* simplify formatters and fix inconsistencies ([9a02be3](https://github.com/1nVitr0/plugin-vscode-format-list/commit/9a02be3c05384940fd4e0de81b49849583b08911))
+
 # [1.3.0](https://github.com/1nVitr0/plugin-vscode-format-list/compare/v1.2.0...v1.3.0) (2023-10-06)
 
 
