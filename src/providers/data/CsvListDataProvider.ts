@@ -47,7 +47,7 @@ export default class CsvListDataProvider implements ListDataProvider<CsvParamete
     token: CancellationToken
   ) {
     const { delimiter, hasHeader } = parameters ?? { delimiter: ",", hasHeader: false };
-    const text = document.getText(selection);
+    const text = document.getText(selection).trim();
     const lines = text.split(/\r?\n/);
 
     if (hasHeader) lines.shift();
