@@ -1,3 +1,10 @@
+## [1.3.2](https://github.com/1nVitr0/plugin-vscode-format-list/compare/v1.3.1...v1.3.2) (2023-10-08)
+
+
+### Bug Fixes
+
+* add commands for immediate pretty printing ([d71273f](https://github.com/1nVitr0/plugin-vscode-format-list/commit/d71273f883d49a8be605a2f3f7b90a7574a8dcb7))
+
 ## [1.3.1](https://github.com/1nVitr0/plugin-vscode-format-list/compare/v1.3.0...v1.3.1) (2023-10-07)
 
 
