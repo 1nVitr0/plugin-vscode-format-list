@@ -1,7 +1,7 @@
 {
   "name": "list-tools",
   "displayName": "List Tools (Convert / Extract List Data)",
-  "description": "Convert and extract list data across languages",
+  "description": "Convert and extract list data between CSV, JSON, XML, YAML, SQL and more!",
   "icon": "resources/icon.png",
   "license": "MIT",
   "author": "1nVitr0",
@@ -20,11 +20,11 @@
     "Other"
   ],
   "keywords": [
-    "format",
     "list",
     "convert",
     "csv",
-    "extract"
+    "extract",
+    "json"
   ],
   "activationEvents": [
     "onCommand:list-tools.formatSimpleList",
@@ -44,6 +44,34 @@
       {
         "command": "list-tools.formatObjectList",
         "title": "Convert multiple columns to object list",
+        "icon": "symbol-object",
+        "category": "List Tools",
+        "enablement": "editorHasSelection"
+      },
+      {
+        "command": "list-tools.formatSimpleListPretty",
+        "title": "Convert single column to simple list (pretty print)",
+        "icon": "symbol-array",
+        "category": "List Tools",
+        "enablement": "editorHasSelection"
+      },
+      {
+        "command": "list-tools.formatObjectListPretty",
+        "title": "Convert multiple columns to object list (pretty print)",
+        "icon": "symbol-object",
+        "category": "List Tools",
+        "enablement": "editorHasSelection"
+      },
+      {
+        "command": "list-tools.formatSimpleListUgly",
+        "title": "Convert single column to simple list (without pretty print)",
+        "icon": "symbol-array",
+        "category": "List Tools",
+        "enablement": "editorHasSelection"
+      },
+      {
+        "command": "list-tools.formatObjectListUgly",
+        "title": "Convert multiple columns to object list (without pretty print)",
         "icon": "symbol-object",
         "category": "List Tools",
         "enablement": "editorHasSelection"

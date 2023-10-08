@@ -23,9 +23,8 @@ import {
   SimpleListButton,
   TogglePrettyButton,
 } from "../input/buttons";
-import { DefaultFormatterLanguages, FormatterListTypes, CustomFormatters, Pretty } from "../types/Formatter";
+import { DefaultFormatterLanguages, FormatterListTypes, Pretty } from "../types/Formatter";
 import { workspace } from "vscode";
-import { SetRequired } from "type-fest";
 
 interface QuickPickProviderItem extends QuickPickItem {
   languageId?: string;
@@ -79,10 +78,16 @@ export class ListFormattingProvider {
     }, {});
   }
 
-  public async provideSimpleListFormattingEdit(textEditor: TextEditor) {
+  public async provideSimpleListFormattingEdit(options: { forcePretty?: boolean }, textEditor: TextEditor) {
     const { document, selection } = textEditor;
     const cancellation = new CancellationTokenSource();
-    const formattedList = await this.provideList(document, selection, "simpleList", cancellation.token);
+    const formattedList = await this.provideList(
+      document,
+      selection,
+      "simpleList",
+      cancellation.token,
+      options.forcePretty
+    );
     if (!formattedList) return;
 
     textEditor.edit((editBuilder: TextEditorEdit) => {
@@ -90,10 +95,16 @@ export class ListFormattingProvider {
     });
   }
 
-  public async provideObjectListFormattingEdit(textEditor: TextEditor) {
+  public async provideObjectListFormattingEdit(options: { forcePretty?: boolean }, textEditor: TextEditor) {
     const { document, selection } = textEditor;
     const cancellation = new CancellationTokenSource();
-    const formattedList = await this.provideList(document, selection, "objectList", cancellation.token);
+    const formattedList = await this.provideList(
+      document,
+      selection,
+      "objectList",
+      cancellation.token,
+      options.forcePretty
+    );
     if (!formattedList) return;
 
     textEditor.edit((editBuilder: TextEditorEdit) => {
@@ -147,6 +158,7 @@ export class ListFormattingProvider {
     selection: Selection,
     preferredListType: keyof FormatterListTypes,
     token: CancellationToken,
+    forcePretty?: boolean,
     customDataProvider?: boolean
   ): Promise<string | null> {
     const {
@@ -163,7 +175,7 @@ export class ListFormattingProvider {
       listType,
       provider: formatProvider,
       action,
-    } = (await this.queryListFormatter(preferredListType, token)) ?? {};
+    } = (await this.queryListFormatter(preferredListType, token, forcePretty)) ?? {};
     if (action === "changeDataProvider")
       return await this.provideList(document, selection, preferredListType, token, true);
     if (!formatProvider || !listType || !dataProvider || token.isCancellationRequested) return null;
@@ -187,7 +199,8 @@ export class ListFormattingProvider {
       case "objectList":
         const selectedColumns = await this.queryColumns(columns, token);
         const objectListParameters = await formatProvider.queryParameters("objectList", token);
-        if (!selectedColumns || !objectListParameters || token.isCancellationRequested) return null;
+        if (!selectedColumns || selectedColumns.length <= 0 || !objectListParameters || token.isCancellationRequested)
+          return null;
         this.lastListOptions = {
           dataProvider,
           formatProvider,
@@ -234,7 +247,11 @@ export class ListFormattingProvider {
   ): Promise<ListDataProvider<T> | null> {
     const response = await window.showQuickPick(
       Object.entries(this.listDataProviders).map(([label, provider]) => ({ label, provider })),
-      { title: "Data format could not be determined automatically", placeHolder: "Select a data provider" }
+      {
+        ignoreFocusOut: true,
+        title: "Data format could not be determined automatically",
+        placeHolder: "Select a data provider",
+      }
     );
 
     if (!response || token.isCancellationRequested) return null;
@@ -245,7 +262,7 @@ export class ListFormattingProvider {
   private async queryColumn(columns: { name: string; example?: string }[], token: CancellationToken) {
     const selectedColumns = await window.showQuickPick(
       columns.map((column) => ({ label: column.name, description: column.example })),
-      { placeHolder: "Select column" }
+      { placeHolder: "Select column", ignoreFocusOut: true }
     );
 
     if (!selectedColumns || token.isCancellationRequested) return null;
@@ -256,7 +273,7 @@ export class ListFormattingProvider {
   private async queryColumns(columns: { name: string; example?: string }[], token: CancellationToken) {
     const selectedColumns = await window.showQuickPick(
       columns.map((column) => ({ label: column.name, description: column.example })),
-      { canPickMany: true, placeHolder: "Select columns to include" }
+      { canPickMany: true, ignoreFocusOut: true, placeHolder: "Select columns to include" }
     );
 
     if (!selectedColumns || token.isCancellationRequested) return null;
@@ -279,6 +296,7 @@ export class ListFormattingProvider {
     quickPick.items = this.getQuickPickItems(providers, listType);
     quickPick.buttons = this.getQuickPickButton(listType, forcePretty);
     quickPick.canSelectMany = false;
+    quickPick.ignoreFocusOut = true;
 
     const selectedFormatter = await new Promise<QuickPickProviderItem | ListFormattingButton | undefined>((resolve) => {
       const disposables = [
@@ -316,10 +334,10 @@ export class ListFormattingProvider {
     const tabSize = workspace.getConfiguration("editor", context).get<number>("tabSize", 2);
 
     const pretty =
-      forcePretty || prettyPrint === -1
-        ? Infinity
-        : (forcePretty ?? prettyPrint) === false
+      (forcePretty ?? prettyPrint) === false
         ? 0
+        : forcePretty || prettyPrint === -1
+        ? Infinity
         : (prettyPrint as number);
     const indent = tabSize;
     return { listType, pretty, indent, provider: selectedFormatter.provider };
@@ -375,8 +393,8 @@ export class ListFormattingProvider {
     return result;
   }
 
-  private getQuickPickButton(listType: keyof FormatterListTypes, pretty = false): ListFormattingButton[] {
-    const buttons: ListFormattingButton[] = [new TogglePrettyButton(!pretty), new ChangeDataProviderButton()];
+  private getQuickPickButton(listType: keyof FormatterListTypes, pretty?: boolean): ListFormattingButton[] {
+    const buttons: ListFormattingButton[] = [new TogglePrettyButton(pretty === undefined ? true : !pretty)];
 
     switch (listType) {
       case "simpleList":
@@ -387,6 +405,7 @@ export class ListFormattingProvider {
         break;
     }
 
+    buttons.push(new ChangeDataProviderButton());
     return buttons;
   }
 }

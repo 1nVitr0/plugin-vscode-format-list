@@ -5,11 +5,27 @@ export default function contributeCommands(formattingProvider: ListFormattingPro
   return [
     commands.registerTextEditorCommand(
       "list-tools.formatSimpleList",
-      formattingProvider.provideSimpleListFormattingEdit.bind(formattingProvider)
+      formattingProvider.provideSimpleListFormattingEdit.bind(formattingProvider, {})
     ),
     commands.registerTextEditorCommand(
       "list-tools.formatObjectList",
-      formattingProvider.provideObjectListFormattingEdit.bind(formattingProvider)
+      formattingProvider.provideObjectListFormattingEdit.bind(formattingProvider, {})
+    ),
+    commands.registerTextEditorCommand(
+      "list-tools.formatSimpleListPretty",
+      formattingProvider.provideSimpleListFormattingEdit.bind(formattingProvider, { forcePretty: true })
+    ),
+    commands.registerTextEditorCommand(
+      "list-tools.formatObjectListPretty",
+      formattingProvider.provideObjectListFormattingEdit.bind(formattingProvider, { forcePretty: true })
+    ),
+    commands.registerTextEditorCommand(
+      "list-tools.formatSimpleListUgly",
+      formattingProvider.provideSimpleListFormattingEdit.bind(formattingProvider, { forcePretty: false })
+    ),
+    commands.registerTextEditorCommand(
+      "list-tools.formatObjectListUgly",
+      formattingProvider.provideObjectListFormattingEdit.bind(formattingProvider, { forcePretty: false })
     ),
     commands.registerTextEditorCommand(
       "list-tools.repeatLastAction",

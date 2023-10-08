@@ -6,14 +6,14 @@ export const formatSql: FormatterOptions = {
     indentItems: -1,
     indentEnclosure: 0,
     enclosure: {
-      start: ") VALUES",
+      start: "VALUES",
       end: ";",
     },
     header: {
       delimiter: ",",
       enclosure: {
         start: "INSERT${ignore}INTO ${tableName} (",
-        end: "",
+        end: ")",
       },
       keyEnclosure: [{ test: "/.*/", enclosure: "`" }],
       indentItems: -1,

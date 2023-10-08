@@ -179,6 +179,7 @@ export default class ListFormatProvider {
           const entries: [string, string | number | boolean][] = query.options ? Object.entries(query.options) : [];
           const keys = entries.map(([key]) => key);
           const quickPick = window.createQuickPick<QuickPickItem & { value: string | number | boolean }>();
+          quickPick.ignoreFocusOut = true;
           quickPick.items = entries.map(([key, value]) => ({ label: key, value, picked: value === defaultValue }));
 
           quickPick.title = query.prompt;
