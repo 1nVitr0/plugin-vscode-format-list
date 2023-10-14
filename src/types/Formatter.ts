@@ -228,4 +228,14 @@ export type DefaultFormatterLanguages =
   | "textList"
   | "sql";
 
-export type DefaultDataLanguages = "javascript" | "typescript" | "json" | "yaml" | "php" | "c" | "cpp" | "csv" | "java";
+export type DefaultDataLanguages =
+  | "javascript"
+  | "typescript"
+  | "json"
+  | "yaml"
+  | "xml"
+  | "php"
+  | "c"
+  | "cpp"
+  | "csv"
+  | "java";

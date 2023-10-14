@@ -29,7 +29,12 @@
   "activationEvents": [
     "onCommand:list-tools.formatSimpleList",
     "onCommand:list-tools.formatObjectList",
-    "onCommand:list-tools.repeatLastAction"
+    "onCommand:list-tools.repeatLastAction",
+    "onCommand:list-tools.formatSimpleListPretty",
+    "onCommand:list-tools.formatObjectListPretty",
+    "onCommand:list-tools.formatSimpleListUgly",
+    "onCommand:list-tools.formatObjectListUgly",
+    "onCommand:list-tools.extractColumns"
   ],
   "main": "./dist/extension.js",
   "contributes": {
@@ -72,6 +77,13 @@
       {
         "command": "list-tools.formatObjectListUgly",
         "title": "Convert multiple columns to object list (without pretty print)",
+        "icon": "symbol-object",
+        "category": "List Tools",
+        "enablement": "editorHasSelection"
+      },
+      {
+        "command": "list-tools.extractColumns",
+        "title": "Extract columns from object list",
         "icon": "symbol-object",
         "category": "List Tools",
         "enablement": "editorHasSelection"
@@ -2726,6 +2738,7 @@
     "@types/mocha": "^10.0.1",
     "@types/node": "^18.6.4",
     "@types/vscode": "1.64",
+    "@types/xml2js": "^0.4.12",
     "@typescript-eslint/eslint-plugin": "^6.4.0",
     "@typescript-eslint/parser": "^6.4.0",
     "eslint": "^8.47.0",
@@ -2779,6 +2792,7 @@
     ]
   },
   "dependencies": {
-    "deepmerge": "^4.3.1"
+    "deepmerge": "^4.3.1",
+    "xml2js": "^0.6.2"
   }
 }
