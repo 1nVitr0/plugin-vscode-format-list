@@ -15,7 +15,7 @@ import { ListDataProvider } from "../types/Providers";
 import ListFormatProvider from "./formats/ListFormatProvider";
 import { listDataProviders } from "./data";
 import { listFormatProviders } from "./formats";
-import { ListDataParams } from "../types/List";
+import { ListDataContext } from "../types/List";
 import {
   ChangeDataProviderButton,
   ListFormattingButton,
@@ -39,7 +39,8 @@ interface QueryFormatterResult {
   action?: "changeDataProvider";
 }
 
-interface StoredListOptions<T extends ListDataParams = ListDataParams> extends Omit<QueryFormatterResult, "provider"> {
+interface StoredListOptions<T extends ListDataContext = ListDataContext>
+  extends Omit<QueryFormatterResult, "provider"> {
   dataProvider: ListDataProvider<T>;
   formatProvider: ListFormatProvider;
   selectedColumns: string[];
@@ -47,7 +48,13 @@ interface StoredListOptions<T extends ListDataParams = ListDataParams> extends O
   formatParameters: Record<string, string | number | boolean>;
 }
 
-export class ListFormattingProvider {
+interface FormattingEditOptions {
+  forcePretty?: boolean;
+  customDataProvider?: boolean;
+  keepLanguage?: boolean;
+}
+
+export class ListConversionProvider {
   private listDataProviders: Record<string, ListDataProvider<any>>;
   private formatProviders: Record<DefaultFormatterLanguages, ListFormatProvider>;
   private customFormatProviders: Record<string, ListFormatProvider>;
@@ -78,16 +85,16 @@ export class ListFormattingProvider {
     }, {});
   }
 
-  public async provideSimpleListFormattingEdit(options: { forcePretty?: boolean }, textEditor: TextEditor) {
+  /**
+   * Provides simple list formatting edit for the given text editor and selection.
+   *
+   * @param options Formatting options.
+   * @param textEditor The text editor to provide the formatting edit for.
+   */
+  public async provideSimpleListFormattingEdit(options: FormattingEditOptions, textEditor: TextEditor) {
     const { document, selection } = textEditor;
     const cancellation = new CancellationTokenSource();
-    const formattedList = await this.provideList(
-      document,
-      selection,
-      "simpleList",
-      cancellation.token,
-      options.forcePretty
-    );
+    const formattedList = await this.provideList(document, selection, "simpleList", options, cancellation.token);
     if (!formattedList) return;
 
     textEditor.edit((editBuilder: TextEditorEdit) => {
@@ -95,16 +102,16 @@ export class ListFormattingProvider {
     });
   }
 
-  public async provideObjectListFormattingEdit(options: { forcePretty?: boolean }, textEditor: TextEditor) {
+  /**
+   * Provides object list formatting edit for the given text editor and selection.
+   *
+   * @param options Formatting options.
+   * @param textEditor The text editor to provide the formatting edit for.
+   */
+  public async provideObjectListFormattingEdit(options: FormattingEditOptions, textEditor: TextEditor) {
     const { document, selection } = textEditor;
     const cancellation = new CancellationTokenSource();
-    const formattedList = await this.provideList(
-      document,
-      selection,
-      "objectList",
-      cancellation.token,
-      options.forcePretty
-    );
+    const formattedList = await this.provideList(document, selection, "objectList", options, cancellation.token);
     if (!formattedList) return;
 
     textEditor.edit((editBuilder: TextEditorEdit) => {
@@ -112,6 +119,11 @@ export class ListFormattingProvider {
     });
   }
 
+  /**
+   * Provides formatting edit for the last list formatting action.
+   *
+   * @param textEditor The text editor to provide the formatting edit for.
+   */
   public async provideRepeatFormattingEdit(textEditor: TextEditor) {
     const { document, selection } = textEditor;
     const cancellation = new CancellationTokenSource();
@@ -123,6 +135,14 @@ export class ListFormattingProvider {
     });
   }
 
+  /**
+   * Applies the last list formatting action to the given text editor and selection.
+   *
+   * @param textEditor The text editor to apply the formatting action to.
+   * @param selection The selection to apply the formatting action to.
+   * @param token A cancellation token.
+   * @returns the formatted list as a string or `null` if the action could not be applied.
+   */
   private async provideRepeatLastList(document: TextDocument, selection: Selection, token: CancellationToken) {
     if (!this.lastListOptions) return null;
 
@@ -153,13 +173,23 @@ export class ListFormattingProvider {
     }
   }
 
+  /**
+   * Provides a converted list for the given text editor and selection.
+   * Handles all the user to change the data provider and list formatter.
+   *
+   * @param document The document to provide the converted list for.
+   * @param selection The selection to provide the converted list for.
+   * @param preferredListType The preferred list type to use.
+   * @param options Formatting options.
+   * @param token A cancellation token.
+   * @returns the converted list as a string or `null` if the list could not be converted.
+   */
   private async provideList(
     document: TextDocument,
     selection: Selection,
     preferredListType: keyof FormatterListTypes,
-    token: CancellationToken,
-    forcePretty?: boolean,
-    customDataProvider?: boolean
+    { forcePretty, customDataProvider, keepLanguage }: FormattingEditOptions = {},
+    token: CancellationToken
   ): Promise<string | null> {
     const {
       columns,
@@ -175,14 +205,14 @@ export class ListFormattingProvider {
       listType,
       provider: formatProvider,
       action,
-    } = (await this.queryListFormatter(preferredListType, token, forcePretty)) ?? {};
+    } = (await this.queryListFormatter(document, preferredListType, { forcePretty, keepLanguage }, token)) ?? {};
     if (action === "changeDataProvider")
-      return await this.provideList(document, selection, preferredListType, token, true);
+      return await this.provideList(document, selection, preferredListType, { customDataProvider: true }, token);
     if (!formatProvider || !listType || !dataProvider || token.isCancellationRequested) return null;
 
     switch (listType) {
       case "simpleList":
-        const selectedColumn = await this.queryColumn(columns, token);
+        const selectedColumn = await this.querySingleColumn(columns, token);
         const simpleListParameters = await formatProvider.queryParameters("simpleList", token);
         if (!selectedColumn || !simpleListParameters || token.isCancellationRequested) return null;
         this.lastListOptions = {
@@ -197,7 +227,7 @@ export class ListFormattingProvider {
         };
         return await formatProvider.formatSimpleList(listData, selectedColumn, pretty, indent, simpleListParameters);
       case "objectList":
-        const selectedColumns = await this.queryColumns(columns, token);
+        const selectedColumns = await this.queryMultipleColumns(columns, token);
         const objectListParameters = await formatProvider.queryParameters("objectList", token);
         if (!selectedColumns || selectedColumns.length <= 0 || !objectListParameters || token.isCancellationRequested)
           return null;
@@ -215,6 +245,16 @@ export class ListFormattingProvider {
     }
   }
 
+  /**
+   * Gets the list data for the given text editor and selection.
+   *
+   * @param document The document to get the list data for.
+   * @param selection The selection to get the list data for.
+   * @param token A cancellation token.
+   * @param customDataProvider Whether to force the use of a custom data provider.
+   * @param dataParameters The parameters to pass to the data provider.
+   * @returns the list data or `null` if the list data could not be retrieved.
+   */
   private async getListData<T>(
     document: TextDocument,
     selection: Selection,
@@ -226,7 +266,7 @@ export class ListFormattingProvider {
       typeof customDataProvider === "object"
         ? customDataProvider
         : customDataProvider === true || !this.listDataProviders[document.languageId]
-        ? await this.queryDataProvider(token)
+        ? await this.queryListDataProvider(token)
         : this.listDataProviders[document.languageId] ?? null;
     if (!provider) {
       window.showErrorMessage(`List formatting is not supported for ${document.languageId} files`);
@@ -242,7 +282,13 @@ export class ListFormattingProvider {
     return { columns: options.columns, listData, provider, parameters: options.parameters };
   }
 
-  private async queryDataProvider<T extends ListDataParams = ListDataParams>(
+  /**
+   * Queries the user to select a data provider.
+   *
+   * @param token A cancellation token.
+   * @returns the selected data provider or `null` if the user cancelled the selection.
+   */
+  private async queryListDataProvider<T extends ListDataContext = ListDataContext>(
     token: CancellationToken
   ): Promise<ListDataProvider<T> | null> {
     const response = await window.showQuickPick(
@@ -259,7 +305,14 @@ export class ListFormattingProvider {
     return response.provider;
   }
 
-  private async queryColumn(columns: { name: string; example?: string }[], token: CancellationToken) {
+  /**
+   * Queries the user to select a single column.
+   *
+   * @param columns The columns to select from.
+   * @param token A cancellation token.
+   * @returns the selected column or `null` if the user cancelled the selection.
+   */
+  private async querySingleColumn(columns: { name: string; example?: string }[], token: CancellationToken) {
     const selectedColumns = await window.showQuickPick(
       columns.map((column) => ({ label: column.name, description: column.example })),
       { placeHolder: "Select column", ignoreFocusOut: true }
@@ -270,7 +323,14 @@ export class ListFormattingProvider {
     return selectedColumns.label;
   }
 
-  private async queryColumns(columns: { name: string; example?: string }[], token: CancellationToken) {
+  /**
+   * Queries the user to select multiple columns.
+   *
+   * @param columns The columns to select from.
+   * @param token A cancellation token.
+   * @returns the selected columns or `null` if the user cancelled the selection.
+   */
+  private async queryMultipleColumns(columns: { name: string; example?: string }[], token: CancellationToken) {
     const selectedColumns = await window.showQuickPick(
       columns.map((column) => ({ label: column.name, description: column.example })),
       { canPickMany: true, ignoreFocusOut: true, placeHolder: "Select columns to include" }
@@ -281,52 +341,69 @@ export class ListFormattingProvider {
     return selectedColumns.map((column) => column.label);
   }
 
+  /**
+   * Queries the user to select a list formatter.
+   *
+   * @param document The document to get the list formatter for.
+   * @param listType The preferred list type to use.
+   * @param options Formatting options.
+   * @param token A cancellation token.
+   * @returns the selected list formatter or `null` if the user cancelled the selection.
+   */
   private async queryListFormatter(
+    document: TextDocument,
     listType: keyof FormatterListTypes,
-    token: CancellationToken,
-    forcePretty?: boolean
+    { forcePretty, keepLanguage }: FormattingEditOptions = {},
+    token?: CancellationToken
   ): Promise<
     QueryFormatterResult | (Partial<QueryFormatterResult> & Required<Pick<QueryFormatterResult, "action">>) | null
   > {
-    const providers = { ...this.formatProviders, ...this.customFormatProviders };
-    const quickPick = window.createQuickPick();
-    quickPick.title =
-      "Select a formatter" +
-      (forcePretty !== undefined ? ` (Pretty print ${forcePretty ? "enabled" : "disabled"})` : "");
-    quickPick.items = this.getQuickPickItems(providers, listType);
-    quickPick.buttons = this.getQuickPickButton(listType, forcePretty);
-    quickPick.canSelectMany = false;
-    quickPick.ignoreFocusOut = true;
+    const formatProviders: Record<string, ListFormatProvider> = {
+      ...this.formatProviders,
+      ...this.customFormatProviders,
+    };
 
-    const selectedFormatter = await new Promise<QuickPickProviderItem | ListFormattingButton | undefined>((resolve) => {
-      const disposables = [
-        quickPick.onDidAccept(() => {
-          resolve(quickPick.selectedItems[0]);
-          disposables.forEach((disposable) => disposable.dispose());
-          quickPick.hide();
-        }),
-        quickPick.onDidTriggerButton((button: QuickInputButton) => {
-          resolve(button as ListFormattingButton);
-          disposables.forEach((disposable) => disposable.dispose());
-          quickPick.hide();
-        }),
-        quickPick.onDidHide(() => {
-          resolve(undefined);
-          disposables.forEach((disposable) => disposable.dispose());
-          quickPick.dispose();
-        }),
-      ];
-      quickPick.show();
-    });
+    const matchingFormatProvider = keepLanguage ? formatProviders[document.languageId] : null;
+    const selectedFormatter = matchingFormatProvider
+      ? { provider: matchingFormatProvider, languageId: document.languageId }
+      : await new Promise<QuickPickProviderItem | ListFormattingButton | undefined>((resolve) => {
+          const quickPick = window.createQuickPick();
+          quickPick.title =
+            "Select a formatter" +
+            (forcePretty !== undefined ? ` (Pretty print ${forcePretty ? "enabled" : "disabled"})` : "");
+          quickPick.items = this.getListFormatterQuickPickItems(formatProviders, listType, { forcePretty });
+          quickPick.buttons = this.getListFormatterQuickPickButton(listType, forcePretty);
+          quickPick.canSelectMany = false;
+          quickPick.ignoreFocusOut = true;
 
-    if (token.isCancellationRequested) return null;
+          const disposables = [
+            quickPick.onDidAccept(() => {
+              resolve(quickPick.selectedItems[0]);
+              disposables.forEach((disposable) => disposable.dispose());
+              quickPick.hide();
+            }),
+            quickPick.onDidTriggerButton((button: QuickInputButton) => {
+              resolve(button as ListFormattingButton);
+              disposables.forEach((disposable) => disposable.dispose());
+              quickPick.hide();
+            }),
+            quickPick.onDidHide(() => {
+              resolve(undefined);
+              disposables.forEach((disposable) => disposable.dispose());
+              quickPick.dispose();
+            }),
+          ];
+          quickPick.show();
+        });
+
+    if (token?.isCancellationRequested) return null;
     if (selectedFormatter instanceof ChangeDataProviderButton) return { action: "changeDataProvider" };
     if (selectedFormatter instanceof SimpleListButton)
-      return await this.queryListFormatter("simpleList", token, forcePretty);
+      return await this.queryListFormatter(document, "simpleList", { forcePretty }, token);
     if (selectedFormatter instanceof ObjectListButton)
-      return await this.queryListFormatter("objectList", token, forcePretty);
+      return await this.queryListFormatter(document, "objectList", { forcePretty }, token);
     if (selectedFormatter instanceof TogglePrettyButton)
-      return await this.queryListFormatter(listType, token, !forcePretty);
+      return await this.queryListFormatter(document, listType, { forcePretty }, token);
     if (!selectedFormatter || !selectedFormatter.provider) return null;
 
     const context = selectedFormatter.languageId ? { languageId: selectedFormatter.languageId } : undefined;
@@ -343,11 +420,21 @@ export class ListFormattingProvider {
     return { listType, pretty, indent, provider: selectedFormatter.provider };
   }
 
-  private getQuickPickItems(
+  /**
+   * Gets the quick pick items for the given list format providers.
+   *
+   * @param providers The list format providers to get the quick pick items for.
+   * @param listType The preferred list type to use.
+   * @param options Formatting options.
+   * @returns the quick pick items.
+   * @internal
+   */
+  private getListFormatterQuickPickItems(
     providers: Record<string, ListFormatProvider>,
     listType: keyof FormatterListTypes,
-    forcePretty?: boolean
+    { forcePretty }: FormattingEditOptions = {}
   ): QuickPickProviderItem[] {
+    // Group formatters by supported list type
     const groupedFormatters: Record<string, [string, ListFormatProvider][]> = Object.entries(providers).reduce(
       (grouped, formatter) => {
         const { options } = formatter[1];
@@ -393,7 +480,17 @@ export class ListFormattingProvider {
     return result;
   }
 
-  private getQuickPickButton(listType: keyof FormatterListTypes, pretty?: boolean): ListFormattingButton[] {
+  /**
+   * Gets the quick pick buttons for the given list format providers.
+   *
+   * @param listType The preferred list type to use.
+   * @param pretty Whether pretty printing is enabled.
+   * @returns the quick pick buttons.
+   */
+  private getListFormatterQuickPickButton(
+    listType: keyof FormatterListTypes,
+    pretty?: boolean
+  ): ListFormattingButton[] {
     const buttons: ListFormattingButton[] = [new TogglePrettyButton(pretty === undefined ? true : !pretty)];
 
     switch (listType) {

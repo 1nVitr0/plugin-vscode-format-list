@@ -1,9 +1,9 @@
 import { ExtensionContext, commands, workspace } from "vscode";
 import contributeCommands from "./contribute/commands";
-import { ListFormattingProvider } from "./providers/ListFormattingProvider";
+import { ListConversionProvider } from "./providers/ListConversionProvider";
 
 export function activate(context: ExtensionContext) {
-  const formattingProvider = new ListFormattingProvider();
+  const formattingProvider = new ListConversionProvider();
   context.subscriptions.push(...contributeCommands(formattingProvider));
   context.subscriptions.push(workspace.onDidChangeConfiguration((change) => {}));
 }

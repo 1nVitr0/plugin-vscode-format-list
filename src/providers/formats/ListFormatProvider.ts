@@ -13,7 +13,8 @@ import {
   FormatterListObjectItemOptions,
 } from "../../types/Formatter";
 import { ListData } from "../../types/List";
-import * as deepMerge from 'deepmerge';
+import * as deepMerge from "deepmerge";
+import { showFreeSoloQuickPick } from "../../input/freeSoloQuickPick";
 
 /**
  * List formatter
@@ -31,10 +32,13 @@ export default class ListFormatProvider {
     objectListProvider: ListFormatProvider | null = null,
     options: ExtendFormatterOptions = {}
   ): ListFormatProvider {
-    const mergedOptions: FormatterOptions = deepMerge({
-      simpleList: simpleListProvider ? simpleListProvider.options.simpleList : undefined,
-      objectList: objectListProvider ? objectListProvider.options.objectList : undefined,
-    }, options);
+    const mergedOptions: FormatterOptions = deepMerge(
+      {
+        simpleList: simpleListProvider ? simpleListProvider.options.simpleList : undefined,
+        objectList: objectListProvider ? objectListProvider.options.objectList : undefined,
+      },
+      options
+    );
 
     return new ListFormatProvider(name, mergedOptions, true);
   }
@@ -164,6 +168,13 @@ export default class ListFormatProvider {
     return _pretty > 0 ? lines.join("\n") : lines.join("");
   }
 
+  /**
+   * Query the user for set parameters, that do not have a default-only value
+   *
+   * @param type Type of the list to query parameters for
+   * @param token Cancellation token
+   * @returns Parameters as a key-value object
+   */
   public async queryParameters(
     type: "simpleList" | "objectList",
     token?: CancellationToken
@@ -175,45 +186,23 @@ export default class ListFormatProvider {
     for (const [key, param] of Object.entries(parameters)) {
       const { default: defaultValue, query } = param;
       if (query) {
-        const option = await new Promise<string | number | boolean | null>((resolve) => {
-          const entries: [string, string | number | boolean][] = query.options ? Object.entries(query.options) : [];
-          const keys = entries.map(([key]) => key);
-          const quickPick = window.createQuickPick<QuickPickItem & { value: string | number | boolean }>();
-          quickPick.ignoreFocusOut = true;
-          quickPick.items = entries.map(([key, value]) => ({ label: key, value, picked: value === defaultValue }));
-
-          quickPick.title = query.prompt;
-
-          quickPick.onDidChangeValue(() => {
-            // Inject user values into proposed values
-            if (!keys.includes(quickPick.value)) {
-              quickPick.items = [[quickPick.value, quickPick.value], ...entries].map(([key, value]) => ({
-                label: key,
-                value,
-                picked: value === quickPick.value,
-              }));
-            }
-          });
-
-          quickPick.onDidAccept(() => {
-            const selection = quickPick.activeItems[0];
-            resolve(selection.value);
-            quickPick.hide();
-          });
-          quickPick.onDidHide(() => {
-            resolve(null);
-            quickPick.dispose();
-          });
-          quickPick.show();
-
-          token?.onCancellationRequested(() => {
-            resolve(null);
-            quickPick.hide();
-          });
-        });
+        const entries: [string, string | number | boolean][] = query.options ? Object.entries(query.options) : [];
+        const option = await showFreeSoloQuickPick(
+          entries.map<QuickPickItem & { value: string | number | boolean }>(([key, value]) => ({
+            label: key,
+            value,
+            picked: value === defaultValue,
+          })),
+          {
+            ignoreFocusOut: true,
+            title: query.prompt,
+            createInputItem: (label) => ({ label, value: label }),
+          },
+          token
+        );
 
         if (token?.isCancellationRequested) return null;
-        else if (option !== null) result[key] = option;
+        else if (option !== null) result[key] = option.value;
         else return null; // User cancelled
       } else {
         result[key] = defaultValue ?? -1;
@@ -223,6 +212,17 @@ export default class ListFormatProvider {
     return result;
   }
 
+  /**
+   * Format a list of strings using the formatter options
+   *
+   * @param items string items
+   * @param pretty if true or >= level, separate items by newlines and indent
+   * @param indent number of spaces to indent
+   * @param level current level of pretty print
+   * @param options formatter options
+   * @param parameters parameters to inject into templates
+   * @returns
+   */
   private joinList(
     items: string[],
     pretty: number = 0,
@@ -252,10 +252,13 @@ export default class ListFormatProvider {
     lines.push(
       ...items.map(
         (item, index) =>
-          `${index === 0 || !delimitSameLine ? itemIndent : sameLineItemIndent}${this.templateString(index === 0 ? first : rest, {
-            ...parameters,
-            index,
-          })}${item}${
+          `${index === 0 || !delimitSameLine ? itemIndent : sameLineItemIndent}${this.templateString(
+            index === 0 ? first : rest,
+            {
+              ...parameters,
+              index,
+            }
+          )}${item}${
             delimitLastItem || index < items.length - 1
               ? this.templateString(delimiter ?? "", { ...parameters, index })
               : ""
@@ -274,6 +277,17 @@ export default class ListFormatProvider {
     else return lines.join("");
   }
 
+  /**
+   * Enclose key-value pairs based on the key and value enclosure options
+   * If noKeys is true, only the value will be enclosed
+   *
+   * @param key Key to enclose
+   * @param value Value to enclose
+   * @param options Key-value enclosure options
+   * @param spaced If true, add a space between the key and value
+   * @param parameters Parameters to inject into templates
+   * @returns Enclosed key-value pair
+   */
   private encloseKeyValue(
     key: string,
     value: string | number | boolean | null,
@@ -421,6 +435,16 @@ export default class ListFormatProvider {
     });
   }
 
+  /**
+   * Build header for object list
+   *
+   * @param columns selected columns
+   * @param pretty PIf truthy, separate items by newlines and indent
+   * @param indent Indentation level
+   * @param options Header options
+   * @param parameters Parameters to inject into templates
+   * @returns Formatted header
+   */
   private buildHeader(
     columns: string[],
     pretty: number = 0,

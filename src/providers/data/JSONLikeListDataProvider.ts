@@ -1,5 +1,5 @@
 import { CancellationToken, Selection, TextDocument } from "vscode";
-import { ListColumn, ListData, ListDataParams } from "../../types/List";
+import { ListColumn, ListData, ListDataContext } from "../../types/List";
 import { ListDataProvider } from "../../types/Providers";
 
 export default abstract class JSONLikeListDataProvider implements ListDataProvider {
@@ -41,7 +41,7 @@ export default abstract class JSONLikeListDataProvider implements ListDataProvid
   public async provideListData(
     document: TextDocument,
     selection: Selection,
-    { columns }: ListDataParams,
+    { columns }: ListDataContext,
     token: CancellationToken
   ) {
     const text = document.getText(selection);

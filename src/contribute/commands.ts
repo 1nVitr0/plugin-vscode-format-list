@@ -1,35 +1,39 @@
 import { commands } from "vscode";
-import { ListFormattingProvider } from "../providers/ListFormattingProvider";
+import { ListConversionProvider } from "../providers/ListConversionProvider";
 
-export default function contributeCommands(formattingProvider: ListFormattingProvider) {
+export default function contributeCommands(conversionProvider: ListConversionProvider) {
   return [
     commands.registerTextEditorCommand(
       "list-tools.formatSimpleList",
-      formattingProvider.provideSimpleListFormattingEdit.bind(formattingProvider, {})
+      conversionProvider.provideSimpleListFormattingEdit.bind(conversionProvider, {})
     ),
     commands.registerTextEditorCommand(
       "list-tools.formatObjectList",
-      formattingProvider.provideObjectListFormattingEdit.bind(formattingProvider, {})
+      conversionProvider.provideObjectListFormattingEdit.bind(conversionProvider, {})
     ),
     commands.registerTextEditorCommand(
       "list-tools.formatSimpleListPretty",
-      formattingProvider.provideSimpleListFormattingEdit.bind(formattingProvider, { forcePretty: true })
+      conversionProvider.provideSimpleListFormattingEdit.bind(conversionProvider, { forcePretty: true })
     ),
     commands.registerTextEditorCommand(
       "list-tools.formatObjectListPretty",
-      formattingProvider.provideObjectListFormattingEdit.bind(formattingProvider, { forcePretty: true })
+      conversionProvider.provideObjectListFormattingEdit.bind(conversionProvider, { forcePretty: true })
     ),
     commands.registerTextEditorCommand(
       "list-tools.formatSimpleListUgly",
-      formattingProvider.provideSimpleListFormattingEdit.bind(formattingProvider, { forcePretty: false })
+      conversionProvider.provideSimpleListFormattingEdit.bind(conversionProvider, { forcePretty: false })
     ),
     commands.registerTextEditorCommand(
       "list-tools.formatObjectListUgly",
-      formattingProvider.provideObjectListFormattingEdit.bind(formattingProvider, { forcePretty: false })
+      conversionProvider.provideObjectListFormattingEdit.bind(conversionProvider, { forcePretty: false })
+    ),
+    commands.registerTextEditorCommand(
+      "list-tools.extractColumns",
+      conversionProvider.provideObjectListFormattingEdit.bind(conversionProvider, { keepLanguage: true })
     ),
     commands.registerTextEditorCommand(
       "list-tools.repeatLastAction",
-      formattingProvider.provideRepeatFormattingEdit.bind(formattingProvider)
+      conversionProvider.provideRepeatFormattingEdit.bind(conversionProvider)
     ),
   ];
 }

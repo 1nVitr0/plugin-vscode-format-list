@@ -40,7 +40,9 @@ export const formatSql: FormatterOptions = {
           prompt: "Ignore duplicates?",
           placeholder: "Ignore",
           options: {
+            // eslint-disable-next-line @typescript-eslint/naming-convention
             Yes: " IGNORE ",
+            // eslint-disable-next-line @typescript-eslint/naming-convention
             No: " ",
           },
         },
