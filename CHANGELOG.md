@@ -1,3 +1,15 @@
+# [1.4.0](https://github.com/1nVitr0/plugin-vscode-format-list/compare/v1.3.2...v1.4.0) (2023-10-14)
+
+
+### Bug Fixes
+
+* allow custom separators for xml ([5facb90](https://github.com/1nVitr0/plugin-vscode-format-list/commit/5facb900792b2017423da290069f2b3b588915df))
+
+
+### Features
+
+* add support for xml data ([59285a0](https://github.com/1nVitr0/plugin-vscode-format-list/commit/59285a01f089bf5b51152665739d5781ead0256d))
+
 ## [1.3.2](https://github.com/1nVitr0/plugin-vscode-format-list/compare/v1.3.1...v1.3.2) (2023-10-08)
 
 
