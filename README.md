@@ -72,14 +72,24 @@ The pretty printing level can be set on a per-language basis by using vscode's l
 The level matches the indentation level for most languages, specifying `-1` equates to an infinite depth:
 
 ```json
-[ // This would be level 0
-  { // level 1
-    "city": "Tokyo", // Level 2
+// "list-tools.prettyPrint": -1
+// equivalent to "list-tools.prettyPrint": 2
+[
+  {
+    "city": "Tokyo",
     "country": "Japan",
     "population": 37732000,
   }
 ]
-``` 
+
+// "list-tools.prettyPrint": 1
+[
+  { "city": "Tokyo", "country": "Japan", "population": 37732000 }
+]
+
+// "list-tools.prettyPrint": 0
+[{"city":"Tokyo","country":"Japan","population":37732000}]
+```
 
 ### Adding Custom Formats
 
