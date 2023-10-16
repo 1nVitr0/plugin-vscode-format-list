@@ -15,7 +15,7 @@ export const formatSql: FormatterOptions = {
         start: "INSERT${ignore}INTO ${tableName} (",
         end: ")",
       },
-      keyEnclosure: [{ test: "/.*/", enclosure: "`" }],
+      keyEnclosure: [{ id: "quote-columns", test: "/.*/", enclosure: "`" }],
       indentItems: -1,
     },
     itemFormat: {

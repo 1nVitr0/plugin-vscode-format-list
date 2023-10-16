@@ -16,10 +16,14 @@ export interface FormatterBoundaryEnclosure {
 
 /** Enclosure options for key-like items */
 export interface FormatterRegexEnclosure {
+  /** Unique id, used to identify the enclosure and override it in extending formats */
+  id: string;
   /** Regular expression, that tests if the key must be enclosed */
   test: RegExp | `/${string}/${string}`;
   /** Inverse the test */
   inverse?: boolean;
+  /** If true, the enclosure is disabled, used in extending formats to disabled enclosures */
+  disabled?: boolean;
   /** Enclosure boundaries or char, if char, it's used for both start and end */
   enclosure: FormatterBoundaryEnclosure | string;
   /** Replacement string, indexes like `$1` can be used */
@@ -205,6 +209,7 @@ export type ExtendableFormatterListOptions<T extends FormatterSimpleListOptions>
 } & PartialDeep<T>;
 
 export interface ExtendFormatterOptions extends PartialDeep<FormatterOptions> {
+  name: string;
   simpleList?: FormatterSimpleListOptions | ExtendableFormatterListOptions<FormatterSimpleListOptions>;
   objectList?: FormatterObjectListOptions | ExtendableFormatterListOptions<FormatterObjectListOptions>;
 }

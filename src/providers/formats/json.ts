@@ -14,7 +14,7 @@ export const formatJson: FormatterOptions = {
     itemFormat: {
       enclosure: { start: "{", end: "}" },
       delimiter: ",",
-      keyEnclosure: [{ test: "/.*/", enclosure: '"' }],
+      keyEnclosure: [{ id: "quote-keys", test: "/.*/", enclosure: '"' }],
       valueEnclosure: { string: '"' },
       assignmentOperator: ":",
       assignmentOperatorSpaced: ": ",

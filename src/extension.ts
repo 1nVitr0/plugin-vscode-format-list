@@ -5,7 +5,14 @@ import { ListConversionProvider } from "./providers/ListConversionProvider";
 export function activate(context: ExtensionContext) {
   const formattingProvider = new ListConversionProvider();
   context.subscriptions.push(...contributeCommands(formattingProvider));
-  context.subscriptions.push(workspace.onDidChangeConfiguration((change) => {}));
+  context.subscriptions.push(
+    workspace.onDidChangeConfiguration((change) => {
+      if (change.affectsConfiguration("list-tools")) {
+        deactivate(context);
+        activate(context);
+      }
+    })
+  );
 }
 
 function deactivate(context: ExtensionContext) {

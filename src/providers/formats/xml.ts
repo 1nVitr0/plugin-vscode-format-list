@@ -28,6 +28,7 @@ export const formatXml: FormatterOptions = {
       },
       keyEnclosure: [
         {
+          id: "bracket-keys",
           test: "/.*/",
           enclosure: {
             start: "<",

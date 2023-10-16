@@ -14,7 +14,7 @@ export const formatC: FormatterOptions = {
     itemFormat: {
       enclosure: { start: "{", end: "}" },
       delimiter: ",",
-      keyEnclosure: [{ test: "/.*/", enclosure: { start: ".", end: "" } }],
+      keyEnclosure: [{ id: "prefix-dot", test: "/.*/", enclosure: { start: ".", end: "" } }],
       valueEnclosure: { string: '"' },
       assignmentOperator: "=",
       assignmentOperatorSpaced: " = ",

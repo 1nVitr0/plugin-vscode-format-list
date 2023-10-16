@@ -54,7 +54,9 @@ const csvSimpleListOptions: FormatterSimpleListOptions = {
       start: "",
       end: "\n",
     },
-    itemEnclosure: [{ test: "/\\d+(\\.\\d+)?|\\.\\d+|true|false/", inverse: true, enclosure: '"' }],
+    itemEnclosure: [
+      { id: "quote-strings", test: "/\\d+(\\.\\d+)?|\\.\\d+|true|false/", inverse: true, enclosure: '"' },
+    ],
     delimitSameLine: 1,
   },
 };

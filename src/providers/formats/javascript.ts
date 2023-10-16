@@ -15,7 +15,7 @@ export const formatJavaScript: FormatterOptions = {
     itemFormat: {
       enclosure: { start: "{", end: "}" },
       delimiter: ",",
-      keyEnclosure: [{ test: "/^([^A-Za-z0-9_$]*|^[^0-9]*)$/", enclosure: '"' }],
+      keyEnclosure: [{ id: "quote-strings", test: "/^([^A-Za-z0-9_$]*|^[^0-9]*)$/", enclosure: '"' }],
       valueEnclosure: { string: '"' },
       assignmentOperator: ":",
       assignmentOperatorSpaced: ": ",

@@ -30,17 +30,34 @@ export default class ListFormatProvider {
     name: string,
     simpleListProvider: ListFormatProvider | null = null,
     objectListProvider: ListFormatProvider | null = null,
-    options: ExtendFormatterOptions = {}
+    options: ExtendFormatterOptions = { name }
   ): ListFormatProvider {
     const mergedOptions: FormatterOptions = deepMerge(
       {
         simpleList: simpleListProvider ? simpleListProvider.options.simpleList : undefined,
         objectList: objectListProvider ? objectListProvider.options.objectList : undefined,
       },
-      options
+      options,
+      {
+        // Merge formatter regex enclosures by their id
+        arrayMerge: (target, source) => {
+          let hasIds = true;
+          const generateLookup = (lookup: Record<string, FormatterRegexEnclosure>, item: FormatterRegexEnclosure) => {
+            if (!item.id) hasIds = false;
+            lookup[item.id] = item;
+            return lookup;
+          };
+          const sourceLookup = source.reduce(generateLookup, {});
+          const targetLookup = target.reduce(generateLookup, {});
+
+          if (hasIds) return Object.values({ ...targetLookup, ...sourceLookup });
+          else return target;
+        },
+        clone: true,
+      }
     );
 
-    return new ListFormatProvider(name, mergedOptions, true);
+    return new ListFormatProvider(options.name, mergedOptions, true);
   }
 
   /**
@@ -368,7 +385,9 @@ export default class ListFormatProvider {
     regexEnclosure: FormatterRegexEnclosure[] = [],
     parameters: Record<string, string | number | boolean> = {}
   ): string {
-    for (const keyEnclosureOption of regexEnclosure) {
+    const activeEnclosures = regexEnclosure.filter((enclosure) => !enclosure.disabled);
+
+    for (const keyEnclosureOption of activeEnclosures) {
       let { test, inverse, enclosure, replace } = keyEnclosureOption;
       const { start, end } = typeof enclosure === "string" ? { start: enclosure, end: enclosure } : enclosure;
       const regex = typeof test === "string" ? new RegExp(test.replace(/^\/(.*)\/$/, "$1")) : test;
