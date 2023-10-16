@@ -1,3 +1,12 @@
+## [1.4.1](https://github.com/1nVitr0/plugin-vscode-format-list/compare/v1.4.0...v1.4.1) (2023-10-16)
+
+
+### Bug Fixes
+
+* allow overriding key escape regexps ([31dfc74](https://github.com/1nVitr0/plugin-vscode-format-list/commit/31dfc7461a88c58da8fc6200fff862579263ccf8))
+* fix toggle pretty print button ([b17ffed](https://github.com/1nVitr0/plugin-vscode-format-list/commit/b17ffed95be851a133e0733eaaf95c98257a7bac))
+* make pretty printing langauge-overridable ([c9c110d](https://github.com/1nVitr0/plugin-vscode-format-list/commit/c9c110dfb143a315e5f9bc0c6f49bd5c5deaa898))
+
 # [1.4.0](https://github.com/1nVitr0/plugin-vscode-format-list/compare/v1.3.2...v1.4.0) (2023-10-14)
 
 
