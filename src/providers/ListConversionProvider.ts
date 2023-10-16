@@ -71,14 +71,22 @@ export class ListConversionProvider {
   }
 
   public constructor() {
+    const configuration = workspace.getConfiguration("list-tools");
+
     this.listDataProviders = listDataProviders;
     this.formatProviders = listFormatProviders;
-    this.customFormatProviders = Object.entries(
-      workspace.getConfiguration("list-tools.additionalFormats") ?? {}
-    ).reduce<Record<string, ListFormatProvider>>((providers, [name, options]) => {
+    this.customFormatProviders = Object.entries(configuration?.get("additionalFormats") ?? {}).reduce<
+      Record<string, ListFormatProvider>
+    >((providers, [name, options]) => {
       const { simpleList, objectList } = options;
-      const simpleListProvider = simpleList && "base" in simpleList ? providers[simpleList.base] : null;
-      const objectListProvider = objectList && "base" in objectList ? providers[objectList.base] : null;
+      const simpleListProvider =
+        simpleList && "base" in simpleList
+          ? listFormatProviders[simpleList.base as DefaultFormatterLanguages] ?? providers[simpleList.base]
+          : null;
+      const objectListProvider =
+        objectList && "base" in objectList
+          ? listFormatProviders[objectList.base as DefaultFormatterLanguages] ?? providers[objectList.base]
+          : null;
 
       providers[name] = ListFormatProvider.extend(name, simpleListProvider, objectListProvider, options);
       return providers;
@@ -403,7 +411,7 @@ export class ListConversionProvider {
     if (selectedFormatter instanceof ObjectListButton)
       return await this.queryListFormatter(document, "objectList", { forcePretty }, token);
     if (selectedFormatter instanceof TogglePrettyButton)
-      return await this.queryListFormatter(document, listType, { forcePretty }, token);
+      return await this.queryListFormatter(document, listType, { forcePretty: !forcePretty }, token);
     if (!selectedFormatter || !selectedFormatter.provider) return null;
 
     const context = selectedFormatter.languageId ? { languageId: selectedFormatter.languageId } : undefined;
@@ -452,10 +460,12 @@ export class ListConversionProvider {
 
         return grouped;
       },
-      {} as Record<string, [string, ListFormatProvider][]>
+      {} as Record<keyof FormatterListTypes, [string, ListFormatProvider][]>
     );
 
-    const itemGroups = Object.entries(groupedFormatters).map(([label, formatters]) => {
+    const itemGroups = (
+      Object.entries(groupedFormatters) as [keyof FormatterListTypes, [string, ListFormatProvider][]][]
+    ).map(([type, formatters]) => {
       const items = formatters.map<QuickPickProviderItem>(([name, provider]) => ({
         label:
           (forcePretty !== undefined && !provider.supportsPretty() ? "$(bracket-error) " : "") + provider.custom
@@ -464,8 +474,10 @@ export class ListConversionProvider {
         languageId: name,
         provider,
         detail: provider.options[listType]?.example,
-        description: forcePretty !== undefined && provider.supportsPretty() ? "Doesn't support pretty printing" : "",
+        description: forcePretty !== undefined && !provider.supportsPretty() ? "Doesn't support pretty printing" : "",
       }));
+
+      const label = type === "objectList" ? "Object list" : type === "simpleList" ? "Simple list" : type;
 
       return { label, items };
     });
