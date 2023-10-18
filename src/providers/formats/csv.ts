@@ -8,7 +8,8 @@ export const csvParameters: Record<string, FormatterParameter> = {
     default: ",",
     query: {
       prompt: "Delimiter",
-      placeholder: "Enter delimiter",
+      placeholder: "Select a delimiter",
+      customInputLabel: 'Custom delimiter: "{input}"',
       options: {
         // eslint-disable-next-line @typescript-eslint/naming-convention
         ", (comma)": ",",
@@ -29,7 +30,8 @@ export const csvParameters: Record<string, FormatterParameter> = {
     default: '"',
     query: {
       prompt: "Enclosure",
-      placeholder: "Enter enclosure",
+      placeholder: "Select an enclosure",
+      customInputLabel: 'Custom enclosure: "{input}"',
       options: {
         // eslint-disable-next-line @typescript-eslint/naming-convention
         '" (double quote)': '"',
@@ -38,7 +40,7 @@ export const csvParameters: Record<string, FormatterParameter> = {
         // eslint-disable-next-line @typescript-eslint/naming-convention
         "` (backtick)": "`",
         // eslint-disable-next-line @typescript-eslint/naming-convention
-        "none (empty string)": "",
+        None: "",
       },
       allowInput: true,
     },
@@ -82,9 +84,7 @@ export const formatCsvCustom: FormatterOptions = deepMerge(formatCsvDefault, {
   simpleList: {
     header: {
       delimiter: "${delimiter}",
-      keyEnclosure: [
-        { test: "/\\d+(\\.\\d+)?|\\.\\d+|true|false/", inverse: true, enclosure: "${enclosure}" },
-      ],
+      keyEnclosure: [{ test: "/\\d+(\\.\\d+)?|\\.\\d+|true|false/", inverse: true, enclosure: "${enclosure}" }],
     },
     parameters: csvParameters,
   },
@@ -93,13 +93,11 @@ export const formatCsvCustom: FormatterOptions = deepMerge(formatCsvDefault, {
       delimiter: "${delimiter}",
       valueEnclosure: {
         string: "${enclosure}",
-      }
+      },
     },
     header: {
       delimiter: "${delimiter}",
-      keyEnclosure: [
-        { test: "/\\d+(\\.\\d+)?|\\.\\d+|true|false/", inverse: true, enclosure: "${enclosure}" },
-      ],
+      keyEnclosure: [{ test: "/\\d+(\\.\\d+)?|\\.\\d+|true|false/", inverse: true, enclosure: "${enclosure}" }],
     },
     parameters: csvParameters,
   },

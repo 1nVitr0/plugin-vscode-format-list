@@ -9,6 +9,7 @@ import {
   TextEditor,
   TextEditorEdit,
   commands,
+  l10n,
   window,
 } from "vscode";
 import { ListDataProvider } from "../types/Providers";
@@ -169,7 +170,7 @@ export class ListConversionProvider {
       (await this.getListData(document, selection, token, dataProvider, dataParameters)) ?? {};
 
     if (!listData || !columns || selectedColumns?.some((column) => !columns.some((col) => col.name === column))) {
-      window.showErrorMessage("Not all columns are available in the current selection");
+      window.showErrorMessage(l10n.t("Not all columns are available in the current selection"));
       return;
     }
 
@@ -277,7 +278,7 @@ export class ListConversionProvider {
         ? await this.queryListDataProvider(token)
         : this.listDataProviders[document.languageId] ?? null;
     if (!provider) {
-      window.showErrorMessage(`List formatting is not supported for ${document.languageId} files`);
+      window.showErrorMessage(l10n.t("List formatting is not supported for {0} files", document.languageId));
       return;
     }
 
@@ -303,8 +304,8 @@ export class ListConversionProvider {
       Object.entries(this.listDataProviders).map(([label, provider]) => ({ label, provider })),
       {
         ignoreFocusOut: true,
-        title: "Data format could not be determined automatically",
-        placeHolder: "Select a data provider",
+        title: l10n.t("Data format could not be determined automatically"),
+        placeHolder: l10n.t("Select a data provider"),
       }
     );
 
@@ -323,7 +324,7 @@ export class ListConversionProvider {
   private async querySingleColumn(columns: { name: string; example?: string }[], token: CancellationToken) {
     const selectedColumns = await window.showQuickPick(
       columns.map((column) => ({ label: column.name, description: column.example })),
-      { placeHolder: "Select column", ignoreFocusOut: true }
+      { placeHolder: l10n.t("Select column"), ignoreFocusOut: true }
     );
 
     if (!selectedColumns || token.isCancellationRequested) return null;
@@ -341,7 +342,7 @@ export class ListConversionProvider {
   private async queryMultipleColumns(columns: { name: string; example?: string }[], token: CancellationToken) {
     const selectedColumns = await window.showQuickPick(
       columns.map((column) => ({ label: column.name, description: column.example })),
-      { canPickMany: true, ignoreFocusOut: true, placeHolder: "Select columns to include" }
+      { canPickMany: true, ignoreFocusOut: true, placeHolder: l10n.t("Select columns to include") }
     );
 
     if (!selectedColumns || token.isCancellationRequested) return null;
@@ -377,8 +378,9 @@ export class ListConversionProvider {
       : await new Promise<QuickPickProviderItem | ListFormattingButton | undefined>((resolve) => {
           const quickPick = window.createQuickPick();
           quickPick.title =
-            "Select a formatter" +
-            (forcePretty !== undefined ? ` (Pretty print ${forcePretty ? "enabled" : "disabled"})` : "");
+            l10n.t("Select an output format") + forcePretty !== undefined
+              ? ` (${forcePretty ? l10n.t("Pretty print enabled") : l10n.t("Pretty print disabled")})`
+              : "";
           quickPick.items = this.getListFormatterQuickPickItems(formatProviders, listType, { forcePretty });
           quickPick.buttons = this.getListFormatterQuickPickButton(listType, forcePretty);
           quickPick.canSelectMany = false;
@@ -474,11 +476,15 @@ export class ListConversionProvider {
         languageId: name,
         provider,
         detail: provider.options[listType]?.example,
-        description: forcePretty !== undefined && !provider.supportsPretty() ? "Doesn't support pretty printing" : "",
+        description:
+          forcePretty !== undefined && !provider.supportsPretty()
+            ? l10n.t("Format does not support pretty printing")
+            : "",
       }));
 
-      const label = type === "objectList" ? "Object list" : type === "simpleList" ? "Simple list" : type;
-
+      const label =
+        type === "objectList" ? l10n.t("Object list") : type === "simpleList" ? l10n.t("Simple list") : type;
+      
       return { label, items };
     });
 

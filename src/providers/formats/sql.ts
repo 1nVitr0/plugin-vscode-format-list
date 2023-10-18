@@ -38,7 +38,7 @@ export const formatSql: FormatterOptions = {
         default: "",
         query: {
           prompt: "Ignore duplicates?",
-          placeholder: "Ignore",
+          placeholder: "IGNORE",
           options: {
             // eslint-disable-next-line @typescript-eslint/naming-convention
             Yes: " IGNORE ",
@@ -52,7 +52,7 @@ export const formatSql: FormatterOptions = {
         default: "t",
         query: {
           prompt: "Table name",
-          placeholder: "Table name",
+          placeholder: "`table`",
           allowInput: true,
         },
       },
