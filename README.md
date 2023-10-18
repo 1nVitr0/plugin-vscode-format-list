@@ -129,3 +129,11 @@ It is possible to add your own formats using the internal descriptors used to ge
 - data sources and programming languages must be in a valid format
 - extraction from programming languages only works in cases with simple key-value pairs
 - converting may lead to invalid syntax when special characters are involved
+
+## Contributing
+
+Feel free to open pull request or issues with additional formats.
+Have a look through [`src/providers/formats`](src/providers/formats) for some examples.
+
+This extension also supports localization through vscodes [l10n](https://github.com/microsoft/vscode-l10n), so l10n bundles are always welcome.
+All bundles included in [`l10n/`](l10n/) will always be complete, so any of them can be used as a template.
