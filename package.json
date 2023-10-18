@@ -37,60 +37,61 @@
     "onCommand:list-tools.extractColumns"
   ],
   "main": "./dist/extension.js",
+  "l10n": "./l10n",
   "contributes": {
     "commands": [
       {
         "command": "list-tools.formatSimpleList",
-        "title": "Convert single column to simple list",
+        "title": "%list-tools.commands.formatSimpleList%",
         "icon": "symbol-array",
         "category": "List Tools",
         "enablement": "editorHasSelection"
       },
       {
         "command": "list-tools.formatObjectList",
-        "title": "Convert multiple columns to object list",
+        "title": "%list-tools.commands.formatObjectList%",
         "icon": "symbol-object",
         "category": "List Tools",
         "enablement": "editorHasSelection"
       },
       {
         "command": "list-tools.formatSimpleListPretty",
-        "title": "Convert single column to simple list (pretty print)",
+        "title": "%list-tools.commands.formatSimpleListPretty%",
         "icon": "symbol-array",
         "category": "List Tools",
         "enablement": "editorHasSelection"
       },
       {
         "command": "list-tools.formatObjectListPretty",
-        "title": "Convert multiple columns to object list (pretty print)",
+        "title": "%list-tools.commands.formatObjectListPretty%",
         "icon": "symbol-object",
         "category": "List Tools",
         "enablement": "editorHasSelection"
       },
       {
         "command": "list-tools.formatSimpleListUgly",
-        "title": "Convert single column to simple list (without pretty print)",
+        "title": "%list-tools.commands.formatSimpleListUgly%",
         "icon": "symbol-array",
         "category": "List Tools",
         "enablement": "editorHasSelection"
       },
       {
         "command": "list-tools.formatObjectListUgly",
-        "title": "Convert multiple columns to object list (without pretty print)",
+        "title": "%list-tools.commands.formatObjectListUgly%",
         "icon": "symbol-object",
         "category": "List Tools",
         "enablement": "editorHasSelection"
       },
       {
         "command": "list-tools.extractColumns",
-        "title": "Extract columns from object list",
+        "title": "%list-tools.commands.extractColumns%",
         "icon": "symbol-object",
         "category": "List Tools",
         "enablement": "editorHasSelection"
       },
       {
         "command": "list-tools.repeatLastAction",
-        "title": "Repeat last action",
+        "title": "%list-tools.commands.repeatLastAction%",
         "icon": "timeline-open",
         "category": "List Tools",
         "enablement": "editorHasSelection && list-tools.lastAction"
