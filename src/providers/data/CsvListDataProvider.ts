@@ -1,4 +1,4 @@
-import { Selection, TextDocument, CancellationToken, window } from "vscode";
+import { Selection, TextDocument, CancellationToken, window, l10n } from "vscode";
 import { ListColumn, ListData, ListDataContext } from "../../types/List";
 import { ListDataProvider } from "../../types/Providers";
 import { showFreeSoloQuickPick } from "../../input/freeSoloQuickPick";
@@ -70,23 +70,31 @@ export default class CsvListDataProvider implements ListDataProvider<CsvParamete
 
   protected async queryOptions(token: CancellationToken): Promise<CsvParameters | null> {
     const delimiter = await showFreeSoloQuickPick(
-      Object.keys(this.delimiters),
-      { title: this.quickPickTitle, placeholder: "Select a delimiter", ignoreFocusOut: true },
+      Object.entries(this.delimiters).map(([key, value]) => ({ label: l10n.t(key), value })),
+      {
+        title: this.quickPickTitle,
+        placeholder: l10n.t("Select a delimiter"),
+        ignoreFocusOut: true,
+        createInputItem: (input) => ({ label: l10n.t('Custom delimiter: "{input}"', { input }), value: input }),
+      },
       token
     );
 
     if (!delimiter || token.isCancellationRequested) return null;
 
-    const hasHeader = await window.showQuickPick(["Yes", "No"], {
-      title: this.quickPickTitle,
-      placeHolder: "Does the CSV have a header?",
-    });
+    const hasHeader = await window.showQuickPick(
+      [
+        { label: l10n.t("Yes"), value: true },
+        { label: l10n.t("No"), value: false },
+      ],
+      { title: this.quickPickTitle, placeHolder: l10n.t("Does the CSV have a header?") }
+    );
 
     if (hasHeader === undefined || token.isCancellationRequested) return null;
 
     return {
-      delimiter: this.delimiters[delimiter as keyof typeof this.delimiters] ?? delimiter,
-      hasHeader: hasHeader === "Yes",
+      delimiter: delimiter.value,
+      hasHeader: hasHeader.value,
     };
   }
 

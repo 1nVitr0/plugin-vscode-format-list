@@ -1,5 +1,5 @@
 import { SetOptional, Writable, WritableKeysOf } from "type-fest";
-import { CancellationToken, QuickPick, QuickPickItem, QuickPickOptions, window } from "vscode";
+import { CancellationToken, QuickPick, QuickPickItem, QuickPickOptions, l10n, window } from "vscode";
 
 type QuickPickProperties<I extends QuickPickItem | string> = Pick<
   QuickPick<I extends string ? QuickPickItem : I>,
@@ -78,10 +78,13 @@ export async function showFreeSoloQuickPick<I extends QuickPickItem | string>(
 
     quickPick.onDidChangeValue(() => {
       // Inject user values into proposed values
-      if (!labels.includes(quickPick.value)) {
-        const injectedItem = (options.createInputItem?.(quickPick.value) ?? {
-          label: quickPick.value,
-        }) as I extends string ? QuickPickItem : I;
+      const { value } = quickPick;
+      if (!value) {
+        quickPick.items = extendedItems;
+      } else if (!labels.includes(value)) {
+        const injectedItem = (options.createInputItem?.(value) ?? { label: value }) as I extends string
+          ? QuickPickItem
+          : I;
         injectedItem.picked = !options.canSelectMany;
         quickPick.items = [injectedItem, ...extendedItems];
       }

@@ -87,6 +87,8 @@ interface FormatterParameterBase<T extends string | number | boolean> {
     {
       /** If true, the user can enter any value, otherwise the user can only select from the given options */
       allowInput?: boolean;
+      /** Label fused for a custom input, `{input}` can be used to display input */
+      customInputLabel?: string;
       /** Prompt shown to the user */
       prompt: string;
       /** Placeholder shown in the input field */

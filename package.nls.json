@@ -1,0 +1,10 @@
+{
+  "list-tools.commands.formatSimpleList": "Convert single column to simple list",
+  "list-tools.commands.formatObjectList": "Convert multiple columns to object list",
+  "list-tools.commands.formatSimpleListPretty": "Convert single column to simple list (pretty print)",
+  "list-tools.commands.formatObjectListPretty": "Convert multiple columns to object list (pretty print)",
+  "list-tools.commands.formatSimpleListUgly": "Convert single column to simple list (without pretty print)",
+  "list-tools.commands.formatObjectListUgly": "Convert multiple columns to object list (without pretty print)",
+  "list-tools.commands.extractColumns": "Extract columns from object list",
+  "list-tools.commands.repeatLastAction": "Repeat last action"
+}

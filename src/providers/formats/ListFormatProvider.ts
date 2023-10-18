@@ -1,4 +1,4 @@
-import { CancellationToken, QuickPickItem, window } from "vscode";
+import { CancellationToken, QuickPickItem, l10n, window } from "vscode";
 import {
   ExtendFormatterOptions,
   FormatterListHeaderOptions,
@@ -11,6 +11,7 @@ import {
   FormatterValueEscape,
   FormatterEnclosure,
   FormatterListObjectItemOptions,
+  FormatterParameter,
 } from "../../types/Formatter";
 import { ListData } from "../../types/List";
 import * as deepMerge from "deepmerge";
@@ -203,17 +204,22 @@ export default class ListFormatProvider {
     for (const [key, param] of Object.entries(parameters)) {
       const { default: defaultValue, query } = param;
       if (query) {
-        const entries: [string, string | number | boolean][] = query.options ? Object.entries(query.options) : [];
         const option = await showFreeSoloQuickPick(
-          entries.map<QuickPickItem & { value: string | number | boolean }>(([key, value]) => ({
-            label: key,
-            value,
-            picked: value === defaultValue,
-          })),
+          Object.entries(query.options ?? {}).map<QuickPickItem & { value: string | number | boolean }>(
+            ([key, value]) => ({
+              label: l10n.t(key),
+              value,
+              picked: value === defaultValue,
+            })
+          ),
           {
             ignoreFocusOut: true,
-            title: query.prompt,
-            createInputItem: (label) => ({ label, value: label }),
+            title: l10n.t(query.prompt),
+            placeholder: query.placeholder && l10n.t(query.placeholder),
+            createInputItem: (input) => ({
+              label: query.customInputLabel ? l10n.t(query.customInputLabel, { input }) : input,
+              value: input,
+            }),
           },
           token
         );
