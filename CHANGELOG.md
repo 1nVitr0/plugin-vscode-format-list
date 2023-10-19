@@ -1,3 +1,15 @@
+# [1.5.0](https://github.com/1nVitr0/plugin-vscode-format-list/compare/v1.4.1...v1.5.0) (2023-10-19)
+
+
+### Bug Fixes
+
+* add l10n to query parameters ([fd9f526](https://github.com/1nVitr0/plugin-vscode-format-list/commit/fd9f52664bda57d95d00ef21ebccf0858f5f5863))
+
+
+### Features
+
+* add l10n support ([1dfbbc3](https://github.com/1nVitr0/plugin-vscode-format-list/commit/1dfbbc3bd7dc9b82fe314b40d21c51dd08f06228))
+
 ## [1.4.1](https://github.com/1nVitr0/plugin-vscode-format-list/compare/v1.4.0...v1.4.1) (2023-10-16)
 
 
