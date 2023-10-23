@@ -9,7 +9,7 @@ import { formatJson } from "./json";
 import { formatTextList } from "./list";
 import { formatMarkdown } from "./md";
 import { formatPhp } from "./php";
-import { formatSql } from "./sql";
+import { formatSqlInsert, formatSqlUpdate } from "./sql";
 import { formatXml } from "./xml";
 import { formatYaml } from "./yaml";
 
@@ -20,7 +20,8 @@ export const listFormatProviders: Record<DefaultFormatterLanguages, ListFormatPr
   yaml: new ListFormatProvider("YAML", formatYaml),
   xml: new ListFormatProvider("XML", formatXml),
   textList: new ListFormatProvider("Separated list", formatTextList),
-  sql: new ListFormatProvider("SQL", formatSql),
+  sql: new ListFormatProvider("SQL", formatSqlInsert),
+  sqlUpdate: new ListFormatProvider("SQL Update", formatSqlUpdate),
   markdown: new ListFormatProvider("Markdown", formatMarkdown),
   javascript: new ListFormatProvider("JavaScript", formatJavaScript),
   php: new ListFormatProvider("PHP Array", formatPhp),

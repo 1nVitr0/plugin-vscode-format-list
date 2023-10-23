@@ -12,8 +12,9 @@ import {
   FormatterEnclosure,
   FormatterListObjectItemOptions,
   FormatterParameter,
+  ParameterList,
 } from "../../types/Formatter";
-import { ListData } from "../../types/List";
+import { ListColumn, ListData } from "../../types/List";
 import * as deepMerge from "deepmerge";
 import { showFreeSoloQuickPick } from "../../input/freeSoloQuickPick";
 
@@ -124,20 +125,26 @@ export default class ListFormatProvider {
     column: string,
     pretty: number = 0,
     indent: number = 0,
-    parameters?: Record<string, string | number | boolean>
+    parameters?: ParameterList
   ): Promise<string | null> {
     if (!this.options.simpleList) return null;
 
     const { simpleList, pretty: maxPretty, indent: overrideIndent } = this.options;
     const { valueEnclosure, valueAlias, valueEscape } = simpleList;
-    const _parameters = parameters ?? (await this.queryParameters("simpleList"));
+    const _parameters = parameters ?? (await this.queryParameters("simpleList", [column]));
     const _pretty = Math.min(pretty, maxPretty ?? pretty);
     const _indent = overrideIndent ?? indent;
 
     if (!_parameters) return null;
 
     const mappedItems = items.map((item) =>
-      this.encloseValue(item[column], valueAlias, valueEnclosure, valueEscape, _parameters)
+      this.encloseValue(item[column], valueAlias, valueEnclosure, valueEscape, {
+        ..._parameters,
+        ..._parameters,
+        item,
+        key: column,
+        value: item[column],
+      })
     );
 
     return this.joinList(mappedItems, _pretty, _indent, 0, simpleList, _parameters);
@@ -157,13 +164,13 @@ export default class ListFormatProvider {
     columns: string[],
     pretty: number = 0,
     indent: number = 0,
-    parameters?: Record<string, string | number | boolean>
+    parameters?: ParameterList
   ): Promise<string | null> {
     if (!this.options.objectList) return null;
 
     const { objectList, pretty: maxPretty, indent: overrideIndent } = this.options;
     const { itemFormat, header } = objectList;
-    const _parameters = parameters ?? (await this.queryParameters("objectList"));
+    const _parameters = parameters ?? (await this.queryParameters("objectList", columns));
     const _pretty = Math.min(pretty, maxPretty ?? pretty);
     const _indent = overrideIndent ?? indent;
 
@@ -171,10 +178,15 @@ export default class ListFormatProvider {
 
     const mappedItems = items.map((item) => {
       const mappedItem = columns.map((column) =>
-        this.encloseKeyValue(column, item[column], itemFormat, _pretty > 0, _parameters)
+        this.encloseKeyValue(column, item[column], itemFormat, _pretty > 0, {
+          ..._parameters,
+          item,
+          key: column,
+          value: item[column],
+        })
       );
 
-      return this.joinList(mappedItem, _pretty, _indent, 1, itemFormat, _parameters);
+      return this.joinList(mappedItem, _pretty, _indent, 1, itemFormat, { ..._parameters, item });
     });
 
     const body = this.joinList(mappedItems, _pretty, _indent, 0, objectList, _parameters);
@@ -195,23 +207,29 @@ export default class ListFormatProvider {
    */
   public async queryParameters(
     type: "simpleList" | "objectList",
+    columns: string[] = [],
     token?: CancellationToken
-  ): Promise<Record<string, string | number | boolean> | null> {
+  ): Promise<ParameterList | null> {
     const { parameters = {} } = this.options[type] ?? {};
 
-    const result: Record<string, string | number | boolean> = {};
+    const result: ParameterList = {};
 
     for (const [key, param] of Object.entries(parameters)) {
       const { default: defaultValue, query } = param;
       if (query) {
         const option = await showFreeSoloQuickPick(
-          Object.entries(query.options ?? {}).map<QuickPickItem & { value: string | number | boolean }>(
-            ([key, value]) => ({
-              label: l10n.t(key),
-              value,
-              picked: value === defaultValue,
-            })
-          ),
+          query.options === "columns"
+            ? columns.map<QuickPickItem & { value: string | number | boolean }>((value) => ({
+                label: value,
+                value,
+              }))
+            : Object.entries(query.options ?? {}).map<QuickPickItem & { value: string | number | boolean }>(
+                ([key, value]) => ({
+                  label: l10n.t(key),
+                  value,
+                  picked: value === defaultValue,
+                })
+              ),
           {
             ignoreFocusOut: true,
             title: l10n.t(query.prompt),
@@ -260,7 +278,7 @@ export default class ListFormatProvider {
       indentEnclosure,
       itemPrefix = "",
     }: FormatterListOptions,
-    parameters: Record<string, string | number | boolean> = {}
+    parameters: ParameterList = {}
   ): string {
     indentItems = indentItems && indent * (indentItems === -1 ? level + 1 : indentItems);
     indentEnclosure = indentEnclosure && indent * (indentEnclosure === -1 ? level : indentEnclosure);
@@ -326,7 +344,7 @@ export default class ListFormatProvider {
       noKeys,
     }: FormatterListObjectItemOptions,
     spaced?: boolean,
-    parameters: Record<string, string | number | boolean> = {}
+    parameters: ParameterList = {}
   ): string {
     if (noKeys) return this.encloseValue(value, valueAlias, valueEnclosure, valueEscape, parameters);
 
@@ -351,7 +369,7 @@ export default class ListFormatProvider {
     valueAlias: FormatterValueAlias = {},
     enclosureOptions: FormatterEnclosure = {},
     escapeOptions: FormatterValueEscape[] = [],
-    parameters: Record<string, string | number | boolean> = {}
+    parameters: ParameterList = {}
   ): string {
     if (value === true) return valueAlias.true ?? "true";
     else if (value === false) return valueAlias.false ?? "false";
@@ -389,7 +407,7 @@ export default class ListFormatProvider {
   private encloseByRegex(
     value: string,
     regexEnclosure: FormatterRegexEnclosure[] = [],
-    parameters: Record<string, string | number | boolean> = {}
+    parameters: ParameterList = {}
   ): string {
     const activeEnclosures = regexEnclosure.filter((enclosure) => !enclosure.disabled);
 
@@ -430,11 +448,11 @@ export default class ListFormatProvider {
     return escapedValue;
   }
 
-  private templateString(template: string, data: Record<string, string | number | boolean>): string {
+  private templateString(template: string, data: ParameterList): string {
     if (Object.keys(data).length === 0) return template;
 
     return template.replace(/\${(.*?)}/g, (_, template) => {
-      const [tmp, key, modifier, factor] = /([a-z0-9_]+)\s*([+\-\*\/])?\s*(\d+)?/i.exec(template) ?? [];
+      const [tmp, key, modifier, factor] = /([a-z0-9_]+)\s*([+\-\*\/\.])?\s*([\$a-z0-9_\.]+)?/i.exec(template) ?? [];
       const value = key && data[key];
 
       if (!key || value === undefined) return template;
@@ -451,12 +469,23 @@ export default class ListFormatProvider {
             return (numericValue * numericFactor).toString();
           case "/":
             return (numericValue / numericFactor).toString();
+          case ".":
+            return (
+              factor.split(".").reduce<ParameterList[string] | null>((value, path) => {
+                if (value === null || typeof value !== "object") return null;
+                if (path.startsWith("$")) {
+                  const expandedPath = data[path.slice(1)];
+                  if (typeof expandedPath !== "string" && typeof expandedPath !== "number") return null;
+                  return value[expandedPath];
+                }
+                return value[path];
+              }, value) ?? template
+            );
           default:
             return template;
         }
       }
-
-      return value.toString();
+      return typeof value === "object" ? template : value.toString();
     });
   }
 
@@ -475,11 +504,11 @@ export default class ListFormatProvider {
     pretty: number = 0,
     indent: number = 0,
     options: FormatterListHeaderOptions,
-    parameters?: Record<string, string | number | boolean>
+    parameters?: ParameterList
   ): string {
     const { keyEnclosure, keyEscape, keyAlias } = options;
     const mappedColumns = columns.map((column) =>
-      this.encloseValue(column, keyAlias, keyEnclosure, keyEscape, parameters)
+      this.encloseValue(column, keyAlias, keyEnclosure, keyEscape, { ...parameters, key: column })
     );
     return this.joinList(mappedColumns, pretty, indent, 0, options, parameters);
   }

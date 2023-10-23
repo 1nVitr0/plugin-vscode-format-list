@@ -1,4 +1,5 @@
 import { PartialDeep, RequireAtLeastOne, Simplify } from "type-fest";
+import { ListDataContext } from "./List";
 
 /** Indentation width, true is equivalent to 2 spaces */
 export type Indent = number;
@@ -94,7 +95,7 @@ interface FormatterParameterBase<T extends string | number | boolean> {
       /** Placeholder shown in the input field */
       placeholder?: string;
       /** Options for the user to select from */
-      options?: Record<string, T>;
+      options?: Record<string, T> | "columns";
     },
     "allowInput" | "options"
   >;
@@ -106,6 +107,11 @@ export type FormatterParameter = Simplify<
   | RequireAtLeastOne<FormatterParameterBase<number>, "default" | "query">
   | RequireAtLeastOne<FormatterParameterBase<boolean>, "default" | "query">
 >;
+
+/** Simple (nested) Object of parameters */
+export interface ParameterList {
+  [key: string]: string | number | boolean | null | ParameterList;
+}
 
 /** Base options for lists */
 export interface FormatterListOptions {
@@ -233,7 +239,8 @@ export type DefaultFormatterLanguages =
   | "csvCustom"
   | "java"
   | "textList"
-  | "sql";
+  | "sql"
+  | "sqlUpdate";
 
 export type DefaultDataLanguages =
   | "javascript"

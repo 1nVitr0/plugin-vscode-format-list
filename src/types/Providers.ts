@@ -1,5 +1,5 @@
 import { CancellationToken, ProviderResult, Selection, TextDocument } from "vscode";
-import { ListColumn, ListData, ListDataContext } from "./List";
+import { ListData, ListDataContext } from "./List";
 
 export interface ListDataProvider<P = undefined, T extends ListDataContext<P> = ListDataContext<P>> {
   /**
