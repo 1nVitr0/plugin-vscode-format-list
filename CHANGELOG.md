@@ -1,3 +1,15 @@
+# [1.6.0](https://github.com/1nVitr0/plugin-vscode-format-list/compare/v1.5.0...v1.6.0) (2023-10-23)
+
+
+### Bug Fixes
+
+* add support for SQL update queries ([425674f](https://github.com/1nVitr0/plugin-vscode-format-list/commit/425674fa0033ac24bdd2d84d73585514bc732a89))
+
+
+### Features
+
+* support nested parameter substitution ([5a55e6d](https://github.com/1nVitr0/plugin-vscode-format-list/commit/5a55e6d7f06ea2b1a61ab448171e7d273ed71805))
+
 # [1.5.0](https://github.com/1nVitr0/plugin-vscode-format-list/compare/v1.4.1...v1.5.0) (2023-10-19)
 
 
