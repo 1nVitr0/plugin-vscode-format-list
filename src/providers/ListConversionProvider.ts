@@ -24,7 +24,7 @@ import {
   SimpleListButton,
   TogglePrettyButton,
 } from "../input/buttons";
-import { DefaultFormatterLanguages, FormatterListTypes, Pretty } from "../types/Formatter";
+import { DefaultFormatterLanguages, FormatterListTypes, ParameterList, Pretty } from "../types/Formatter";
 import { workspace } from "vscode";
 
 interface QuickPickProviderItem extends QuickPickItem {
@@ -46,7 +46,7 @@ interface StoredListOptions<T extends ListDataContext = ListDataContext>
   formatProvider: ListFormatProvider;
   selectedColumns: string[];
   dataParameters?: any;
-  formatParameters: Record<string, string | number | boolean>;
+  formatParameters: ParameterList;
 }
 
 interface FormattingEditOptions {
@@ -222,7 +222,11 @@ export class ListConversionProvider {
     switch (listType) {
       case "simpleList":
         const selectedColumn = await this.querySingleColumn(columns, token);
-        const simpleListParameters = await formatProvider.queryParameters("simpleList", token);
+        const simpleListParameters = await formatProvider.queryParameters(
+          "simpleList",
+          selectedColumn ? [selectedColumn] : [],
+          token
+        );
         if (!selectedColumn || !simpleListParameters || token.isCancellationRequested) return null;
         this.lastListOptions = {
           dataProvider,
@@ -237,7 +241,7 @@ export class ListConversionProvider {
         return await formatProvider.formatSimpleList(listData, selectedColumn, pretty, indent, simpleListParameters);
       case "objectList":
         const selectedColumns = await this.queryMultipleColumns(columns, token);
-        const objectListParameters = await formatProvider.queryParameters("objectList", token);
+        const objectListParameters = await formatProvider.queryParameters("objectList", selectedColumns ?? [], token);
         if (!selectedColumns || selectedColumns.length <= 0 || !objectListParameters || token.isCancellationRequested)
           return null;
         this.lastListOptions = {
@@ -484,7 +488,7 @@ export class ListConversionProvider {
 
       const label =
         type === "objectList" ? l10n.t("Object list") : type === "simpleList" ? l10n.t("Simple list") : type;
-      
+
       return { label, items };
     });
 
