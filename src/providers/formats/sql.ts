@@ -1,6 +1,6 @@
 import { FormatterOptions } from "../../types/Formatter";
 
-export const formatSql: FormatterOptions = {
+export const formatSqlInsert: FormatterOptions = {
   objectList: {
     delimiter: ",",
     indentItems: -1,
@@ -49,11 +49,51 @@ export const formatSql: FormatterOptions = {
       },
       tableName: {
         type: "string",
-        default: "t",
+        default: "table",
         query: {
           prompt: "Table name",
           placeholder: "`table`",
           allowInput: true,
+        },
+      },
+    },
+  },
+};
+
+export const formatSqlUpdate: FormatterOptions = {
+  objectList: {
+    indentItems: 0,
+    indentEnclosure: 0,
+    itemFormat: {
+      valueEnclosure: {
+        string: '"',
+      },
+      delimiter: ",",
+      assignmentOperator: "=",
+      assignmentOperatorSpaced: " = ",
+      indentItems: -1,
+      indentEnclosure: -1,
+      enclosure: {
+        start: "UPDATE ${tableName} SET",
+        end: "WHERE ${primaryKey} = ${item.$primaryKey};",
+      },
+    },
+    parameters: {
+      tableName: {
+        type: "string",
+        default: "table",
+        query: {
+          prompt: "Table name",
+          placeholder: "`table`",
+          allowInput: true,
+        },
+      },
+      primaryKey: {
+        type: "string",
+        query: {
+          prompt: "Primary key",
+          placeholder: "`id`",
+          options: "columns",
         },
       },
     },
