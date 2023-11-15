@@ -6,6 +6,11 @@ export const formatYaml: FormatterOptions = {
   simpleList: {
     delimiter: "\n",
     itemPrefix: "- ",
+    valueEscape: [
+      { pattern: '"', escape: '\\"' },
+      { pattern: "\n", replace: "\\n" },
+      { pattern: "\r", replace: "\\r" },
+    ],
   },
   objectList: {
     delimiter: "\n",
@@ -15,6 +20,11 @@ export const formatYaml: FormatterOptions = {
       assignmentOperator: ": ",
       itemPrefix: { first: "", rest: "  " },
       indentItems: 0,
+      valueEscape: [
+        { pattern: '"', escape: '\\"' },
+        { pattern: "\n", replace: "\\n" },
+        { pattern: "\r", replace: "\\r" },
+      ],
     },
   },
 };

@@ -6,6 +6,7 @@ export const formatMarkdown: FormatterOptions = {
   simpleList: {
     delimiter: "\n",
     itemPrefix: "- ",
+    valueEscape: [{ pattern: "\n", replace: "\n  " }],
   },
   objectList: {
     delimiter: "\n",
@@ -16,6 +17,7 @@ export const formatMarkdown: FormatterOptions = {
       assignmentOperator: ": ",
       itemPrefix: "- ",
       indentItems: 1,
+      valueEscape: [{ pattern: "\n", replace: "\n    " }],
     },
   },
 };

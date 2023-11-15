@@ -2,6 +2,7 @@ import { Selection, TextDocument, CancellationToken, window, l10n } from "vscode
 import { ListColumn, ListData, ListDataContext } from "../../types/List";
 import { ListDataProvider } from "../../types/Providers";
 import { showFreeSoloQuickPick } from "../../input/freeSoloQuickPick";
+import { parse } from "csv-parse";
 
 interface CsvParameters {
   delimiter: string;
@@ -31,12 +32,17 @@ export default class CsvListDataProvider implements ListDataProvider<CsvParamete
     if (!_parameters) return;
 
     const { delimiter, hasHeader } = _parameters;
-    const firstLineParts = document.lineAt(selection.start.line).text.split(delimiter);
-    const secondLineParts = document
-      .lineAt(Math.min(selection.start.line + 1, selection.end.line))
-      .text.split(delimiter);
-    const columns = firstLineParts.map<ListColumn>((column, index) => {
-      const example = secondLineParts[index];
+
+    const [header, firstEntry] = await new Promise<string[][]>((res, rej) =>
+      parse(
+        document.getText(selection),
+        { delimiter, skipEmptyLines: true, quote: '"', comment: "#" },
+        (err, records) => (err ? rej(err) : res(records))
+      )
+    );
+
+    const columns = header.map<ListColumn>((column, index) => {
+      const example = firstEntry?.[index];
       const name = hasHeader ? this.extractString(column) : `column_${index}`;
 
       return { name, example };
@@ -52,14 +58,17 @@ export default class CsvListDataProvider implements ListDataProvider<CsvParamete
     token: CancellationToken
   ) {
     const { delimiter, hasHeader } = parameters ?? { delimiter: ",", hasHeader: false };
-    const text = document.getText(selection).trim();
-    const lines = text.split(/\r?\n/);
 
-    if (hasHeader) lines.shift();
+    const [header, ...body] = await new Promise<string[][]>((res, rej) =>
+      parse(
+        document.getText(selection),
+        { delimiter, skipEmptyLines: true, quote: '"', comment: "#" },
+        (err, records) => (err ? rej(err) : res(records))
+      )
+    );
+    const csv = hasHeader ? body : [header, ...body];
 
-    return lines.map((line) => {
-      const values = line.split(delimiter);
-
+    return csv.map((values) => {
       return values.reduce((acc, item, index) => {
         const column = columns[index]?.name ?? `column_${index}`;
         acc[column] = this.parseValue(item);

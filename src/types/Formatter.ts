@@ -19,7 +19,12 @@ export interface FormatterBoundaryEnclosure {
 export interface FormatterRegexEnclosure {
   /** Unique id, used to identify the enclosure and override it in extending formats */
   id: string;
-  /** Regular expression, that tests if the key must be enclosed */
+  /**
+   * Regular expression, that tests if the key must be enclosed
+   *
+   * @TJS-type string
+   * @pattern ^\/.*\/[gimuy]*$
+   */
   test: RegExp | `/${string}/${string}`;
   /** Inverse the test */
   inverse?: boolean;
@@ -49,15 +54,25 @@ export type FormatterEnclosure =
   | FormatterRegexEnclosure[]
   | string;
 
-/** Escape options for value-like items */
-export interface FormatterValueEscape {
-  /** Regular expression, that matches parts of the value to be escaped */
+/** Replace options for value-like items */
+export type FormatterValueEscape = {
+  /**
+   * Regular expression, that matches parts of the value to be escaped
+   *
+   * @TJS-type string
+   * @pattern ^\/.*\/[gimuy]*$
+   */
   pattern: RegExp | string;
-  /** Escape char */
-  escape: string;
-  /** Replacement string, indexes like `$1` can be used */
-  replace?: string;
-}
+} & (
+  | {
+      /** Escape char */
+      escape: string;
+    }
+  | {
+      /** Replacement string, indexes like `$1` can be used */
+      replace: string;
+    }
+);
 
 /** Alias options for value-like items */
 export interface FormatterValueAlias {
