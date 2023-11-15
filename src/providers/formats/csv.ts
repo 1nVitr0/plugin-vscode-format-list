@@ -49,6 +49,7 @@ export const csvParameters: Record<string, FormatterParameter> = {
 
 const csvSimpleListOptions: FormatterSimpleListOptions = {
   delimiter: "\n",
+  valueAlias: { null: "" },
   header: {
     delimiter: ",",
     keyEnclosure: '"',
@@ -71,9 +72,8 @@ export const formatCsvDefault: FormatterOptions = {
     ...csvSimpleListOptions,
     itemFormat: {
       delimiter: ",",
-      valueEnclosure: {
-        string: '"',
-      },
+      valueAlias: { null: "" },
+      valueEnclosure: { string: '"' },
       assignmentOperator: "",
       noKeys: true,
     },
