@@ -1,3 +1,15 @@
+# [1.7.0](https://github.com/1nVitr0/plugin-vscode-format-list/compare/v1.6.1...v1.7.0) (2023-11-15)
+
+
+### Bug Fixes
+
+* output null value as empty in csv ([c5c6cf7](https://github.com/1nVitr0/plugin-vscode-format-list/commit/c5c6cf764284daba5a462711c2e40ef8e560db6d))
+
+
+### Features
+
+* flatten parsed json & support keyed data ([ee4c69f](https://github.com/1nVitr0/plugin-vscode-format-list/commit/ee4c69f343e21b0920b8867381652e04965f0f47))
+
 ## [1.6.1](https://github.com/1nVitr0/plugin-vscode-format-list/compare/v1.6.0...v1.6.1) (2023-11-15)
 
 
