@@ -437,12 +437,11 @@ export default class ListFormatProvider {
   private escapeValue(value: string, escapeOptions: FormatterValueEscape[] = []): string {
     let escapedValue = value;
 
-    escapeOptions?.forEach((escapeOption) => {
-      const { escape, replace } = escapeOption;
-      const regex = this.buildEscapeRegex(escapeOption);
+    escapeOptions?.forEach((esc) => {
+      const regex = this.buildEscapeRegex(esc);
 
-      if (escape) escapedValue = escapedValue.replace(regex, `${escape}$1`);
-      else if (replace) escapedValue = escapedValue.replace(regex, replace);
+      if ("escape" in esc) escapedValue = escapedValue.replace(regex, `${esc.escape}$1`);
+      else if ("replace" in esc) escapedValue = escapedValue.replace(regex, esc.replace);
     });
 
     return escapedValue;
@@ -518,13 +517,14 @@ export default class ListFormatProvider {
    *
    * @param escapeOptions Escape options
    */
-  private buildEscapeRegex({ pattern, escape }: FormatterValueEscape): RegExp {
+  private buildEscapeRegex(options: FormatterValueEscape): RegExp {
+    const { pattern } = options;
     if (typeof pattern !== "string") return pattern;
 
     // TODO: ignore already escaped characters
     const regexParts = /\/(.*)\/([gimuy]*)$/.exec(pattern);
     if (regexParts) return new RegExp(regexParts[1], regexParts[2]);
 
-    return new RegExp(`(?<!${escape})(${pattern})`, "g");
+    return "escape" in options ? new RegExp(`(?<!${options.escape})(${pattern})`, "g") : new RegExp(pattern, "g");
   }
 }

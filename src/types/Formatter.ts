@@ -49,15 +49,20 @@ export type FormatterEnclosure =
   | FormatterRegexEnclosure[]
   | string;
 
-/** Escape options for value-like items */
-export interface FormatterValueEscape {
+/** Replace options for value-like items */
+export type FormatterValueEscape = {
   /** Regular expression, that matches parts of the value to be escaped */
   pattern: RegExp | string;
-  /** Escape char */
-  escape: string;
-  /** Replacement string, indexes like `$1` can be used */
-  replace?: string;
-}
+} & (
+  | {
+      /** Escape char */
+      escape: string;
+    }
+  | {
+      /** Replacement string, indexes like `$1` can be used */
+      replace: string;
+    }
+);
 
 /** Alias options for value-like items */
 export interface FormatterValueAlias {

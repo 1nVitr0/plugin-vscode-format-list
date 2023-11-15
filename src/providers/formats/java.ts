@@ -5,6 +5,11 @@ export const formatJava: FormatterOptions = {
     enclosure: { start: "{", end: "}" },
     delimiter: ",",
     valueEnclosure: { string: '"' },
+    valueEscape: [
+      { pattern: '"', escape: '\\"' },
+      { pattern: "\n", replace: "\\n" },
+      { pattern: "\r", replace: "\\r" },
+    ],
     indentItems: -1,
   },
 };

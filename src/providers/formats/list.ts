@@ -7,6 +7,7 @@ export const formatTextList: FormatterOptions = {
   simpleList: {
     delimiter: "${delimiter}",
     enclosure: { start: "${enclosure}", end: "${enclosure}" },
+    valueEscape: [{ pattern: "\n", replace: "\\n" }],
     parameters: csvParameters,
   },
 };

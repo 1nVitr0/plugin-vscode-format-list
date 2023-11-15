@@ -5,6 +5,11 @@ export const formatJavaScript: FormatterOptions = {
     enclosure: { start: "[", end: "]" },
     delimiter: ",",
     valueEnclosure: { string: '"' },
+    valueEscape: [
+      { pattern: '"', escape: '\\"' },
+      { pattern: "\n", replace: "\\n" },
+      { pattern: "\r", replace: "\\r" },
+    ],
     indentItems: -1,
   },
   objectList: {
@@ -17,6 +22,11 @@ export const formatJavaScript: FormatterOptions = {
       delimiter: ",",
       keyEnclosure: [{ id: "quote-strings", test: "/^([^A-Za-z0-9_$]*|^[^0-9]*)$/", enclosure: '"' }],
       valueEnclosure: { string: '"' },
+      valueEscape: [
+        { pattern: '"', escape: '\\"' },
+        { pattern: "\n", replace: "\\n" },
+        { pattern: "\r", replace: "\\r" },
+      ],
       assignmentOperator: ":",
       assignmentOperatorSpaced: ": ",
       indentItems: -1,

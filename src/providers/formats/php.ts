@@ -5,6 +5,11 @@ export const formatPhp: FormatterOptions = {
     enclosure: { start: "[", end: "]" },
     delimiter: ",",
     valueEnclosure: { string: '"' },
+    valueEscape: [
+      { pattern: '"', escape: '\\"' },
+      { pattern: "\n", replace: "\\n" },
+      { pattern: "\r", replace: "\\r" },
+    ],
     indentItems: -1,
   },
   objectList: {
@@ -16,6 +21,11 @@ export const formatPhp: FormatterOptions = {
       delimiter: ",",
       keyEnclosure: [{ id: "quote-keys", test: "/.*/", enclosure: '"' }],
       valueEnclosure: { string: '"' },
+      valueEscape: [
+        { pattern: '"', escape: '\\"' },
+        { pattern: "\n", replace: "\\n" },
+        { pattern: "\r", replace: "\\r" },
+      ],
       assignmentOperator: "=>",
       assignmentOperatorSpaced: " => ",
       indentItems: -1,
