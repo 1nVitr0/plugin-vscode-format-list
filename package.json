@@ -108,6 +108,9 @@
             "additionalProperties": {
               "type": "object",
               "properties": {
+                "name": {
+                  "type": "string"
+                },
                 "simpleList": {
                   "description": "Simple list options, if not specified simple lists are not supported",
                   "anyOf": [
@@ -312,63 +315,21 @@
                                 "description": "Enclosure options for key-like items",
                                 "type": "object",
                                 "properties": {
+                                  "id": {
+                                    "description": "Unique id, used to identify the enclosure and override it in extending formats",
+                                    "type": "string"
+                                  },
                                   "test": {
                                     "description": "Regular expression, that tests if the key must be enclosed",
-                                    "anyOf": [
-                                      {
-                                        "type": "object",
-                                        "properties": {
-                                          "source": {
-                                            "type": "string"
-                                          },
-                                          "global": {
-                                            "type": "boolean"
-                                          },
-                                          "ignoreCase": {
-                                            "type": "boolean"
-                                          },
-                                          "multiline": {
-                                            "type": "boolean"
-                                          },
-                                          "lastIndex": {
-                                            "type": "number"
-                                          },
-                                          "flags": {
-                                            "type": "string"
-                                          },
-                                          "sticky": {
-                                            "type": "boolean"
-                                          },
-                                          "unicode": {
-                                            "type": "boolean"
-                                          },
-                                          "dotAll": {
-                                            "type": "boolean"
-                                          }
-                                        },
-                                        "additionalProperties": false,
-                                        "required": [
-                                          "dotAll",
-                                          "flags",
-                                          "global",
-                                          "ignoreCase",
-                                          "lastIndex",
-                                          "multiline",
-                                          "source",
-                                          "sticky",
-                                          "unicode"
-                                        ]
-                                      },
-                                      {
-                                        "type": "array",
-                                        "items": {
-                                          "type": "string"
-                                        }
-                                      }
-                                    ]
+                                    "type": "string",
+                                    "pattern": "^\\/.*\\/[gimuy]*$"
                                   },
                                   "inverse": {
                                     "description": "Inverse the test",
+                                    "type": "boolean"
+                                  },
+                                  "disabled": {
+                                    "description": "If true, the enclosure is disabled, used in extending formats to disabled enclosures",
                                     "type": "boolean"
                                   },
                                   "enclosure": {
@@ -406,6 +367,7 @@
                                 "additionalProperties": false,
                                 "required": [
                                   "enclosure",
+                                  "id",
                                   "test"
                                 ]
                               }
@@ -637,63 +599,21 @@
                                     "description": "Enclosure options for key-like items",
                                     "type": "object",
                                     "properties": {
+                                      "id": {
+                                        "description": "Unique id, used to identify the enclosure and override it in extending formats",
+                                        "type": "string"
+                                      },
                                       "test": {
                                         "description": "Regular expression, that tests if the key must be enclosed",
-                                        "anyOf": [
-                                          {
-                                            "type": "object",
-                                            "properties": {
-                                              "source": {
-                                                "type": "string"
-                                              },
-                                              "global": {
-                                                "type": "boolean"
-                                              },
-                                              "ignoreCase": {
-                                                "type": "boolean"
-                                              },
-                                              "multiline": {
-                                                "type": "boolean"
-                                              },
-                                              "lastIndex": {
-                                                "type": "number"
-                                              },
-                                              "flags": {
-                                                "type": "string"
-                                              },
-                                              "sticky": {
-                                                "type": "boolean"
-                                              },
-                                              "unicode": {
-                                                "type": "boolean"
-                                              },
-                                              "dotAll": {
-                                                "type": "boolean"
-                                              }
-                                            },
-                                            "additionalProperties": false,
-                                            "required": [
-                                              "dotAll",
-                                              "flags",
-                                              "global",
-                                              "ignoreCase",
-                                              "lastIndex",
-                                              "multiline",
-                                              "source",
-                                              "sticky",
-                                              "unicode"
-                                            ]
-                                          },
-                                          {
-                                            "type": "array",
-                                            "items": {
-                                              "type": "string"
-                                            }
-                                          }
-                                        ]
+                                        "type": "string",
+                                        "pattern": "^\\/.*\\/[gimuy]*$"
                                       },
                                       "inverse": {
                                         "description": "Inverse the test",
+                                        "type": "boolean"
+                                      },
+                                      "disabled": {
+                                        "description": "If true, the enclosure is disabled, used in extending formats to disabled enclosures",
                                         "type": "boolean"
                                       },
                                       "enclosure": {
@@ -731,6 +651,7 @@
                                     "additionalProperties": false,
                                     "required": [
                                       "enclosure",
+                                      "id",
                                       "test"
                                     ]
                                   }
@@ -895,63 +816,21 @@
                                     "description": "Enclosure options for key-like items",
                                     "type": "object",
                                     "properties": {
+                                      "id": {
+                                        "description": "Unique id, used to identify the enclosure and override it in extending formats",
+                                        "type": "string"
+                                      },
                                       "test": {
                                         "description": "Regular expression, that tests if the key must be enclosed",
-                                        "anyOf": [
-                                          {
-                                            "type": "object",
-                                            "properties": {
-                                              "source": {
-                                                "type": "string"
-                                              },
-                                              "global": {
-                                                "type": "boolean"
-                                              },
-                                              "ignoreCase": {
-                                                "type": "boolean"
-                                              },
-                                              "multiline": {
-                                                "type": "boolean"
-                                              },
-                                              "lastIndex": {
-                                                "type": "number"
-                                              },
-                                              "flags": {
-                                                "type": "string"
-                                              },
-                                              "sticky": {
-                                                "type": "boolean"
-                                              },
-                                              "unicode": {
-                                                "type": "boolean"
-                                              },
-                                              "dotAll": {
-                                                "type": "boolean"
-                                              }
-                                            },
-                                            "additionalProperties": false,
-                                            "required": [
-                                              "dotAll",
-                                              "flags",
-                                              "global",
-                                              "ignoreCase",
-                                              "lastIndex",
-                                              "multiline",
-                                              "source",
-                                              "sticky",
-                                              "unicode"
-                                            ]
-                                          },
-                                          {
-                                            "type": "array",
-                                            "items": {
-                                              "type": "string"
-                                            }
-                                          }
-                                        ]
+                                        "type": "string",
+                                        "pattern": "^\\/.*\\/[gimuy]*$"
                                       },
                                       "inverse": {
                                         "description": "Inverse the test",
+                                        "type": "boolean"
+                                      },
+                                      "disabled": {
+                                        "description": "If true, the enclosure is disabled, used in extending formats to disabled enclosures",
                                         "type": "boolean"
                                       },
                                       "enclosure": {
@@ -989,6 +868,7 @@
                                     "additionalProperties": false,
                                     "required": [
                                       "enclosure",
+                                      "id",
                                       "test"
                                     ]
                                   }
@@ -1002,74 +882,46 @@
                               "description": "Escape options for each key",
                               "type": "array",
                               "items": {
-                                "description": "Escape options for value-like items",
-                                "type": "object",
-                                "properties": {
-                                  "pattern": {
-                                    "description": "Regular expression, that matches parts of the value to be escaped",
-                                    "anyOf": [
-                                      {
-                                        "type": "object",
-                                        "properties": {
-                                          "source": {
-                                            "type": "string"
-                                          },
-                                          "global": {
-                                            "type": "boolean"
-                                          },
-                                          "ignoreCase": {
-                                            "type": "boolean"
-                                          },
-                                          "multiline": {
-                                            "type": "boolean"
-                                          },
-                                          "lastIndex": {
-                                            "type": "number"
-                                          },
-                                          "flags": {
-                                            "type": "string"
-                                          },
-                                          "sticky": {
-                                            "type": "boolean"
-                                          },
-                                          "unicode": {
-                                            "type": "boolean"
-                                          },
-                                          "dotAll": {
-                                            "type": "boolean"
-                                          }
-                                        },
-                                        "additionalProperties": false,
-                                        "required": [
-                                          "dotAll",
-                                          "flags",
-                                          "global",
-                                          "ignoreCase",
-                                          "lastIndex",
-                                          "multiline",
-                                          "source",
-                                          "sticky",
-                                          "unicode"
-                                        ]
+                                "description": "Replace options for value-like items",
+                                "anyOf": [
+                                  {
+                                    "additionalProperties": false,
+                                    "type": "object",
+                                    "properties": {
+                                      "pattern": {
+                                        "description": "Regular expression, that matches parts of the value to be escaped",
+                                        "type": "string",
+                                        "pattern": "^\\/.*\\/[gimuy]*$"
                                       },
-                                      {
+                                      "escape": {
+                                        "description": "Escape char",
                                         "type": "string"
                                       }
+                                    },
+                                    "required": [
+                                      "escape",
+                                      "pattern"
                                     ]
                                   },
-                                  "escape": {
-                                    "description": "Escape char",
-                                    "type": "string"
-                                  },
-                                  "replace": {
-                                    "description": "Replacement string, indexes like `$1` can be used",
-                                    "type": "string"
+                                  {
+                                    "additionalProperties": false,
+                                    "type": "object",
+                                    "properties": {
+                                      "pattern": {
+                                        "description": "Regular expression, that matches parts of the value to be escaped",
+                                        "type": "string",
+                                        "pattern": "^\\/.*\\/[gimuy]*$"
+                                      },
+                                      "replace": {
+                                        "description": "Replacement string, indexes like `$1` can be used",
+                                        "type": "string"
+                                      }
+                                    },
+                                    "required": [
+                                      "pattern",
+                                      "replace"
+                                    ]
                                   }
-                                },
-                                "additionalProperties": false,
-                                "required": [
-                                  "escape",
-                                  "pattern"
                                 ]
                               }
                             },
@@ -1242,63 +1094,21 @@
                                 "description": "Enclosure options for key-like items",
                                 "type": "object",
                                 "properties": {
+                                  "id": {
+                                    "description": "Unique id, used to identify the enclosure and override it in extending formats",
+                                    "type": "string"
+                                  },
                                   "test": {
                                     "description": "Regular expression, that tests if the key must be enclosed",
-                                    "anyOf": [
-                                      {
-                                        "type": "object",
-                                        "properties": {
-                                          "source": {
-                                            "type": "string"
-                                          },
-                                          "global": {
-                                            "type": "boolean"
-                                          },
-                                          "ignoreCase": {
-                                            "type": "boolean"
-                                          },
-                                          "multiline": {
-                                            "type": "boolean"
-                                          },
-                                          "lastIndex": {
-                                            "type": "number"
-                                          },
-                                          "flags": {
-                                            "type": "string"
-                                          },
-                                          "sticky": {
-                                            "type": "boolean"
-                                          },
-                                          "unicode": {
-                                            "type": "boolean"
-                                          },
-                                          "dotAll": {
-                                            "type": "boolean"
-                                          }
-                                        },
-                                        "additionalProperties": false,
-                                        "required": [
-                                          "dotAll",
-                                          "flags",
-                                          "global",
-                                          "ignoreCase",
-                                          "lastIndex",
-                                          "multiline",
-                                          "source",
-                                          "sticky",
-                                          "unicode"
-                                        ]
-                                      },
-                                      {
-                                        "type": "array",
-                                        "items": {
-                                          "type": "string"
-                                        }
-                                      }
-                                    ]
+                                    "type": "string",
+                                    "pattern": "^\\/.*\\/[gimuy]*$"
                                   },
                                   "inverse": {
                                     "description": "Inverse the test",
+                                    "type": "boolean"
+                                  },
+                                  "disabled": {
+                                    "description": "If true, the enclosure is disabled, used in extending formats to disabled enclosures",
                                     "type": "boolean"
                                   },
                                   "enclosure": {
@@ -1336,6 +1146,7 @@
                                 "additionalProperties": false,
                                 "required": [
                                   "enclosure",
+                                  "id",
                                   "test"
                                 ]
                               }
@@ -1349,74 +1160,46 @@
                           "description": "Escape options for each item",
                           "type": "array",
                           "items": {
-                            "description": "Escape options for value-like items",
-                            "type": "object",
-                            "properties": {
-                              "pattern": {
-                                "description": "Regular expression, that matches parts of the value to be escaped",
-                                "anyOf": [
-                                  {
-                                    "type": "object",
-                                    "properties": {
-                                      "source": {
-                                        "type": "string"
-                                      },
-                                      "global": {
-                                        "type": "boolean"
-                                      },
-                                      "ignoreCase": {
-                                        "type": "boolean"
-                                      },
-                                      "multiline": {
-                                        "type": "boolean"
-                                      },
-                                      "lastIndex": {
-                                        "type": "number"
-                                      },
-                                      "flags": {
-                                        "type": "string"
-                                      },
-                                      "sticky": {
-                                        "type": "boolean"
-                                      },
-                                      "unicode": {
-                                        "type": "boolean"
-                                      },
-                                      "dotAll": {
-                                        "type": "boolean"
-                                      }
-                                    },
-                                    "additionalProperties": false,
-                                    "required": [
-                                      "dotAll",
-                                      "flags",
-                                      "global",
-                                      "ignoreCase",
-                                      "lastIndex",
-                                      "multiline",
-                                      "source",
-                                      "sticky",
-                                      "unicode"
-                                    ]
+                            "description": "Replace options for value-like items",
+                            "anyOf": [
+                              {
+                                "additionalProperties": false,
+                                "type": "object",
+                                "properties": {
+                                  "pattern": {
+                                    "description": "Regular expression, that matches parts of the value to be escaped",
+                                    "type": "string",
+                                    "pattern": "^\\/.*\\/[gimuy]*$"
                                   },
-                                  {
+                                  "escape": {
+                                    "description": "Escape char",
                                     "type": "string"
                                   }
+                                },
+                                "required": [
+                                  "escape",
+                                  "pattern"
                                 ]
                               },
-                              "escape": {
-                                "description": "Escape char",
-                                "type": "string"
-                              },
-                              "replace": {
-                                "description": "Replacement string, indexes like `$1` can be used",
-                                "type": "string"
+                              {
+                                "additionalProperties": false,
+                                "type": "object",
+                                "properties": {
+                                  "pattern": {
+                                    "description": "Regular expression, that matches parts of the value to be escaped",
+                                    "type": "string",
+                                    "pattern": "^\\/.*\\/[gimuy]*$"
+                                  },
+                                  "replace": {
+                                    "description": "Replacement string, indexes like `$1` can be used",
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "pattern",
+                                  "replace"
+                                ]
                               }
-                            },
-                            "additionalProperties": false,
-                            "required": [
-                              "escape",
-                              "pattern"
                             ]
                           }
                         },
@@ -1459,6 +1242,7 @@
                             "markdown",
                             "php",
                             "sql",
+                            "sqlUpdate",
                             "textList",
                             "xml",
                             "yaml"
@@ -1520,63 +1304,21 @@
                                 "description": "Enclosure options for key-like items",
                                 "type": "object",
                                 "properties": {
+                                  "id": {
+                                    "description": "Unique id, used to identify the enclosure and override it in extending formats",
+                                    "type": "string"
+                                  },
                                   "test": {
                                     "description": "Regular expression, that tests if the key must be enclosed",
-                                    "anyOf": [
-                                      {
-                                        "type": "object",
-                                        "properties": {
-                                          "source": {
-                                            "type": "string"
-                                          },
-                                          "global": {
-                                            "type": "boolean"
-                                          },
-                                          "ignoreCase": {
-                                            "type": "boolean"
-                                          },
-                                          "multiline": {
-                                            "type": "boolean"
-                                          },
-                                          "lastIndex": {
-                                            "type": "number"
-                                          },
-                                          "flags": {
-                                            "type": "string"
-                                          },
-                                          "sticky": {
-                                            "type": "boolean"
-                                          },
-                                          "unicode": {
-                                            "type": "boolean"
-                                          },
-                                          "dotAll": {
-                                            "type": "boolean"
-                                          }
-                                        },
-                                        "additionalProperties": false,
-                                        "required": [
-                                          "dotAll",
-                                          "flags",
-                                          "global",
-                                          "ignoreCase",
-                                          "lastIndex",
-                                          "multiline",
-                                          "source",
-                                          "sticky",
-                                          "unicode"
-                                        ]
-                                      },
-                                      {
-                                        "type": "array",
-                                        "items": {
-                                          "type": "string"
-                                        }
-                                      }
-                                    ]
+                                    "type": "string",
+                                    "pattern": "^\\/.*\\/[gimuy]*$"
                                   },
                                   "inverse": {
                                     "description": "Inverse the test",
+                                    "type": "boolean"
+                                  },
+                                  "disabled": {
+                                    "description": "If true, the enclosure is disabled, used in extending formats to disabled enclosures",
                                     "type": "boolean"
                                   },
                                   "enclosure": {
@@ -1614,6 +1356,7 @@
                                 "additionalProperties": false,
                                 "required": [
                                   "enclosure",
+                                  "id",
                                   "test"
                                 ]
                               }
@@ -1817,63 +1560,21 @@
                                     "description": "Enclosure options for key-like items",
                                     "type": "object",
                                     "properties": {
+                                      "id": {
+                                        "description": "Unique id, used to identify the enclosure and override it in extending formats",
+                                        "type": "string"
+                                      },
                                       "test": {
                                         "description": "Regular expression, that tests if the key must be enclosed",
-                                        "anyOf": [
-                                          {
-                                            "type": "object",
-                                            "properties": {
-                                              "source": {
-                                                "type": "string"
-                                              },
-                                              "global": {
-                                                "type": "boolean"
-                                              },
-                                              "ignoreCase": {
-                                                "type": "boolean"
-                                              },
-                                              "multiline": {
-                                                "type": "boolean"
-                                              },
-                                              "lastIndex": {
-                                                "type": "number"
-                                              },
-                                              "flags": {
-                                                "type": "string"
-                                              },
-                                              "sticky": {
-                                                "type": "boolean"
-                                              },
-                                              "unicode": {
-                                                "type": "boolean"
-                                              },
-                                              "dotAll": {
-                                                "type": "boolean"
-                                              }
-                                            },
-                                            "additionalProperties": false,
-                                            "required": [
-                                              "dotAll",
-                                              "flags",
-                                              "global",
-                                              "ignoreCase",
-                                              "lastIndex",
-                                              "multiline",
-                                              "source",
-                                              "sticky",
-                                              "unicode"
-                                            ]
-                                          },
-                                          {
-                                            "type": "array",
-                                            "items": {
-                                              "type": "string"
-                                            }
-                                          }
-                                        ]
+                                        "type": "string",
+                                        "pattern": "^\\/.*\\/[gimuy]*$"
                                       },
                                       "inverse": {
                                         "description": "Inverse the test",
+                                        "type": "boolean"
+                                      },
+                                      "disabled": {
+                                        "description": "If true, the enclosure is disabled, used in extending formats to disabled enclosures",
                                         "type": "boolean"
                                       },
                                       "enclosure": {
@@ -1911,6 +1612,7 @@
                                     "additionalProperties": false,
                                     "required": [
                                       "enclosure",
+                                      "id",
                                       "test"
                                     ]
                                   }
@@ -2055,63 +1757,21 @@
                                     "description": "Enclosure options for key-like items",
                                     "type": "object",
                                     "properties": {
+                                      "id": {
+                                        "description": "Unique id, used to identify the enclosure and override it in extending formats",
+                                        "type": "string"
+                                      },
                                       "test": {
                                         "description": "Regular expression, that tests if the key must be enclosed",
-                                        "anyOf": [
-                                          {
-                                            "type": "object",
-                                            "properties": {
-                                              "source": {
-                                                "type": "string"
-                                              },
-                                              "global": {
-                                                "type": "boolean"
-                                              },
-                                              "ignoreCase": {
-                                                "type": "boolean"
-                                              },
-                                              "multiline": {
-                                                "type": "boolean"
-                                              },
-                                              "lastIndex": {
-                                                "type": "number"
-                                              },
-                                              "flags": {
-                                                "type": "string"
-                                              },
-                                              "sticky": {
-                                                "type": "boolean"
-                                              },
-                                              "unicode": {
-                                                "type": "boolean"
-                                              },
-                                              "dotAll": {
-                                                "type": "boolean"
-                                              }
-                                            },
-                                            "additionalProperties": false,
-                                            "required": [
-                                              "dotAll",
-                                              "flags",
-                                              "global",
-                                              "ignoreCase",
-                                              "lastIndex",
-                                              "multiline",
-                                              "source",
-                                              "sticky",
-                                              "unicode"
-                                            ]
-                                          },
-                                          {
-                                            "type": "array",
-                                            "items": {
-                                              "type": "string"
-                                            }
-                                          }
-                                        ]
+                                        "type": "string",
+                                        "pattern": "^\\/.*\\/[gimuy]*$"
                                       },
                                       "inverse": {
                                         "description": "Inverse the test",
+                                        "type": "boolean"
+                                      },
+                                      "disabled": {
+                                        "description": "If true, the enclosure is disabled, used in extending formats to disabled enclosures",
                                         "type": "boolean"
                                       },
                                       "enclosure": {
@@ -2149,6 +1809,7 @@
                                     "additionalProperties": false,
                                     "required": [
                                       "enclosure",
+                                      "id",
                                       "test"
                                     ]
                                   }
@@ -2276,74 +1937,46 @@
                               "description": "Escape options for each key",
                               "type": "array",
                               "items": {
-                                "description": "Escape options for value-like items",
-                                "type": "object",
-                                "properties": {
-                                  "pattern": {
-                                    "description": "Regular expression, that matches parts of the value to be escaped",
-                                    "anyOf": [
-                                      {
-                                        "type": "object",
-                                        "properties": {
-                                          "source": {
-                                            "type": "string"
-                                          },
-                                          "global": {
-                                            "type": "boolean"
-                                          },
-                                          "ignoreCase": {
-                                            "type": "boolean"
-                                          },
-                                          "multiline": {
-                                            "type": "boolean"
-                                          },
-                                          "lastIndex": {
-                                            "type": "number"
-                                          },
-                                          "flags": {
-                                            "type": "string"
-                                          },
-                                          "sticky": {
-                                            "type": "boolean"
-                                          },
-                                          "unicode": {
-                                            "type": "boolean"
-                                          },
-                                          "dotAll": {
-                                            "type": "boolean"
-                                          }
-                                        },
-                                        "additionalProperties": false,
-                                        "required": [
-                                          "dotAll",
-                                          "flags",
-                                          "global",
-                                          "ignoreCase",
-                                          "lastIndex",
-                                          "multiline",
-                                          "source",
-                                          "sticky",
-                                          "unicode"
-                                        ]
+                                "description": "Replace options for value-like items",
+                                "anyOf": [
+                                  {
+                                    "additionalProperties": false,
+                                    "type": "object",
+                                    "properties": {
+                                      "pattern": {
+                                        "description": "Regular expression, that matches parts of the value to be escaped",
+                                        "type": "string",
+                                        "pattern": "^\\/.*\\/[gimuy]*$"
                                       },
-                                      {
+                                      "escape": {
+                                        "description": "Escape char",
                                         "type": "string"
                                       }
+                                    },
+                                    "required": [
+                                      "escape",
+                                      "pattern"
                                     ]
                                   },
-                                  "escape": {
-                                    "description": "Escape char",
-                                    "type": "string"
-                                  },
-                                  "replace": {
-                                    "description": "Replacement string, indexes like `$1` can be used",
-                                    "type": "string"
+                                  {
+                                    "additionalProperties": false,
+                                    "type": "object",
+                                    "properties": {
+                                      "pattern": {
+                                        "description": "Regular expression, that matches parts of the value to be escaped",
+                                        "type": "string",
+                                        "pattern": "^\\/.*\\/[gimuy]*$"
+                                      },
+                                      "replace": {
+                                        "description": "Replacement string, indexes like `$1` can be used",
+                                        "type": "string"
+                                      }
+                                    },
+                                    "required": [
+                                      "pattern",
+                                      "replace"
+                                    ]
                                   }
-                                },
-                                "additionalProperties": false,
-                                "required": [
-                                  "escape",
-                                  "pattern"
                                 ]
                               }
                             },
@@ -2382,63 +2015,21 @@
                                 "description": "Enclosure options for key-like items",
                                 "type": "object",
                                 "properties": {
+                                  "id": {
+                                    "description": "Unique id, used to identify the enclosure and override it in extending formats",
+                                    "type": "string"
+                                  },
                                   "test": {
                                     "description": "Regular expression, that tests if the key must be enclosed",
-                                    "anyOf": [
-                                      {
-                                        "type": "object",
-                                        "properties": {
-                                          "source": {
-                                            "type": "string"
-                                          },
-                                          "global": {
-                                            "type": "boolean"
-                                          },
-                                          "ignoreCase": {
-                                            "type": "boolean"
-                                          },
-                                          "multiline": {
-                                            "type": "boolean"
-                                          },
-                                          "lastIndex": {
-                                            "type": "number"
-                                          },
-                                          "flags": {
-                                            "type": "string"
-                                          },
-                                          "sticky": {
-                                            "type": "boolean"
-                                          },
-                                          "unicode": {
-                                            "type": "boolean"
-                                          },
-                                          "dotAll": {
-                                            "type": "boolean"
-                                          }
-                                        },
-                                        "additionalProperties": false,
-                                        "required": [
-                                          "dotAll",
-                                          "flags",
-                                          "global",
-                                          "ignoreCase",
-                                          "lastIndex",
-                                          "multiline",
-                                          "source",
-                                          "sticky",
-                                          "unicode"
-                                        ]
-                                      },
-                                      {
-                                        "type": "array",
-                                        "items": {
-                                          "type": "string"
-                                        }
-                                      }
-                                    ]
+                                    "type": "string",
+                                    "pattern": "^\\/.*\\/[gimuy]*$"
                                   },
                                   "inverse": {
                                     "description": "Inverse the test",
+                                    "type": "boolean"
+                                  },
+                                  "disabled": {
+                                    "description": "If true, the enclosure is disabled, used in extending formats to disabled enclosures",
                                     "type": "boolean"
                                   },
                                   "enclosure": {
@@ -2476,6 +2067,7 @@
                                 "additionalProperties": false,
                                 "required": [
                                   "enclosure",
+                                  "id",
                                   "test"
                                 ]
                               }
@@ -2603,74 +2195,46 @@
                           "description": "Escape options for each item",
                           "type": "array",
                           "items": {
-                            "description": "Escape options for value-like items",
-                            "type": "object",
-                            "properties": {
-                              "pattern": {
-                                "description": "Regular expression, that matches parts of the value to be escaped",
-                                "anyOf": [
-                                  {
-                                    "type": "object",
-                                    "properties": {
-                                      "source": {
-                                        "type": "string"
-                                      },
-                                      "global": {
-                                        "type": "boolean"
-                                      },
-                                      "ignoreCase": {
-                                        "type": "boolean"
-                                      },
-                                      "multiline": {
-                                        "type": "boolean"
-                                      },
-                                      "lastIndex": {
-                                        "type": "number"
-                                      },
-                                      "flags": {
-                                        "type": "string"
-                                      },
-                                      "sticky": {
-                                        "type": "boolean"
-                                      },
-                                      "unicode": {
-                                        "type": "boolean"
-                                      },
-                                      "dotAll": {
-                                        "type": "boolean"
-                                      }
-                                    },
-                                    "additionalProperties": false,
-                                    "required": [
-                                      "dotAll",
-                                      "flags",
-                                      "global",
-                                      "ignoreCase",
-                                      "lastIndex",
-                                      "multiline",
-                                      "source",
-                                      "sticky",
-                                      "unicode"
-                                    ]
+                            "description": "Replace options for value-like items",
+                            "anyOf": [
+                              {
+                                "additionalProperties": false,
+                                "type": "object",
+                                "properties": {
+                                  "pattern": {
+                                    "description": "Regular expression, that matches parts of the value to be escaped",
+                                    "type": "string",
+                                    "pattern": "^\\/.*\\/[gimuy]*$"
                                   },
-                                  {
+                                  "escape": {
+                                    "description": "Escape char",
                                     "type": "string"
                                   }
+                                },
+                                "required": [
+                                  "escape",
+                                  "pattern"
                                 ]
                               },
-                              "escape": {
-                                "description": "Escape char",
-                                "type": "string"
-                              },
-                              "replace": {
-                                "description": "Replacement string, indexes like `$1` can be used",
-                                "type": "string"
+                              {
+                                "additionalProperties": false,
+                                "type": "object",
+                                "properties": {
+                                  "pattern": {
+                                    "description": "Regular expression, that matches parts of the value to be escaped",
+                                    "type": "string",
+                                    "pattern": "^\\/.*\\/[gimuy]*$"
+                                  },
+                                  "replace": {
+                                    "description": "Replacement string, indexes like `$1` can be used",
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "pattern",
+                                  "replace"
+                                ]
                               }
-                            },
-                            "additionalProperties": false,
-                            "required": [
-                              "escape",
-                              "pattern"
                             ]
                           }
                         },
@@ -2908,63 +2472,21 @@
                                     "description": "Enclosure options for key-like items",
                                     "type": "object",
                                     "properties": {
+                                      "id": {
+                                        "description": "Unique id, used to identify the enclosure and override it in extending formats",
+                                        "type": "string"
+                                      },
                                       "test": {
                                         "description": "Regular expression, that tests if the key must be enclosed",
-                                        "anyOf": [
-                                          {
-                                            "type": "object",
-                                            "properties": {
-                                              "source": {
-                                                "type": "string"
-                                              },
-                                              "global": {
-                                                "type": "boolean"
-                                              },
-                                              "ignoreCase": {
-                                                "type": "boolean"
-                                              },
-                                              "multiline": {
-                                                "type": "boolean"
-                                              },
-                                              "lastIndex": {
-                                                "type": "number"
-                                              },
-                                              "flags": {
-                                                "type": "string"
-                                              },
-                                              "sticky": {
-                                                "type": "boolean"
-                                              },
-                                              "unicode": {
-                                                "type": "boolean"
-                                              },
-                                              "dotAll": {
-                                                "type": "boolean"
-                                              }
-                                            },
-                                            "additionalProperties": false,
-                                            "required": [
-                                              "dotAll",
-                                              "flags",
-                                              "global",
-                                              "ignoreCase",
-                                              "lastIndex",
-                                              "multiline",
-                                              "source",
-                                              "sticky",
-                                              "unicode"
-                                            ]
-                                          },
-                                          {
-                                            "type": "array",
-                                            "items": {
-                                              "type": "string"
-                                            }
-                                          }
-                                        ]
+                                        "type": "string",
+                                        "pattern": "^\\/.*\\/[gimuy]*$"
                                       },
                                       "inverse": {
                                         "description": "Inverse the test",
+                                        "type": "boolean"
+                                      },
+                                      "disabled": {
+                                        "description": "If true, the enclosure is disabled, used in extending formats to disabled enclosures",
                                         "type": "boolean"
                                       },
                                       "enclosure": {
@@ -3002,6 +2524,7 @@
                                     "additionalProperties": false,
                                     "required": [
                                       "enclosure",
+                                      "id",
                                       "test"
                                     ]
                                   }
@@ -3166,63 +2689,21 @@
                                     "description": "Enclosure options for key-like items",
                                     "type": "object",
                                     "properties": {
+                                      "id": {
+                                        "description": "Unique id, used to identify the enclosure and override it in extending formats",
+                                        "type": "string"
+                                      },
                                       "test": {
                                         "description": "Regular expression, that tests if the key must be enclosed",
-                                        "anyOf": [
-                                          {
-                                            "type": "object",
-                                            "properties": {
-                                              "source": {
-                                                "type": "string"
-                                              },
-                                              "global": {
-                                                "type": "boolean"
-                                              },
-                                              "ignoreCase": {
-                                                "type": "boolean"
-                                              },
-                                              "multiline": {
-                                                "type": "boolean"
-                                              },
-                                              "lastIndex": {
-                                                "type": "number"
-                                              },
-                                              "flags": {
-                                                "type": "string"
-                                              },
-                                              "sticky": {
-                                                "type": "boolean"
-                                              },
-                                              "unicode": {
-                                                "type": "boolean"
-                                              },
-                                              "dotAll": {
-                                                "type": "boolean"
-                                              }
-                                            },
-                                            "additionalProperties": false,
-                                            "required": [
-                                              "dotAll",
-                                              "flags",
-                                              "global",
-                                              "ignoreCase",
-                                              "lastIndex",
-                                              "multiline",
-                                              "source",
-                                              "sticky",
-                                              "unicode"
-                                            ]
-                                          },
-                                          {
-                                            "type": "array",
-                                            "items": {
-                                              "type": "string"
-                                            }
-                                          }
-                                        ]
+                                        "type": "string",
+                                        "pattern": "^\\/.*\\/[gimuy]*$"
                                       },
                                       "inverse": {
                                         "description": "Inverse the test",
+                                        "type": "boolean"
+                                      },
+                                      "disabled": {
+                                        "description": "If true, the enclosure is disabled, used in extending formats to disabled enclosures",
                                         "type": "boolean"
                                       },
                                       "enclosure": {
@@ -3260,6 +2741,7 @@
                                     "additionalProperties": false,
                                     "required": [
                                       "enclosure",
+                                      "id",
                                       "test"
                                     ]
                                   }
@@ -3273,74 +2755,46 @@
                               "description": "Escape options for each key",
                               "type": "array",
                               "items": {
-                                "description": "Escape options for value-like items",
-                                "type": "object",
-                                "properties": {
-                                  "pattern": {
-                                    "description": "Regular expression, that matches parts of the value to be escaped",
-                                    "anyOf": [
-                                      {
-                                        "type": "object",
-                                        "properties": {
-                                          "source": {
-                                            "type": "string"
-                                          },
-                                          "global": {
-                                            "type": "boolean"
-                                          },
-                                          "ignoreCase": {
-                                            "type": "boolean"
-                                          },
-                                          "multiline": {
-                                            "type": "boolean"
-                                          },
-                                          "lastIndex": {
-                                            "type": "number"
-                                          },
-                                          "flags": {
-                                            "type": "string"
-                                          },
-                                          "sticky": {
-                                            "type": "boolean"
-                                          },
-                                          "unicode": {
-                                            "type": "boolean"
-                                          },
-                                          "dotAll": {
-                                            "type": "boolean"
-                                          }
-                                        },
-                                        "additionalProperties": false,
-                                        "required": [
-                                          "dotAll",
-                                          "flags",
-                                          "global",
-                                          "ignoreCase",
-                                          "lastIndex",
-                                          "multiline",
-                                          "source",
-                                          "sticky",
-                                          "unicode"
-                                        ]
+                                "description": "Replace options for value-like items",
+                                "anyOf": [
+                                  {
+                                    "additionalProperties": false,
+                                    "type": "object",
+                                    "properties": {
+                                      "pattern": {
+                                        "description": "Regular expression, that matches parts of the value to be escaped",
+                                        "type": "string",
+                                        "pattern": "^\\/.*\\/[gimuy]*$"
                                       },
-                                      {
+                                      "escape": {
+                                        "description": "Escape char",
                                         "type": "string"
                                       }
+                                    },
+                                    "required": [
+                                      "escape",
+                                      "pattern"
                                     ]
                                   },
-                                  "escape": {
-                                    "description": "Escape char",
-                                    "type": "string"
-                                  },
-                                  "replace": {
-                                    "description": "Replacement string, indexes like `$1` can be used",
-                                    "type": "string"
+                                  {
+                                    "additionalProperties": false,
+                                    "type": "object",
+                                    "properties": {
+                                      "pattern": {
+                                        "description": "Regular expression, that matches parts of the value to be escaped",
+                                        "type": "string",
+                                        "pattern": "^\\/.*\\/[gimuy]*$"
+                                      },
+                                      "replace": {
+                                        "description": "Replacement string, indexes like `$1` can be used",
+                                        "type": "string"
+                                      }
+                                    },
+                                    "required": [
+                                      "pattern",
+                                      "replace"
+                                    ]
                                   }
-                                },
-                                "additionalProperties": false,
-                                "required": [
-                                  "escape",
-                                  "pattern"
                                 ]
                               }
                             },
@@ -3518,63 +2972,21 @@
                                     "description": "Enclosure options for key-like items",
                                     "type": "object",
                                     "properties": {
+                                      "id": {
+                                        "description": "Unique id, used to identify the enclosure and override it in extending formats",
+                                        "type": "string"
+                                      },
                                       "test": {
                                         "description": "Regular expression, that tests if the key must be enclosed",
-                                        "anyOf": [
-                                          {
-                                            "type": "object",
-                                            "properties": {
-                                              "source": {
-                                                "type": "string"
-                                              },
-                                              "global": {
-                                                "type": "boolean"
-                                              },
-                                              "ignoreCase": {
-                                                "type": "boolean"
-                                              },
-                                              "multiline": {
-                                                "type": "boolean"
-                                              },
-                                              "lastIndex": {
-                                                "type": "number"
-                                              },
-                                              "flags": {
-                                                "type": "string"
-                                              },
-                                              "sticky": {
-                                                "type": "boolean"
-                                              },
-                                              "unicode": {
-                                                "type": "boolean"
-                                              },
-                                              "dotAll": {
-                                                "type": "boolean"
-                                              }
-                                            },
-                                            "additionalProperties": false,
-                                            "required": [
-                                              "dotAll",
-                                              "flags",
-                                              "global",
-                                              "ignoreCase",
-                                              "lastIndex",
-                                              "multiline",
-                                              "source",
-                                              "sticky",
-                                              "unicode"
-                                            ]
-                                          },
-                                          {
-                                            "type": "array",
-                                            "items": {
-                                              "type": "string"
-                                            }
-                                          }
-                                        ]
+                                        "type": "string",
+                                        "pattern": "^\\/.*\\/[gimuy]*$"
                                       },
                                       "inverse": {
                                         "description": "Inverse the test",
+                                        "type": "boolean"
+                                      },
+                                      "disabled": {
+                                        "description": "If true, the enclosure is disabled, used in extending formats to disabled enclosures",
                                         "type": "boolean"
                                       },
                                       "enclosure": {
@@ -3612,6 +3024,7 @@
                                     "additionalProperties": false,
                                     "required": [
                                       "enclosure",
+                                      "id",
                                       "test"
                                     ]
                                   }
@@ -3625,74 +3038,46 @@
                               "description": "Escape options for each item",
                               "type": "array",
                               "items": {
-                                "description": "Escape options for value-like items",
-                                "type": "object",
-                                "properties": {
-                                  "pattern": {
-                                    "description": "Regular expression, that matches parts of the value to be escaped",
-                                    "anyOf": [
-                                      {
-                                        "type": "object",
-                                        "properties": {
-                                          "source": {
-                                            "type": "string"
-                                          },
-                                          "global": {
-                                            "type": "boolean"
-                                          },
-                                          "ignoreCase": {
-                                            "type": "boolean"
-                                          },
-                                          "multiline": {
-                                            "type": "boolean"
-                                          },
-                                          "lastIndex": {
-                                            "type": "number"
-                                          },
-                                          "flags": {
-                                            "type": "string"
-                                          },
-                                          "sticky": {
-                                            "type": "boolean"
-                                          },
-                                          "unicode": {
-                                            "type": "boolean"
-                                          },
-                                          "dotAll": {
-                                            "type": "boolean"
-                                          }
-                                        },
-                                        "additionalProperties": false,
-                                        "required": [
-                                          "dotAll",
-                                          "flags",
-                                          "global",
-                                          "ignoreCase",
-                                          "lastIndex",
-                                          "multiline",
-                                          "source",
-                                          "sticky",
-                                          "unicode"
-                                        ]
+                                "description": "Replace options for value-like items",
+                                "anyOf": [
+                                  {
+                                    "additionalProperties": false,
+                                    "type": "object",
+                                    "properties": {
+                                      "pattern": {
+                                        "description": "Regular expression, that matches parts of the value to be escaped",
+                                        "type": "string",
+                                        "pattern": "^\\/.*\\/[gimuy]*$"
                                       },
-                                      {
+                                      "escape": {
+                                        "description": "Escape char",
                                         "type": "string"
                                       }
+                                    },
+                                    "required": [
+                                      "escape",
+                                      "pattern"
                                     ]
                                   },
-                                  "escape": {
-                                    "description": "Escape char",
-                                    "type": "string"
-                                  },
-                                  "replace": {
-                                    "description": "Replacement string, indexes like `$1` can be used",
-                                    "type": "string"
+                                  {
+                                    "additionalProperties": false,
+                                    "type": "object",
+                                    "properties": {
+                                      "pattern": {
+                                        "description": "Regular expression, that matches parts of the value to be escaped",
+                                        "type": "string",
+                                        "pattern": "^\\/.*\\/[gimuy]*$"
+                                      },
+                                      "replace": {
+                                        "description": "Replacement string, indexes like `$1` can be used",
+                                        "type": "string"
+                                      }
+                                    },
+                                    "required": [
+                                      "pattern",
+                                      "replace"
+                                    ]
                                   }
-                                },
-                                "additionalProperties": false,
-                                "required": [
-                                  "escape",
-                                  "pattern"
                                 ]
                               }
                             },
@@ -3918,63 +3303,21 @@
                                 "description": "Enclosure options for key-like items",
                                 "type": "object",
                                 "properties": {
+                                  "id": {
+                                    "description": "Unique id, used to identify the enclosure and override it in extending formats",
+                                    "type": "string"
+                                  },
                                   "test": {
                                     "description": "Regular expression, that tests if the key must be enclosed",
-                                    "anyOf": [
-                                      {
-                                        "type": "object",
-                                        "properties": {
-                                          "source": {
-                                            "type": "string"
-                                          },
-                                          "global": {
-                                            "type": "boolean"
-                                          },
-                                          "ignoreCase": {
-                                            "type": "boolean"
-                                          },
-                                          "multiline": {
-                                            "type": "boolean"
-                                          },
-                                          "lastIndex": {
-                                            "type": "number"
-                                          },
-                                          "flags": {
-                                            "type": "string"
-                                          },
-                                          "sticky": {
-                                            "type": "boolean"
-                                          },
-                                          "unicode": {
-                                            "type": "boolean"
-                                          },
-                                          "dotAll": {
-                                            "type": "boolean"
-                                          }
-                                        },
-                                        "additionalProperties": false,
-                                        "required": [
-                                          "dotAll",
-                                          "flags",
-                                          "global",
-                                          "ignoreCase",
-                                          "lastIndex",
-                                          "multiline",
-                                          "source",
-                                          "sticky",
-                                          "unicode"
-                                        ]
-                                      },
-                                      {
-                                        "type": "array",
-                                        "items": {
-                                          "type": "string"
-                                        }
-                                      }
-                                    ]
+                                    "type": "string",
+                                    "pattern": "^\\/.*\\/[gimuy]*$"
                                   },
                                   "inverse": {
                                     "description": "Inverse the test",
+                                    "type": "boolean"
+                                  },
+                                  "disabled": {
+                                    "description": "If true, the enclosure is disabled, used in extending formats to disabled enclosures",
                                     "type": "boolean"
                                   },
                                   "enclosure": {
@@ -4012,6 +3355,7 @@
                                 "additionalProperties": false,
                                 "required": [
                                   "enclosure",
+                                  "id",
                                   "test"
                                 ]
                               }
@@ -4243,63 +3587,21 @@
                                     "description": "Enclosure options for key-like items",
                                     "type": "object",
                                     "properties": {
+                                      "id": {
+                                        "description": "Unique id, used to identify the enclosure and override it in extending formats",
+                                        "type": "string"
+                                      },
                                       "test": {
                                         "description": "Regular expression, that tests if the key must be enclosed",
-                                        "anyOf": [
-                                          {
-                                            "type": "object",
-                                            "properties": {
-                                              "source": {
-                                                "type": "string"
-                                              },
-                                              "global": {
-                                                "type": "boolean"
-                                              },
-                                              "ignoreCase": {
-                                                "type": "boolean"
-                                              },
-                                              "multiline": {
-                                                "type": "boolean"
-                                              },
-                                              "lastIndex": {
-                                                "type": "number"
-                                              },
-                                              "flags": {
-                                                "type": "string"
-                                              },
-                                              "sticky": {
-                                                "type": "boolean"
-                                              },
-                                              "unicode": {
-                                                "type": "boolean"
-                                              },
-                                              "dotAll": {
-                                                "type": "boolean"
-                                              }
-                                            },
-                                            "additionalProperties": false,
-                                            "required": [
-                                              "dotAll",
-                                              "flags",
-                                              "global",
-                                              "ignoreCase",
-                                              "lastIndex",
-                                              "multiline",
-                                              "source",
-                                              "sticky",
-                                              "unicode"
-                                            ]
-                                          },
-                                          {
-                                            "type": "array",
-                                            "items": {
-                                              "type": "string"
-                                            }
-                                          }
-                                        ]
+                                        "type": "string",
+                                        "pattern": "^\\/.*\\/[gimuy]*$"
                                       },
                                       "inverse": {
                                         "description": "Inverse the test",
+                                        "type": "boolean"
+                                      },
+                                      "disabled": {
+                                        "description": "If true, the enclosure is disabled, used in extending formats to disabled enclosures",
                                         "type": "boolean"
                                       },
                                       "enclosure": {
@@ -4337,6 +3639,7 @@
                                     "additionalProperties": false,
                                     "required": [
                                       "enclosure",
+                                      "id",
                                       "test"
                                     ]
                                   }
@@ -4501,63 +3804,21 @@
                                     "description": "Enclosure options for key-like items",
                                     "type": "object",
                                     "properties": {
+                                      "id": {
+                                        "description": "Unique id, used to identify the enclosure and override it in extending formats",
+                                        "type": "string"
+                                      },
                                       "test": {
                                         "description": "Regular expression, that tests if the key must be enclosed",
-                                        "anyOf": [
-                                          {
-                                            "type": "object",
-                                            "properties": {
-                                              "source": {
-                                                "type": "string"
-                                              },
-                                              "global": {
-                                                "type": "boolean"
-                                              },
-                                              "ignoreCase": {
-                                                "type": "boolean"
-                                              },
-                                              "multiline": {
-                                                "type": "boolean"
-                                              },
-                                              "lastIndex": {
-                                                "type": "number"
-                                              },
-                                              "flags": {
-                                                "type": "string"
-                                              },
-                                              "sticky": {
-                                                "type": "boolean"
-                                              },
-                                              "unicode": {
-                                                "type": "boolean"
-                                              },
-                                              "dotAll": {
-                                                "type": "boolean"
-                                              }
-                                            },
-                                            "additionalProperties": false,
-                                            "required": [
-                                              "dotAll",
-                                              "flags",
-                                              "global",
-                                              "ignoreCase",
-                                              "lastIndex",
-                                              "multiline",
-                                              "source",
-                                              "sticky",
-                                              "unicode"
-                                            ]
-                                          },
-                                          {
-                                            "type": "array",
-                                            "items": {
-                                              "type": "string"
-                                            }
-                                          }
-                                        ]
+                                        "type": "string",
+                                        "pattern": "^\\/.*\\/[gimuy]*$"
                                       },
                                       "inverse": {
                                         "description": "Inverse the test",
+                                        "type": "boolean"
+                                      },
+                                      "disabled": {
+                                        "description": "If true, the enclosure is disabled, used in extending formats to disabled enclosures",
                                         "type": "boolean"
                                       },
                                       "enclosure": {
@@ -4595,6 +3856,7 @@
                                     "additionalProperties": false,
                                     "required": [
                                       "enclosure",
+                                      "id",
                                       "test"
                                     ]
                                   }
@@ -4608,74 +3870,46 @@
                               "description": "Escape options for each key",
                               "type": "array",
                               "items": {
-                                "description": "Escape options for value-like items",
-                                "type": "object",
-                                "properties": {
-                                  "pattern": {
-                                    "description": "Regular expression, that matches parts of the value to be escaped",
-                                    "anyOf": [
-                                      {
-                                        "type": "object",
-                                        "properties": {
-                                          "source": {
-                                            "type": "string"
-                                          },
-                                          "global": {
-                                            "type": "boolean"
-                                          },
-                                          "ignoreCase": {
-                                            "type": "boolean"
-                                          },
-                                          "multiline": {
-                                            "type": "boolean"
-                                          },
-                                          "lastIndex": {
-                                            "type": "number"
-                                          },
-                                          "flags": {
-                                            "type": "string"
-                                          },
-                                          "sticky": {
-                                            "type": "boolean"
-                                          },
-                                          "unicode": {
-                                            "type": "boolean"
-                                          },
-                                          "dotAll": {
-                                            "type": "boolean"
-                                          }
-                                        },
-                                        "additionalProperties": false,
-                                        "required": [
-                                          "dotAll",
-                                          "flags",
-                                          "global",
-                                          "ignoreCase",
-                                          "lastIndex",
-                                          "multiline",
-                                          "source",
-                                          "sticky",
-                                          "unicode"
-                                        ]
+                                "description": "Replace options for value-like items",
+                                "anyOf": [
+                                  {
+                                    "additionalProperties": false,
+                                    "type": "object",
+                                    "properties": {
+                                      "pattern": {
+                                        "description": "Regular expression, that matches parts of the value to be escaped",
+                                        "type": "string",
+                                        "pattern": "^\\/.*\\/[gimuy]*$"
                                       },
-                                      {
+                                      "escape": {
+                                        "description": "Escape char",
                                         "type": "string"
                                       }
+                                    },
+                                    "required": [
+                                      "escape",
+                                      "pattern"
                                     ]
                                   },
-                                  "escape": {
-                                    "description": "Escape char",
-                                    "type": "string"
-                                  },
-                                  "replace": {
-                                    "description": "Replacement string, indexes like `$1` can be used",
-                                    "type": "string"
+                                  {
+                                    "additionalProperties": false,
+                                    "type": "object",
+                                    "properties": {
+                                      "pattern": {
+                                        "description": "Regular expression, that matches parts of the value to be escaped",
+                                        "type": "string",
+                                        "pattern": "^\\/.*\\/[gimuy]*$"
+                                      },
+                                      "replace": {
+                                        "description": "Replacement string, indexes like `$1` can be used",
+                                        "type": "string"
+                                      }
+                                    },
+                                    "required": [
+                                      "pattern",
+                                      "replace"
+                                    ]
                                   }
-                                },
-                                "additionalProperties": false,
-                                "required": [
-                                  "escape",
-                                  "pattern"
                                 ]
                               }
                             },
@@ -4728,6 +3962,7 @@
                             "markdown",
                             "php",
                             "sql",
+                            "sqlUpdate",
                             "textList",
                             "xml",
                             "yaml"
@@ -4793,63 +4028,21 @@
                                     "description": "Enclosure options for key-like items",
                                     "type": "object",
                                     "properties": {
+                                      "id": {
+                                        "description": "Unique id, used to identify the enclosure and override it in extending formats",
+                                        "type": "string"
+                                      },
                                       "test": {
                                         "description": "Regular expression, that tests if the key must be enclosed",
-                                        "anyOf": [
-                                          {
-                                            "type": "object",
-                                            "properties": {
-                                              "source": {
-                                                "type": "string"
-                                              },
-                                              "global": {
-                                                "type": "boolean"
-                                              },
-                                              "ignoreCase": {
-                                                "type": "boolean"
-                                              },
-                                              "multiline": {
-                                                "type": "boolean"
-                                              },
-                                              "lastIndex": {
-                                                "type": "number"
-                                              },
-                                              "flags": {
-                                                "type": "string"
-                                              },
-                                              "sticky": {
-                                                "type": "boolean"
-                                              },
-                                              "unicode": {
-                                                "type": "boolean"
-                                              },
-                                              "dotAll": {
-                                                "type": "boolean"
-                                              }
-                                            },
-                                            "additionalProperties": false,
-                                            "required": [
-                                              "dotAll",
-                                              "flags",
-                                              "global",
-                                              "ignoreCase",
-                                              "lastIndex",
-                                              "multiline",
-                                              "source",
-                                              "sticky",
-                                              "unicode"
-                                            ]
-                                          },
-                                          {
-                                            "type": "array",
-                                            "items": {
-                                              "type": "string"
-                                            }
-                                          }
-                                        ]
+                                        "type": "string",
+                                        "pattern": "^\\/.*\\/[gimuy]*$"
                                       },
                                       "inverse": {
                                         "description": "Inverse the test",
+                                        "type": "boolean"
+                                      },
+                                      "disabled": {
+                                        "description": "If true, the enclosure is disabled, used in extending formats to disabled enclosures",
                                         "type": "boolean"
                                       },
                                       "enclosure": {
@@ -4887,6 +4080,7 @@
                                     "additionalProperties": false,
                                     "required": [
                                       "enclosure",
+                                      "id",
                                       "test"
                                     ]
                                   }
@@ -5031,63 +4225,21 @@
                                     "description": "Enclosure options for key-like items",
                                     "type": "object",
                                     "properties": {
+                                      "id": {
+                                        "description": "Unique id, used to identify the enclosure and override it in extending formats",
+                                        "type": "string"
+                                      },
                                       "test": {
                                         "description": "Regular expression, that tests if the key must be enclosed",
-                                        "anyOf": [
-                                          {
-                                            "type": "object",
-                                            "properties": {
-                                              "source": {
-                                                "type": "string"
-                                              },
-                                              "global": {
-                                                "type": "boolean"
-                                              },
-                                              "ignoreCase": {
-                                                "type": "boolean"
-                                              },
-                                              "multiline": {
-                                                "type": "boolean"
-                                              },
-                                              "lastIndex": {
-                                                "type": "number"
-                                              },
-                                              "flags": {
-                                                "type": "string"
-                                              },
-                                              "sticky": {
-                                                "type": "boolean"
-                                              },
-                                              "unicode": {
-                                                "type": "boolean"
-                                              },
-                                              "dotAll": {
-                                                "type": "boolean"
-                                              }
-                                            },
-                                            "additionalProperties": false,
-                                            "required": [
-                                              "dotAll",
-                                              "flags",
-                                              "global",
-                                              "ignoreCase",
-                                              "lastIndex",
-                                              "multiline",
-                                              "source",
-                                              "sticky",
-                                              "unicode"
-                                            ]
-                                          },
-                                          {
-                                            "type": "array",
-                                            "items": {
-                                              "type": "string"
-                                            }
-                                          }
-                                        ]
+                                        "type": "string",
+                                        "pattern": "^\\/.*\\/[gimuy]*$"
                                       },
                                       "inverse": {
                                         "description": "Inverse the test",
+                                        "type": "boolean"
+                                      },
+                                      "disabled": {
+                                        "description": "If true, the enclosure is disabled, used in extending formats to disabled enclosures",
                                         "type": "boolean"
                                       },
                                       "enclosure": {
@@ -5125,6 +4277,7 @@
                                     "additionalProperties": false,
                                     "required": [
                                       "enclosure",
+                                      "id",
                                       "test"
                                     ]
                                   }
@@ -5252,74 +4405,46 @@
                               "description": "Escape options for each key",
                               "type": "array",
                               "items": {
-                                "description": "Escape options for value-like items",
-                                "type": "object",
-                                "properties": {
-                                  "pattern": {
-                                    "description": "Regular expression, that matches parts of the value to be escaped",
-                                    "anyOf": [
-                                      {
-                                        "type": "object",
-                                        "properties": {
-                                          "source": {
-                                            "type": "string"
-                                          },
-                                          "global": {
-                                            "type": "boolean"
-                                          },
-                                          "ignoreCase": {
-                                            "type": "boolean"
-                                          },
-                                          "multiline": {
-                                            "type": "boolean"
-                                          },
-                                          "lastIndex": {
-                                            "type": "number"
-                                          },
-                                          "flags": {
-                                            "type": "string"
-                                          },
-                                          "sticky": {
-                                            "type": "boolean"
-                                          },
-                                          "unicode": {
-                                            "type": "boolean"
-                                          },
-                                          "dotAll": {
-                                            "type": "boolean"
-                                          }
-                                        },
-                                        "additionalProperties": false,
-                                        "required": [
-                                          "dotAll",
-                                          "flags",
-                                          "global",
-                                          "ignoreCase",
-                                          "lastIndex",
-                                          "multiline",
-                                          "source",
-                                          "sticky",
-                                          "unicode"
-                                        ]
+                                "description": "Replace options for value-like items",
+                                "anyOf": [
+                                  {
+                                    "additionalProperties": false,
+                                    "type": "object",
+                                    "properties": {
+                                      "pattern": {
+                                        "description": "Regular expression, that matches parts of the value to be escaped",
+                                        "type": "string",
+                                        "pattern": "^\\/.*\\/[gimuy]*$"
                                       },
-                                      {
+                                      "escape": {
+                                        "description": "Escape char",
                                         "type": "string"
                                       }
+                                    },
+                                    "required": [
+                                      "escape",
+                                      "pattern"
                                     ]
                                   },
-                                  "escape": {
-                                    "description": "Escape char",
-                                    "type": "string"
-                                  },
-                                  "replace": {
-                                    "description": "Replacement string, indexes like `$1` can be used",
-                                    "type": "string"
+                                  {
+                                    "additionalProperties": false,
+                                    "type": "object",
+                                    "properties": {
+                                      "pattern": {
+                                        "description": "Regular expression, that matches parts of the value to be escaped",
+                                        "type": "string",
+                                        "pattern": "^\\/.*\\/[gimuy]*$"
+                                      },
+                                      "replace": {
+                                        "description": "Replacement string, indexes like `$1` can be used",
+                                        "type": "string"
+                                      }
+                                    },
+                                    "required": [
+                                      "pattern",
+                                      "replace"
+                                    ]
                                   }
-                                },
-                                "additionalProperties": false,
-                                "required": [
-                                  "escape",
-                                  "pattern"
                                 ]
                               }
                             },
@@ -5363,63 +4488,21 @@
                                     "description": "Enclosure options for key-like items",
                                     "type": "object",
                                     "properties": {
+                                      "id": {
+                                        "description": "Unique id, used to identify the enclosure and override it in extending formats",
+                                        "type": "string"
+                                      },
                                       "test": {
                                         "description": "Regular expression, that tests if the key must be enclosed",
-                                        "anyOf": [
-                                          {
-                                            "type": "object",
-                                            "properties": {
-                                              "source": {
-                                                "type": "string"
-                                              },
-                                              "global": {
-                                                "type": "boolean"
-                                              },
-                                              "ignoreCase": {
-                                                "type": "boolean"
-                                              },
-                                              "multiline": {
-                                                "type": "boolean"
-                                              },
-                                              "lastIndex": {
-                                                "type": "number"
-                                              },
-                                              "flags": {
-                                                "type": "string"
-                                              },
-                                              "sticky": {
-                                                "type": "boolean"
-                                              },
-                                              "unicode": {
-                                                "type": "boolean"
-                                              },
-                                              "dotAll": {
-                                                "type": "boolean"
-                                              }
-                                            },
-                                            "additionalProperties": false,
-                                            "required": [
-                                              "dotAll",
-                                              "flags",
-                                              "global",
-                                              "ignoreCase",
-                                              "lastIndex",
-                                              "multiline",
-                                              "source",
-                                              "sticky",
-                                              "unicode"
-                                            ]
-                                          },
-                                          {
-                                            "type": "array",
-                                            "items": {
-                                              "type": "string"
-                                            }
-                                          }
-                                        ]
+                                        "type": "string",
+                                        "pattern": "^\\/.*\\/[gimuy]*$"
                                       },
                                       "inverse": {
                                         "description": "Inverse the test",
+                                        "type": "boolean"
+                                      },
+                                      "disabled": {
+                                        "description": "If true, the enclosure is disabled, used in extending formats to disabled enclosures",
                                         "type": "boolean"
                                       },
                                       "enclosure": {
@@ -5457,6 +4540,7 @@
                                     "additionalProperties": false,
                                     "required": [
                                       "enclosure",
+                                      "id",
                                       "test"
                                     ]
                                   }
@@ -5584,74 +4668,46 @@
                               "description": "Escape options for each item",
                               "type": "array",
                               "items": {
-                                "description": "Escape options for value-like items",
-                                "type": "object",
-                                "properties": {
-                                  "pattern": {
-                                    "description": "Regular expression, that matches parts of the value to be escaped",
-                                    "anyOf": [
-                                      {
-                                        "type": "object",
-                                        "properties": {
-                                          "source": {
-                                            "type": "string"
-                                          },
-                                          "global": {
-                                            "type": "boolean"
-                                          },
-                                          "ignoreCase": {
-                                            "type": "boolean"
-                                          },
-                                          "multiline": {
-                                            "type": "boolean"
-                                          },
-                                          "lastIndex": {
-                                            "type": "number"
-                                          },
-                                          "flags": {
-                                            "type": "string"
-                                          },
-                                          "sticky": {
-                                            "type": "boolean"
-                                          },
-                                          "unicode": {
-                                            "type": "boolean"
-                                          },
-                                          "dotAll": {
-                                            "type": "boolean"
-                                          }
-                                        },
-                                        "additionalProperties": false,
-                                        "required": [
-                                          "dotAll",
-                                          "flags",
-                                          "global",
-                                          "ignoreCase",
-                                          "lastIndex",
-                                          "multiline",
-                                          "source",
-                                          "sticky",
-                                          "unicode"
-                                        ]
+                                "description": "Replace options for value-like items",
+                                "anyOf": [
+                                  {
+                                    "additionalProperties": false,
+                                    "type": "object",
+                                    "properties": {
+                                      "pattern": {
+                                        "description": "Regular expression, that matches parts of the value to be escaped",
+                                        "type": "string",
+                                        "pattern": "^\\/.*\\/[gimuy]*$"
                                       },
-                                      {
+                                      "escape": {
+                                        "description": "Escape char",
                                         "type": "string"
                                       }
+                                    },
+                                    "required": [
+                                      "escape",
+                                      "pattern"
                                     ]
                                   },
-                                  "escape": {
-                                    "description": "Escape char",
-                                    "type": "string"
-                                  },
-                                  "replace": {
-                                    "description": "Replacement string, indexes like `$1` can be used",
-                                    "type": "string"
+                                  {
+                                    "additionalProperties": false,
+                                    "type": "object",
+                                    "properties": {
+                                      "pattern": {
+                                        "description": "Regular expression, that matches parts of the value to be escaped",
+                                        "type": "string",
+                                        "pattern": "^\\/.*\\/[gimuy]*$"
+                                      },
+                                      "replace": {
+                                        "description": "Replacement string, indexes like `$1` can be used",
+                                        "type": "string"
+                                      }
+                                    },
+                                    "required": [
+                                      "pattern",
+                                      "replace"
+                                    ]
                                   }
-                                },
-                                "additionalProperties": false,
-                                "required": [
-                                  "escape",
-                                  "pattern"
                                 ]
                               }
                             },
@@ -5732,63 +4788,21 @@
                                 "description": "Enclosure options for key-like items",
                                 "type": "object",
                                 "properties": {
+                                  "id": {
+                                    "description": "Unique id, used to identify the enclosure and override it in extending formats",
+                                    "type": "string"
+                                  },
                                   "test": {
                                     "description": "Regular expression, that tests if the key must be enclosed",
-                                    "anyOf": [
-                                      {
-                                        "type": "object",
-                                        "properties": {
-                                          "source": {
-                                            "type": "string"
-                                          },
-                                          "global": {
-                                            "type": "boolean"
-                                          },
-                                          "ignoreCase": {
-                                            "type": "boolean"
-                                          },
-                                          "multiline": {
-                                            "type": "boolean"
-                                          },
-                                          "lastIndex": {
-                                            "type": "number"
-                                          },
-                                          "flags": {
-                                            "type": "string"
-                                          },
-                                          "sticky": {
-                                            "type": "boolean"
-                                          },
-                                          "unicode": {
-                                            "type": "boolean"
-                                          },
-                                          "dotAll": {
-                                            "type": "boolean"
-                                          }
-                                        },
-                                        "additionalProperties": false,
-                                        "required": [
-                                          "dotAll",
-                                          "flags",
-                                          "global",
-                                          "ignoreCase",
-                                          "lastIndex",
-                                          "multiline",
-                                          "source",
-                                          "sticky",
-                                          "unicode"
-                                        ]
-                                      },
-                                      {
-                                        "type": "array",
-                                        "items": {
-                                          "type": "string"
-                                        }
-                                      }
-                                    ]
+                                    "type": "string",
+                                    "pattern": "^\\/.*\\/[gimuy]*$"
                                   },
                                   "inverse": {
                                     "description": "Inverse the test",
+                                    "type": "boolean"
+                                  },
+                                  "disabled": {
+                                    "description": "If true, the enclosure is disabled, used in extending formats to disabled enclosures",
                                     "type": "boolean"
                                   },
                                   "enclosure": {
@@ -5826,6 +4840,7 @@
                                 "additionalProperties": false,
                                 "required": [
                                   "enclosure",
+                                  "id",
                                   "test"
                                 ]
                               }
@@ -6029,63 +5044,21 @@
                                     "description": "Enclosure options for key-like items",
                                     "type": "object",
                                     "properties": {
+                                      "id": {
+                                        "description": "Unique id, used to identify the enclosure and override it in extending formats",
+                                        "type": "string"
+                                      },
                                       "test": {
                                         "description": "Regular expression, that tests if the key must be enclosed",
-                                        "anyOf": [
-                                          {
-                                            "type": "object",
-                                            "properties": {
-                                              "source": {
-                                                "type": "string"
-                                              },
-                                              "global": {
-                                                "type": "boolean"
-                                              },
-                                              "ignoreCase": {
-                                                "type": "boolean"
-                                              },
-                                              "multiline": {
-                                                "type": "boolean"
-                                              },
-                                              "lastIndex": {
-                                                "type": "number"
-                                              },
-                                              "flags": {
-                                                "type": "string"
-                                              },
-                                              "sticky": {
-                                                "type": "boolean"
-                                              },
-                                              "unicode": {
-                                                "type": "boolean"
-                                              },
-                                              "dotAll": {
-                                                "type": "boolean"
-                                              }
-                                            },
-                                            "additionalProperties": false,
-                                            "required": [
-                                              "dotAll",
-                                              "flags",
-                                              "global",
-                                              "ignoreCase",
-                                              "lastIndex",
-                                              "multiline",
-                                              "source",
-                                              "sticky",
-                                              "unicode"
-                                            ]
-                                          },
-                                          {
-                                            "type": "array",
-                                            "items": {
-                                              "type": "string"
-                                            }
-                                          }
-                                        ]
+                                        "type": "string",
+                                        "pattern": "^\\/.*\\/[gimuy]*$"
                                       },
                                       "inverse": {
                                         "description": "Inverse the test",
+                                        "type": "boolean"
+                                      },
+                                      "disabled": {
+                                        "description": "If true, the enclosure is disabled, used in extending formats to disabled enclosures",
                                         "type": "boolean"
                                       },
                                       "enclosure": {
@@ -6123,6 +5096,7 @@
                                     "additionalProperties": false,
                                     "required": [
                                       "enclosure",
+                                      "id",
                                       "test"
                                     ]
                                   }
@@ -6267,63 +5241,21 @@
                                     "description": "Enclosure options for key-like items",
                                     "type": "object",
                                     "properties": {
+                                      "id": {
+                                        "description": "Unique id, used to identify the enclosure and override it in extending formats",
+                                        "type": "string"
+                                      },
                                       "test": {
                                         "description": "Regular expression, that tests if the key must be enclosed",
-                                        "anyOf": [
-                                          {
-                                            "type": "object",
-                                            "properties": {
-                                              "source": {
-                                                "type": "string"
-                                              },
-                                              "global": {
-                                                "type": "boolean"
-                                              },
-                                              "ignoreCase": {
-                                                "type": "boolean"
-                                              },
-                                              "multiline": {
-                                                "type": "boolean"
-                                              },
-                                              "lastIndex": {
-                                                "type": "number"
-                                              },
-                                              "flags": {
-                                                "type": "string"
-                                              },
-                                              "sticky": {
-                                                "type": "boolean"
-                                              },
-                                              "unicode": {
-                                                "type": "boolean"
-                                              },
-                                              "dotAll": {
-                                                "type": "boolean"
-                                              }
-                                            },
-                                            "additionalProperties": false,
-                                            "required": [
-                                              "dotAll",
-                                              "flags",
-                                              "global",
-                                              "ignoreCase",
-                                              "lastIndex",
-                                              "multiline",
-                                              "source",
-                                              "sticky",
-                                              "unicode"
-                                            ]
-                                          },
-                                          {
-                                            "type": "array",
-                                            "items": {
-                                              "type": "string"
-                                            }
-                                          }
-                                        ]
+                                        "type": "string",
+                                        "pattern": "^\\/.*\\/[gimuy]*$"
                                       },
                                       "inverse": {
                                         "description": "Inverse the test",
+                                        "type": "boolean"
+                                      },
+                                      "disabled": {
+                                        "description": "If true, the enclosure is disabled, used in extending formats to disabled enclosures",
                                         "type": "boolean"
                                       },
                                       "enclosure": {
@@ -6361,6 +5293,7 @@
                                     "additionalProperties": false,
                                     "required": [
                                       "enclosure",
+                                      "id",
                                       "test"
                                     ]
                                   }
@@ -6488,74 +5421,46 @@
                               "description": "Escape options for each key",
                               "type": "array",
                               "items": {
-                                "description": "Escape options for value-like items",
-                                "type": "object",
-                                "properties": {
-                                  "pattern": {
-                                    "description": "Regular expression, that matches parts of the value to be escaped",
-                                    "anyOf": [
-                                      {
-                                        "type": "object",
-                                        "properties": {
-                                          "source": {
-                                            "type": "string"
-                                          },
-                                          "global": {
-                                            "type": "boolean"
-                                          },
-                                          "ignoreCase": {
-                                            "type": "boolean"
-                                          },
-                                          "multiline": {
-                                            "type": "boolean"
-                                          },
-                                          "lastIndex": {
-                                            "type": "number"
-                                          },
-                                          "flags": {
-                                            "type": "string"
-                                          },
-                                          "sticky": {
-                                            "type": "boolean"
-                                          },
-                                          "unicode": {
-                                            "type": "boolean"
-                                          },
-                                          "dotAll": {
-                                            "type": "boolean"
-                                          }
-                                        },
-                                        "additionalProperties": false,
-                                        "required": [
-                                          "dotAll",
-                                          "flags",
-                                          "global",
-                                          "ignoreCase",
-                                          "lastIndex",
-                                          "multiline",
-                                          "source",
-                                          "sticky",
-                                          "unicode"
-                                        ]
+                                "description": "Replace options for value-like items",
+                                "anyOf": [
+                                  {
+                                    "additionalProperties": false,
+                                    "type": "object",
+                                    "properties": {
+                                      "pattern": {
+                                        "description": "Regular expression, that matches parts of the value to be escaped",
+                                        "type": "string",
+                                        "pattern": "^\\/.*\\/[gimuy]*$"
                                       },
-                                      {
+                                      "escape": {
+                                        "description": "Escape char",
                                         "type": "string"
                                       }
+                                    },
+                                    "required": [
+                                      "escape",
+                                      "pattern"
                                     ]
                                   },
-                                  "escape": {
-                                    "description": "Escape char",
-                                    "type": "string"
-                                  },
-                                  "replace": {
-                                    "description": "Replacement string, indexes like `$1` can be used",
-                                    "type": "string"
+                                  {
+                                    "additionalProperties": false,
+                                    "type": "object",
+                                    "properties": {
+                                      "pattern": {
+                                        "description": "Regular expression, that matches parts of the value to be escaped",
+                                        "type": "string",
+                                        "pattern": "^\\/.*\\/[gimuy]*$"
+                                      },
+                                      "replace": {
+                                        "description": "Replacement string, indexes like `$1` can be used",
+                                        "type": "string"
+                                      }
+                                    },
+                                    "required": [
+                                      "pattern",
+                                      "replace"
+                                    ]
                                   }
-                                },
-                                "additionalProperties": false,
-                                "required": [
-                                  "escape",
-                                  "pattern"
                                 ]
                               }
                             },
@@ -6607,7 +5512,10 @@
                   "type": "number"
                 }
               },
-              "additionalProperties": false
+              "additionalProperties": false,
+              "required": [
+                "name"
+              ]
             }
           },
           "list-tools.prettyPrint": {
