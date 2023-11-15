@@ -5558,19 +5558,19 @@
     "@typescript-eslint/parser": "^6.4.0",
     "csv-parse": "^5.5.2",
     "deepmerge": "^4.3.1",
-    "eslint-config-prettier": "^9.0.0",
     "eslint": "^8.47.0",
+    "eslint-config-prettier": "^9.0.0",
     "glob": "^10.3.3",
     "mocha": "^10.2.0",
-    "semantic-release-vsce": "^5.6.1",
     "semantic-release": "^21.0.7",
+    "semantic-release-vsce": "^5.6.1",
     "ts-loader": "^9.4.4",
     "type-fest": "^4.3.1",
-    "typescript-json-schema": "^0.60.0",
     "typescript": "^5.1.6",
+    "typescript-json-schema": "^0.60.0",
     "vscode-test": "^1.6.1",
-    "webpack-cli": "^5.1.4",
     "webpack": "^5.88.2",
+    "webpack-cli": "^5.1.4",
     "xml2js": "^0.6.2"
   },
   "release": {
@@ -5623,5 +5623,10 @@
         }
       ]
     ]
+  },
+  "dependencies": {
+    "flat": "^6.0.1",
+    "parse-json": "^8.0.1",
+    "strip-json-comments": "^5.0.1"
   }
 }
