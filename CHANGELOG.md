@@ -1,3 +1,11 @@
+## [1.6.1](https://github.com/1nVitr0/plugin-vscode-format-list/compare/v1.6.0...v1.6.1) (2023-11-15)
+
+
+### Bug Fixes
+
+* escape quotes and line breaks in output ([3819305](https://github.com/1nVitr0/plugin-vscode-format-list/commit/381930517ba3730053376df442e8562245fe1a25))
+* support line breaks and quotes in csv ([da49d9a](https://github.com/1nVitr0/plugin-vscode-format-list/commit/da49d9ac94666e39d9d4d9e7a20b8a06c6042ec7))
+
 # [1.6.0](https://github.com/1nVitr0/plugin-vscode-format-list/compare/v1.5.0...v1.6.0) (2023-10-23)
 
 
