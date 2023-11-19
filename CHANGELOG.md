@@ -1,3 +1,11 @@
+## [1.7.1](https://github.com/1nVitr0/plugin-vscode-format-list/compare/v1.7.0...v1.7.1) (2023-11-19)
+
+
+### Bug Fixes
+
+* apply valueEnclosure on value alias ([8d9ab76](https://github.com/1nVitr0/plugin-vscode-format-list/commit/8d9ab767b34edf34e4a57a56961e27519c3421d6))
+* escape xml tokens in values ([6af5f0c](https://github.com/1nVitr0/plugin-vscode-format-list/commit/6af5f0ccf35a9c8beb1e8a0c68854cb3831c3251))
+
 # [1.7.0](https://github.com/1nVitr0/plugin-vscode-format-list/compare/v1.6.1...v1.7.0) (2023-11-15)
 
 
