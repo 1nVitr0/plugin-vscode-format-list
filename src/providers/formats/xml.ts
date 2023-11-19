@@ -1,4 +1,19 @@
-import { FormatterOptions } from "../../types/Formatter";
+import { FormatterOptions, FormatterValueEscape } from "../../types/Formatter";
+
+const xmlValueEscape: FormatterValueEscape[] = [
+  {
+    pattern: /</g,
+    replace: "&lt;",
+  },
+  {
+    pattern: />/g,
+    replace: "&gt;",
+  },
+  {
+    pattern: /&/g,
+    replace: "&amp;",
+  },
+];
 
 export const formatXml: FormatterOptions = {
   simpleList: {
@@ -12,6 +27,7 @@ export const formatXml: FormatterOptions = {
       start: "<item>",
       end: "</item>",
     },
+    valueEscape: xmlValueEscape,
   },
   objectList: {
     delimiter: "",
@@ -40,6 +56,7 @@ export const formatXml: FormatterOptions = {
         start: "",
         end: "</${key}>",
       },
+      valueEscape: xmlValueEscape,
       assignmentOperator: "",
       indentItems: -1,
       indentEnclosure: -1,

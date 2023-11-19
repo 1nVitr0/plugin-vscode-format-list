@@ -371,19 +371,23 @@ export default class ListFormatProvider {
     escapeOptions: FormatterValueEscape[] = [],
     parameters: ParameterList = {}
   ): string {
-    if (value === true) return valueAlias.true ?? "true";
-    else if (value === false) return valueAlias.false ?? "false";
-    else if (value === null) return valueAlias.null ?? "null";
-    else if (enclosureOptions instanceof Array)
-      return this.encloseByRegex(value.toString(), enclosureOptions, parameters);
-
     let enclosure =
-      typeof enclosureOptions === "string" || "start" in enclosureOptions
+      enclosureOptions instanceof Array || typeof enclosureOptions === "string" || "start" in enclosureOptions
         ? enclosureOptions
         : enclosureOptions?.[typeof value as keyof FormatterValueEnclosure];
-    let escapedValue = this.escapeValue(value.toString(), escapeOptions);
 
-    if (enclosure === undefined) return escapedValue;
+    value =
+      value === true
+        ? valueAlias.true ?? "true"
+        : value === false
+        ? valueAlias.false ?? "false"
+        : value === null
+        ? valueAlias.null ?? "null"
+        : value;
+    value = this.escapeValue(value.toString(), escapeOptions);
+
+    if (enclosure === undefined) return value;
+    else if (enclosure instanceof Array) return this.encloseByRegex(value, enclosure, parameters);
 
     const startTemplated = this.templateString(
       typeof enclosure === "string" ? enclosure : enclosure?.start ?? "",
@@ -394,7 +398,7 @@ export default class ListFormatProvider {
       parameters
     );
 
-    return `${startTemplated}${escapedValue}${endTemplated}`;
+    return `${startTemplated}${value}${endTemplated}`;
   }
 
   /**
