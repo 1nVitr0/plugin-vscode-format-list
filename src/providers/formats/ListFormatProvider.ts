@@ -188,11 +188,13 @@ export default class ListFormatProvider {
 
       return this.joinList(mappedItem, _pretty, _indent, 1, itemFormat, { ..._parameters, item });
     });
+    const headerItem = header && this.buildHeader(columns, _pretty, _indent, header, _parameters);
 
+    if (header?.afterEnclosure && headerItem) mappedItems.unshift(headerItem);
     const body = this.joinList(mappedItems, _pretty, _indent, 0, objectList, _parameters);
 
     const lines = [];
-    if (header) lines.push(this.buildHeader(columns, _pretty, _indent, header, _parameters));
+    if (headerItem && !header?.afterEnclosure) lines.push(headerItem);
     lines.push(body);
 
     return _pretty > 0 ? lines.join("\n") : lines.join("");

@@ -6,6 +6,7 @@ import { formatCsvCustom, formatCsvDefault } from "./csv";
 import { formatJava } from "./java";
 import { formatJavaScript } from "./javascript";
 import { formatJson } from "./json";
+import { formatLatex } from "./latex";
 import { formatTextList } from "./list";
 import { formatMarkdown } from "./md";
 import { formatPhp } from "./php";
@@ -28,4 +29,5 @@ export const listFormatProviders: Record<DefaultFormatterLanguages, ListFormatPr
   c: new ListFormatProvider("C Array", formatC),
   cpp: new ListFormatProvider("C++ Array", formatCpp),
   java: new ListFormatProvider("Java Array", formatJava),
+  latex: new ListFormatProvider("LaTeX", formatLatex),
 };
