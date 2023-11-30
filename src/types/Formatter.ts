@@ -186,7 +186,10 @@ export interface FormatterListObjectItemOptions
     FormatterListValueOptions {}
 
 /** Options for list headers */
-export interface FormatterListHeaderOptions extends FormatterListOptions, FormatterListKeyOptions {}
+export interface FormatterListHeaderOptions extends FormatterListOptions, FormatterListKeyOptions {
+  /** If true, header is generated after the enclosure */
+  afterEnclosure?: boolean;
+}
 
 /** Options for output of generated lists */
 export interface GeneratedListOptions {
@@ -255,7 +258,8 @@ export type DefaultFormatterLanguages =
   | "java"
   | "textList"
   | "sql"
-  | "sqlUpdate";
+  | "sqlUpdate"
+  | "latex";
 
 export type DefaultDataLanguages =
   | "javascript"
