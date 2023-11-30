@@ -1,3 +1,10 @@
+# [1.8.0](https://github.com/1nVitr0/plugin-vscode-format-list/compare/v1.7.1...v1.8.0) (2023-11-30)
+
+
+### Features
+
+* add latex output support ([4f43367](https://github.com/1nVitr0/plugin-vscode-format-list/commit/4f43367f03e041bcd79f197bbebc0239e0b4ddc0))
+
 ## [1.7.1](https://github.com/1nVitr0/plugin-vscode-format-list/compare/v1.7.0...v1.7.1) (2023-11-19)
 
 
