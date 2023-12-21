@@ -1,3 +1,16 @@
+# [1.9.0](https://github.com/1nVitr0/plugin-vscode-format-list/compare/v1.8.0...v1.9.0) (2023-12-21)
+
+
+### Bug Fixes
+
+* support jsonl (newline separated json objects) ([017abf9](https://github.com/1nVitr0/plugin-vscode-format-list/commit/017abf994ebb4509d2842cc4ecfae1bc4647a2e2))
+
+
+### Features
+
+* add json log output format support ([aba7f2b](https://github.com/1nVitr0/plugin-vscode-format-list/commit/aba7f2b9674e2bfd415185349990c4d61fbe544f))
+* add support for repeatable parameters ([413bdae](https://github.com/1nVitr0/plugin-vscode-format-list/commit/413bdae04574b88c0fb9df240e92c01aeb94fcd3))
+
 # [1.8.0](https://github.com/1nVitr0/plugin-vscode-format-list/compare/v1.7.1...v1.8.0) (2023-11-30)
 
 
