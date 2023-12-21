@@ -6,6 +6,7 @@ import { formatCsvCustom, formatCsvDefault } from "./csv";
 import { formatJava } from "./java";
 import { formatJavaScript } from "./javascript";
 import { formatJson } from "./json";
+import { formatJsonLog } from "./jsonl";
 import { formatLatex } from "./latex";
 import { formatTextList } from "./list";
 import { formatMarkdown } from "./md";
@@ -18,6 +19,7 @@ export const listFormatProviders: Record<DefaultFormatterLanguages, ListFormatPr
   csv: new ListFormatProvider("CSV (Default Options)", formatCsvDefault),
   csvCustom: new ListFormatProvider("CSV (Custom Options)", formatCsvCustom),
   json: new ListFormatProvider("JSON", formatJson),
+  jsonl: new ListFormatProvider("JSON Log (Newline separated JSON objects)", formatJsonLog),
   yaml: new ListFormatProvider("YAML", formatYaml),
   xml: new ListFormatProvider("XML", formatXml),
   textList: new ListFormatProvider("Separated list", formatTextList),

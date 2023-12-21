@@ -247,6 +247,7 @@ export interface CustomFormatters {
 export type DefaultFormatterLanguages =
   | "javascript"
   | "json"
+  | "jsonl"
   | "yaml"
   | "xml"
   | "markdown"
