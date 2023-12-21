@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { FormatterOptions } from "../../types/Formatter";
 
 export const formatSqlInsert: FormatterOptions = {
@@ -40,9 +41,7 @@ export const formatSqlInsert: FormatterOptions = {
           prompt: "Ignore duplicates?",
           placeholder: "IGNORE",
           options: {
-            // eslint-disable-next-line @typescript-eslint/naming-convention
             Yes: " IGNORE ",
-            // eslint-disable-next-line @typescript-eslint/naming-convention
             No: " ",
           },
         },

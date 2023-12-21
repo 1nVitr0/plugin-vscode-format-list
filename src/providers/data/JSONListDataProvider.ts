@@ -6,13 +6,13 @@ import { ListDataContext, ListData } from "../../types/List";
 import { ListDataProvider } from "../../types/Providers";
 
 export default class JSONListDataProvider implements ListDataProvider {
-  public provideColumns(
+  public async provideColumns(
     document: TextDocument,
     selection: Selection,
     token: CancellationToken,
     parameters?: undefined
-  ): ProviderResult<ListDataContext<undefined>> {
-    const json = this.parseJsonArray(document.getText(selection));
+  ): Promise<ListDataContext<undefined>> {
+    const json = await this.parseJsonArray(document.getText(selection), token);
     const flattened = json.map((item) => flatten<any, any>(item, { delimiter: "." }));
 
     const columns = flattened.reduce<Set<string>>((columns, item) => {
@@ -29,14 +29,14 @@ export default class JSONListDataProvider implements ListDataProvider {
     };
   }
 
-  public provideListData(
+  public async provideListData(
     document: TextDocument,
     selection: Selection,
     context: ListDataContext<undefined>,
     token: CancellationToken
-  ): ProviderResult<ListData[]> {
+  ): Promise<ListData[]> {
     const { columns } = context;
-    const json = this.parseJsonArray(document.getText(selection));
+    const json = await this.parseJsonArray(document.getText(selection), token);
     const flattened = json.map((item) => flatten<any, Record<string, any>>(item, { delimiter: "." }));
 
     return flattened.map((item) =>
@@ -44,15 +44,26 @@ export default class JSONListDataProvider implements ListDataProvider {
     );
   }
 
-  private parseJsonArray(json: string) {
+  private async parseJsonArray(json: string, token: CancellationToken) {
     let stripped = stripJsonComments(json).trim();
 
-    if (stripped[0] !== "[") stripped = `[${stripped}]`;
+    if (stripped[0] !== "[") stripped = `[${stripped}`;
     if (stripped[stripped.length - 1] === ",") stripped = stripped.slice(0, -1);
     if (stripped[stripped.length - 1] !== "]") stripped += "]";
 
-    const items = parseJson(stripped) as unknown as object[];
+    let items: object[];
+    
+    try {
+      items = parseJson(stripped) as unknown as object[];
+    } catch (error) {
+      // Retry parsing as jsonl
+      if (token.isCancellationRequested) return [];
+      stripped = stripped.replace(/\}\r?\n/g, "},\n");
+      items = parseJson(stripped) as unknown as object[];
+    }
 
+
+    if (token.isCancellationRequested) return [];
     if (items.length === 1) {
       const entries = Object.entries(items[0]);
       if (!entries.every(([, value]) => typeof value === "object")) return items;

@@ -124,6 +124,53 @@ It is possible to add your own formats using the internal descriptors used to ge
 }
 ```
 
+#### Parameters
+
+Parameters can be accessed using the default javascript template string syntax `${<key>}`.
+The `<key>` is a key from a list of supported parameters, or when enclosed in `"` or `'` is used as-is.
+The extension has some additional features, such as numeric modifiers and optional repeats:
+
+Modifiers can be used in the format `${<key> [modifier] <value>}` (spaces are optional). Only a single modifier (except for multiple `.`) is supported. Supported Modifiers:
+
+- `+`: `${<key> + <value>}` => casts both parameter value and the `<value>` to a number and adds them together
+- `-`: `${<key> - <value>}` => casts both parameter value and the `<value>` to a number and subtracts `<value>` from the parameter value
+- `*`: `${<key> * <value>}` => casts both parameter value and the `<value>` to a number and multiplies them
+- `/`: `${<key> / <value>}` => casts both parameter value and the `<value>` to a number and divides the parameter value by `<value>`
+- `%`: `${<key> % <value>}` => casts both parameter value and the `<value>` to a number and performs a module operation on them
+- `.`: `${<key>.</key>.</key>}` => used to access inner properties. This is the only modifier that can be repeated, though it cannot be combined with other modifiers.
+
+It is possible to repeat a template or render it conditionally using the syntax `$[<repeat>]*{<key> [modifier] <value>}` or `$[<repeat>]?{<key> [modifier] <value>}`.
+Inside `[]` additional modifiers can be used:
+
+- `>`: `${<key> > <value>}` => checks if the parameter value is larger than `<value>` and returns `"true"` or `"false"`
+- `<`: `${<key> < <value>}` => checks if the parameter value is less than `<value>` and returns `"true"` or `"false"`
+- `=`: `${<key> = <value>}` => checks if the parameter value is equal to `<value>` and returns `"true"` or `"false"`
+- `!`: `${<key> ! <value>}` => checks if the parameter value is unequal `<value>` and returns `"true"` or `"false"`
+
+To query the user for parameters, a `parameters` property can be added to custom formats:
+
+```jsonc
+{
+  "objectList": {
+    "delimiter": "\n${separator}", /
+    "parameters": {
+      "separator": {
+        "type": "string",
+        "query": {
+          "prompt": "Add horizontal separators",
+          "options": {
+            // Parameters are keyed by the text display during the query
+            "Yes": "\\hline\n",
+            "Double": "\\hline\\hline\n",
+            "No": "",
+          }
+        }
+      }
+    }
+  }
+}
+```
+
 ## Known Limitations
 
 - data sources and programming languages must be in a valid format

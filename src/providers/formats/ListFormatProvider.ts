@@ -217,6 +217,7 @@ export default class ListFormatProvider {
     const result: ParameterList = {};
 
     for (const [key, param] of Object.entries(parameters)) {
+      const templateParams = { type, columnCount: columns.length, key };
       const { default: defaultValue, query } = param;
       if (query) {
         const option = await showFreeSoloQuickPick(
@@ -244,11 +245,13 @@ export default class ListFormatProvider {
           token
         );
 
-        if (token?.isCancellationRequested) return null;
-        else if (option !== null) result[key] = option.value;
-        else return null; // User cancelled
+        if (token?.isCancellationRequested || option === null) return null;
+
+        result[key] =
+          typeof option.value === "string" ? this.templateString(option.value, templateParams) : option.value;
       } else {
-        result[key] = defaultValue ?? -1;
+        result[key] =
+          typeof defaultValue === "string" ? this.templateString(defaultValue, templateParams) : defaultValue ?? -1;
       }
     }
 
@@ -456,42 +459,70 @@ export default class ListFormatProvider {
   private templateString(template: string, data: ParameterList): string {
     if (Object.keys(data).length === 0) return template;
 
-    return template.replace(/\${(.*?)}/g, (_, template) => {
-      const [tmp, key, modifier, factor] = /([a-z0-9_]+)\s*([+\-\*\/\.])?\s*([\$a-z0-9_\.]+)?/i.exec(template) ?? [];
-      const value = key && data[key];
+    return template.replace(/\$(\[[^\]]+\][*?])?{([^}]+)}/g, (_, repeat, template) => {
+      const [, repeatKey, repeatModifier, repeatFactor, repeatType] =
+        /^\[([a-z0-9_]+)\s*([+\-\*\/%><=!\.])?\s*([\$a-z0-9_\.]+)?\]([*?])$/i.exec(repeat ?? "") ?? [];
+      const [, key, modifier, factor] =
+        /^([a-z0-9_]+|"[^"]+"|'[^']+')\s*([+\-\*\/%><=!\.])?\s*([\$a-z0-9_\.]+)?$/i.exec(template) ?? [];
+      const value = /"[^"]*"|'[^']*'/g.test(key) ? key.slice(1, -1) : this.getTemplateParameter(data, key, modifier, factor);
 
-      if (!key || value === undefined) return template;
-      if (modifier && factor) {
-        const numericValue = Number(value);
-        const numericFactor = Number(factor);
+      if (!repeat || !value) return value ?? template;
 
-        switch (modifier) {
-          case "+":
-            return (numericValue + numericFactor).toString();
-          case "-":
-            return (numericValue - numericFactor).toString();
-          case "*":
-            return (numericValue * numericFactor).toString();
-          case "/":
-            return (numericValue / numericFactor).toString();
-          case ".":
-            return (
-              factor.split(".").reduce<ParameterList[string] | null>((value, path) => {
-                if (value === null || typeof value !== "object") return null;
-                if (path.startsWith("$")) {
-                  const expandedPath = data[path.slice(1)];
-                  if (typeof expandedPath !== "string" && typeof expandedPath !== "number") return null;
-                  return value[expandedPath];
-                }
-                return value[path];
-              }, value) ?? template
-            );
-          default:
-            return template;
-        }
+      const repeatValue = this.getTemplateParameter(data, repeatKey, repeatModifier, repeatFactor);
+      const repeatNumber = Number(repeatValue);
+      const repeatBoolean = !repeatValue || ["", "null", "false", "0"].includes(repeatValue) ? false : true;
+
+      switch (repeatType) {
+        case "*":
+          return repeatNumber && repeatNumber > 0 ? value.repeat(repeatNumber) : "";
+        case "?":
+          return repeatBoolean ? value : "";
       }
-      return typeof value === "object" ? template : value.toString();
     });
+  }
+
+  private getTemplateParameter(data: ParameterList, key: string, modifier?: string, factor?: string): string | null {
+    const value = key && data[key];
+
+    if (value === undefined || !modifier || !factor) return value?.toString() ?? null;
+
+    const numericValue = Number(value);
+    const numericFactor = Number(factor);
+
+    switch (modifier) {
+      case "+":
+        return (numericValue + numericFactor).toString();
+      case "-":
+        return (numericValue - numericFactor).toString();
+      case "*":
+        return (numericValue * numericFactor).toString();
+      case "/":
+        return (numericValue / numericFactor).toString();
+      case "%":
+        return (numericValue % numericFactor).toString();
+      case ">":
+        return numericValue > numericFactor ? "true" : "false";
+      case "<":
+        return numericValue < numericFactor ? "true" : "false";
+      case "=":
+        return numericValue === numericFactor ? "true" : "false";
+      case "!":
+        return numericValue !== numericFactor ? "true" : "false";
+      case ".":
+        const path =
+          factor.split(".").reduce<ParameterList[string] | null>((value, path) => {
+            if (value === null || typeof value !== "object") return null;
+            if (path.startsWith("$")) {
+              const expandedPath = data[path.slice(1)];
+              if (typeof expandedPath !== "string" && typeof expandedPath !== "number") return null;
+              return value[expandedPath];
+            }
+            return value[path];
+          }, value) ?? null;
+        return typeof path === "object" ? null : path.toString();
+    }
+
+    return null;
   }
 
   /**
