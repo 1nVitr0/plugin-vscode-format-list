@@ -1,6 +1,5 @@
-import * as deepMerge from "deepmerge";
-import { FormatterOptions, FormatterSimpleListOptions, FormatterValueEscape } from "../../types/Formatter";
-import { PartialDeep } from "type-fest";
+/* eslint-disable @typescript-eslint/naming-convention */
+import { FormatterOptions, FormatterValueEscape } from "../../types/Formatter";
 
 const latexEscapes: FormatterValueEscape[] = [
   { pattern: /\\/g, replace: "\\textbackslash{}" },
@@ -51,10 +50,10 @@ export const formatLatex: FormatterOptions = {
   },
   objectList: {
     enclosure: {
-      start: "\\begin{tabular}{${columnTemplate}}\n${separator}\n",
-      end: "\n${separator}\\end{tabular}",
+      start: "\\begin{tabular}{${columnTemplate}}${separator}",
+      end: "\\end{tabular}",
     },
-    delimiter: "\\\\\n${separator}",
+    delimiter: " \\\\\n${separator}",
     delimitLastItem: true,
     header: {
       afterEnclosure: true,
@@ -83,25 +82,18 @@ export const formatLatex: FormatterOptions = {
           prompt: "Column template",
           allowInput: true,
           options: {
-            "1 column": "c",
-            "2 columns": "cc",
-            "2 columns (separator)": "|c|c|",
-            "3 columns": "ccc",
-            "3 columns (separator)": "|c|c|c|",
-            "4 columns": "cccc",
-            "4 columns (separator)": "|c|c|c|c|",
-            "5 columns": "ccccc",
-            "5 columns (separator)": "|c|c|c|c|c|",
-            "6 columns": "cccccc",
-            "6 columns (separator)": "|c|c|c|c|c|c|",
-            "7 columns": "ccccccc",
-            "7 columns (separator)": "|c|c|c|c|c|c|c|",
-            "8 columns": "cccccccc",
-            "8 columns (separator)": "|c|c|c|c|c|c|c|c|",
-            "9 columns": "ccccccccc",
-            "9 columns (separator)": "|c|c|c|c|c|c|c|c|c|",
-            "10 columns": "cccccccccc",
-            "10 columns (separator)": "|c|c|c|c|c|c|c|c|c|c|",
+            Centered: "$[columnCount]*{'c'}",
+            "Centered (separated)": "|$[columnCount]*{'c|'}",
+            "Left-aligned": "$[columnCount]*{'l'}",
+            "Left-aligned (separated)": "|$[columnCount]*{'l|'}",
+            "Right-aligned": "$[columnCount]*{'r'}",
+            "Right-aligned (separated)": "|$[columnCount]*{'r|'}",
+            "Centered, first column right-aligned": "r$[columnCount-1]*{'c'}",
+            "Centered, first column right-aligned (separated)": "|r|$[columnCount-1]*{'c|'}",
+            "Left-aligned, first column right-aligned": "r$[columnCount-1]*{'l'}",
+            "Left-aligned, first column right-aligned (separated)": "|r|$[columnCount-1]*{'l|'}",
+            "Alternating left/right-aligned": "$[columnCount/2]*{lr}$[columnCount%2]?{'l'}",
+            "Alternating left/right-aligned (separated)": "|$[columnCount/2]*{'l|r|'}$[columnCount%2]?{'l|'}",
           },
         },
       },
