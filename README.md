@@ -25,17 +25,19 @@ Simply select any data source and run the command `List Tools: Convert multiple 
 | -----------------------------------------------------------------------------------------: | :---: | :------------------------------------------------------------------------------------------------------------------ |
 | ![CSV](https://img.shields.io/badge/CSV-237346?logo=googlesheets&logoColor=237346&label=​) |   ⇄   | ![CSV](https://img.shields.io/badge/CSV-237346?logo=googlesheets&logoColor=237346&label=​)                          |
 |                        ![JSON](https://img.shields.io/badge/JSON-292929?logo=json&label=​) |   ⇄   | ![JSON](https://img.shields.io/badge/JSON-292929?logo=json&label=​)                                                 |
+|                        ![JSON Lines](https://img.shields.io/badge/JSON%20Lines-292929?logo=json&label=​) |   ⇄   | ![JSON Lines](https://img.shields.io/badge/JSON%20Lines-292929?logo=json&label=​)                                                 |
 |                        ![YAML](https://img.shields.io/badge/YAML-cb171e?logo=yaml&label=​) |   ⇄   | ![YAML](https://img.shields.io/badge/YAML-cb171e?logo=yaml&label=​)                                                 |
 | ![XML](https://img.shields.io/badge/XML-0060ac?logo=googlesheets&logoColor=0060ac&label=​) |   ⇄   | ![XML](https://img.shields.io/badge/XML-0060ac?logo=googlesheets&logoColor=0060ac&label=​)                          |
-|                                                                                            |   ⇄   | ![SQL](https://img.shields.io/badge/SQL-00758F?logo=mysql&label=​)                                                  |
-|                                                                                            |   ⇄   | ![Simple separated lists](https://img.shields.io/badge/Separated%20lists-ccc?logo=codefactor&logoColor=ccc&label=​) |
-|                                                                                            |   ⇄   | ![Markdown](https://img.shields.io/badge/Markdown-083fa1?logo=markdown&label=​)                                     |
 |      ![JavaScript](https://img.shields.io/badge/JavaScript-f1e05a?logo=javascript&label=​) |   ⇄   | ![JavaScript](https://img.shields.io/badge/JavaScript-f1e05a?logo=javascript&label=​)                               |
 |      ![TypeScript](https://img.shields.io/badge/TypeScript-3178c6?logo=typescript&label=​) |   ⇄   |                                                                                                                     |
 |     ![Java](https://img.shields.io/badge/Java-b07219?logo=oracle&logoColor=b07219&label=​) |   ⇄   | ![Java](https://img.shields.io/badge/Java-b07219?logo=oracle&logoColor=b07219&label=​)                              |
 |                                 ![C](https://img.shields.io/badge/C-555555?logo=c&label=​) |   ⇄   | ![C](https://img.shields.io/badge/C-555555?logo=c&label=​)                                                          |
 |    ![C++](https://img.shields.io/badge/C++-f34b7d?logo=cplusplus&logoColor=f34b7d&label=​) |   ⇄   | ![C++](https://img.shields.io/badge/C++-f34b7d?logo=cplusplus&logoColor=f34b7d&label=​)                             |
 |                           ![PHP](https://img.shields.io/badge/PHP-4F5D95?logo=php&label=​) |   ⇄   | ![PHP](https://img.shields.io/badge/PHP-4F5D95?logo=php&label=​)                                                    |
+|                                                                                            |   ⇄   | ![Simple separated lists](https://img.shields.io/badge/Separated%20lists-ccc?logo=codefactor&logoColor=ccc&label=​) |
+|                                                                                            |   ⇄   | ![SQL](https://img.shields.io/badge/SQL-00758F?logo=mysql&label=​)                                                  |
+|                                                                                            |   ⇄   | ![Markdown](https://img.shields.io/badge/Markdown-083fa1?logo=markdown&label=​)                                     |
+|                                                                                            |   ⇄   | ![Latex](https://img.shields.io/badge/Latex-088484?logo=latex&label=​)                                              |
 
 ### Commands
 
