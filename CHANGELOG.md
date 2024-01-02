@@ -1,3 +1,10 @@
+## [1.9.1](https://github.com/1nVitr0/plugin-vscode-format-list/compare/v1.9.0...v1.9.1) (2024-01-02)
+
+
+### Bug Fixes
+
+* render markdown object-list output as table ([fc6c039](https://github.com/1nVitr0/plugin-vscode-format-list/commit/fc6c03985d9f33c76a7772fcabb4b7ade9015169))
+
 # [1.9.0](https://github.com/1nVitr0/plugin-vscode-format-list/compare/v1.8.0...v1.9.0) (2023-12-21)
 
 
