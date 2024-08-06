@@ -1,3 +1,10 @@
+## [1.9.2](https://github.com/1nVitr0/plugin-vscode-format-list/compare/v1.9.1...v1.9.2) (2024-08-06)
+
+
+### Bug Fixes
+
+* fix regex error in yaml parsing ([685f448](https://github.com/1nVitr0/plugin-vscode-format-list/commit/685f448a27687e2f9cff536fe78283f9e3ee33a4))
+
 ## [1.9.1](https://github.com/1nVitr0/plugin-vscode-format-list/compare/v1.9.0...v1.9.1) (2024-01-02)
 
 
