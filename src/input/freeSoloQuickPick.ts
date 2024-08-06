@@ -3,8 +3,9 @@ import { CancellationToken, QuickPick, QuickPickItem, QuickPickOptions, l10n, wi
 
 type QuickPickProperties<I extends QuickPickItem | string> = Pick<
   QuickPick<I extends string ? QuickPickItem : I>,
-  Exclude<WritableKeysOf<QuickPick<I extends string ? QuickPickItem : I>>, "items">
+  Exclude<WritableKeysOf<QuickPick<I extends string ? QuickPickItem : I>>, "items" | undefined>
 >;
+
 
 export interface FreeSoloQuickPickOptions<I extends QuickPickItem | string> extends Partial<QuickPickProperties<I>> {
   /** Create an item for the input value */
