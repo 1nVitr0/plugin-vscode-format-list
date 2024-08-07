@@ -1,10 +1,10 @@
 {
   "list-tools.commands.formatSimpleList": "Einzelne Spalte in einfache Liste konvertieren",
   "list-tools.commands.formatObjectList": "Mehrere Spalten in Objekt-Liste konvertieren",
-  "list-tools.commands.formatSimpleListPretty": "Convert single column to simple list (pretty print)",
-  "list-tools.commands.formatObjectListPretty": "Convert multiple columns to object list (pretty print)",
-  "list-tools.commands.formatSimpleListUgly": "Convert single column to simple list (without pretty print)",
-  "list-tools.commands.formatObjectListUgly": "Convert multiple columns to object list (without pretty print)",
-  "list-tools.commands.extractColumns": "Extract columns from object list",
-  "list-tools.commands.repeatLastAction": "Repeat last action"
+  "list-tools.commands.formatSimpleListPretty": "Einzelne Spalte in einfache Liste konvertieren (formatiert)",
+  "list-tools.commands.formatObjectListPretty": "Mehrere Spalten in Objekt-Liste konvertieren (formatiert)",
+  "list-tools.commands.formatSimpleListUgly": "Einzelne Spalte in einfache Liste konvertieren (ohne Formatierung)",
+  "list-tools.commands.formatObjectListUgly": "Mehrere Spalten in Objekt-Liste konvertieren (ohne Formatierung)",
+  "list-tools.commands.extractColumns": "Spalten aus Objekt-Liste extrahieren",
+  "list-tools.commands.repeatLastAction": "Letzte Aktion wiederholen"
 }
