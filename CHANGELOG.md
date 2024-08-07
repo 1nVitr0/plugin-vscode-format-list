@@ -1,3 +1,17 @@
+# [1.10.0](https://github.com/1nVitr0/plugin-vscode-format-list/compare/v1.9.3...v1.10.0) (2024-08-07)
+
+
+### Bug Fixes
+
+* fix csv parsing when '#' is in the middle of cell ([c151b04](https://github.com/1nVitr0/plugin-vscode-format-list/commit/c151b044fd56c917086494de19b5f277af1418c7))
+* fix enclosure for php array items ([cc7d061](https://github.com/1nVitr0/plugin-vscode-format-list/commit/cc7d061e66e84a92f9f6d1ce9788b18764e3bfc9))
+* show progress notification while loading data ([1f8a9df](https://github.com/1nVitr0/plugin-vscode-format-list/commit/1f8a9df3a278210e0daa3ce5ffc0e736432b0133))
+
+
+### Features
+
+* open converted lists in new file by default ([295dd91](https://github.com/1nVitr0/plugin-vscode-format-list/commit/295dd918b54d628548335fc241b06986d4725e2c))
+
 ## [1.9.3](https://github.com/1nVitr0/plugin-vscode-format-list/compare/v1.9.2...v1.9.3) (2024-08-07)
 
 
