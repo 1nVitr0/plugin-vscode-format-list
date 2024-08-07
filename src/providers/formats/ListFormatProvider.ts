@@ -118,6 +118,8 @@ export default class ListFormatProvider {
    * @param columns List of columns to include
    * @param pretty Pretty print level
    * @param indent Indentation level
+   * @param token Cancellation token
+   * @param parameters Parameters to inject into templates
    * @returns Formatted list
    */
   public async formatSimpleList(
@@ -125,7 +127,8 @@ export default class ListFormatProvider {
     column: string,
     pretty: number = 0,
     indent: number = 0,
-    parameters?: ParameterList
+    parameters?: ParameterList,
+    token?: CancellationToken,
   ): Promise<string | null> {
     if (!this.options.simpleList) return null;
 
@@ -135,11 +138,10 @@ export default class ListFormatProvider {
     const _pretty = Math.min(pretty, maxPretty ?? pretty);
     const _indent = overrideIndent ?? indent;
 
-    if (!_parameters) return null;
+    if (!_parameters || token?.isCancellationRequested) return null;
 
     const mappedItems = items.map((item) =>
       this.encloseValue(item[column], valueAlias, valueEnclosure, valueEscape, {
-        ..._parameters,
         ..._parameters,
         item,
         key: column,
@@ -147,7 +149,7 @@ export default class ListFormatProvider {
       })
     );
 
-    return this.joinList(mappedItems, _pretty, _indent, 0, simpleList, _parameters);
+    return !token?.isCancellationRequested ? this.joinList(mappedItems, _pretty, _indent, 0, simpleList, _parameters) : null;
   }
 
   /**
@@ -157,6 +159,8 @@ export default class ListFormatProvider {
    * @param columns List of columns to include
    * @param pretty Pretty print level
    * @param indent Indentation level
+   * @param token Cancellation token
+   * @param parameters Parameters to inject into templates
    * @returns Formatted object list
    */
   public async formatObjectList(
@@ -164,7 +168,8 @@ export default class ListFormatProvider {
     columns: string[],
     pretty: number = 0,
     indent: number = 0,
-    parameters?: ParameterList
+    parameters?: ParameterList,
+    token?: CancellationToken,
   ): Promise<string | null> {
     if (!this.options.objectList) return null;
 
@@ -174,9 +179,11 @@ export default class ListFormatProvider {
     const _pretty = Math.min(pretty, maxPretty ?? pretty);
     const _indent = overrideIndent ?? indent;
 
-    if (!_parameters) return null;
+    if (!_parameters || token?.isCancellationRequested) return null;
 
     const mappedItems = items.map((item) => {
+      if (token?.isCancellationRequested) return "";
+
       const mappedItem = columns.map((column) =>
         this.encloseKeyValue(column, item[column], itemFormat, _pretty > 0, {
           ..._parameters,
@@ -188,15 +195,19 @@ export default class ListFormatProvider {
 
       return this.joinList(mappedItem, _pretty, _indent, 1, itemFormat, { ..._parameters, item });
     });
+    if (token?.isCancellationRequested) return null;
     const headerItem = header && this.buildHeader(columns, _pretty, _indent, header, _parameters);
 
+    if (token?.isCancellationRequested) return null;
     if (header?.afterEnclosure && headerItem) mappedItems.unshift(headerItem);
     const body = this.joinList(mappedItems, _pretty, _indent, 0, objectList, _parameters);
 
     const lines = [];
+    if (token?.isCancellationRequested) return null;
     if (headerItem && !header?.afterEnclosure) lines.push(headerItem);
     lines.push(body);
 
+    if (token?.isCancellationRequested) return null;
     return _pretty > 0 ? lines.join("\n") : lines.join("");
   }
 
@@ -209,8 +220,7 @@ export default class ListFormatProvider {
    */
   public async queryParameters(
     type: "simpleList" | "objectList",
-    columns: string[] = [],
-    token?: CancellationToken
+    columns: string[] = []
   ): Promise<ParameterList | null> {
     const { parameters = {} } = this.options[type] ?? {};
 
@@ -241,11 +251,10 @@ export default class ListFormatProvider {
               label: query.customInputLabel ? l10n.t(query.customInputLabel, { input }) : input,
               value: input,
             }),
-          },
-          token
+          }
         );
 
-        if (token?.isCancellationRequested || option === null) return null;
+        if (option === null) return null;
 
         result[key] =
           typeof option.value === "string" ? this.templateString(option.value, templateParams) : option.value;
@@ -464,7 +473,9 @@ export default class ListFormatProvider {
         /^\[([a-z0-9_]+)\s*([+\-\*\/%><=!\.])?\s*([\$a-z0-9_\.]+)?\]([*?])$/i.exec(repeat ?? "") ?? [];
       const [, key, modifier, factor] =
         /^([a-z0-9_]+|"[^"]+"|'[^']+')\s*([+\-\*\/%><=!\.])?\s*([\$a-z0-9_\.]+)?$/i.exec(template) ?? [];
-      const value = /"[^"]*"|'[^']*'/g.test(key) ? key.slice(1, -1) : this.getTemplateParameter(data, key, modifier, factor);
+      const value = /"[^"]*"|'[^']*'/g.test(key)
+        ? key.slice(1, -1)
+        : this.getTemplateParameter(data, key, modifier, factor);
 
       if (!repeat || !value) return value ?? template;
 
