@@ -30,5 +30,21 @@
   "Ignore duplicates?": "Duplikate ignorieren?",
   "IGNORE": "IGNORIEREN",
   "Table name": "Tabellenname",
-  "`table`": "`Tabelle`"
+  "`table`": "`Tabelle`",
+  "CSV (Default Options)": "CSV (Standardoptionen)",
+  "CSV (Custom Options)": "CSV (Benutzerdefinierte Optionen)",
+  "JSON": "JSON",
+  "JSON Log (Newline separated JSON objects)": "JSON-Protokoll (JSON-Objekte durch Zeilenumbruch getrennt)",
+  "YAML": "YAML",
+  "XML": "XML",
+  "Separated list": "Einfache Liste",
+  "SQL Insert": "SQL INSERT",
+  "SQL Update": "SQL UPDATE",
+  "Markdown": "Markdown",
+  "JavaScript": "JavaScript",
+  "PHP Array": "PHP Array",
+  "C Array": "C Array",
+  "C++ Array": "C++ Array",
+  "Java Array": "Java Array",
+  "LaTeX": "LaTeX"
 }

@@ -5558,20 +5558,24 @@
     "@typescript-eslint/parser": "^8.0.1",
     "csv-parse": "^5.5.6",
     "deepmerge": "^4.3.1",
-    "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
+    "eslint": "^8.57.0",
+    "flat": "^6.0.1",
     "glob": "^11.0.0",
     "mocha": "^10.7.0",
-    "semantic-release": "^21.0.7",
+    "parse-json": "^8.1.0",
     "semantic-release-vsce": "^5.7.2",
+    "semantic-release": "^21.0.7",
+    "strip-json-comments": "^5.0.1",
     "ts-loader": "^9.5.1",
     "type-fest": "^4.23.0",
-    "typescript": "^5.5.4",
     "typescript-json-schema": "^0.64.0",
+    "typescript": "^5.5.4",
     "vscode-test": "^1.6.1",
-    "webpack": "^5.93.0",
     "webpack-cli": "^5.1.4",
-    "xml2js": "^0.6.2"
+    "webpack": "^5.93.0",
+    "xml2js": "^0.6.2",
+    "yaml": "^2.5.0"
   },
   "release": {
     "branches": [
@@ -5623,10 +5627,5 @@
         }
       ]
     ]
-  },
-  "dependencies": {
-    "flat": "^6.0.1",
-    "parse-json": "^8.1.0",
-    "strip-json-comments": "^5.0.1"
   }
 }
