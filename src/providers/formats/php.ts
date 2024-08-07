@@ -17,7 +17,7 @@ export const formatPhp: FormatterOptions = {
     delimiter: ",",
     indentItems: -1,
     itemFormat: {
-      enclosure: { start: "{", end: "}" },
+      enclosure: { start: "[", end: "]" },
       delimiter: ",",
       keyEnclosure: [{ id: "quote-keys", test: "/.*/", enclosure: '"' }],
       valueEnclosure: { string: '"' },

@@ -1,6 +1,7 @@
 import {
   CancellationToken,
   CancellationTokenSource,
+  ProgressLocation,
   QuickInputButton,
   QuickPickItem,
   QuickPickItemKind,
@@ -36,6 +37,7 @@ interface QueryFormatterResult {
   listType: keyof FormatterListTypes;
   pretty: number;
   indent: number;
+  languageId?: string;
   provider: ListFormatProvider;
   action?: "changeDataProvider";
 }
@@ -53,6 +55,13 @@ interface FormattingEditOptions {
   forcePretty?: boolean;
   customDataProvider?: boolean;
   keepLanguage?: boolean;
+  newDocument?: boolean;
+}
+
+export interface ConvertedList {
+  originalLanguageId?: string;
+  languageId?: string;
+  content: string;
 }
 
 export class ListConversionProvider {
@@ -102,13 +111,10 @@ export class ListConversionProvider {
    */
   public async provideSimpleListFormattingEdit(options: FormattingEditOptions, textEditor: TextEditor) {
     const { document, selection } = textEditor;
-    const cancellation = new CancellationTokenSource();
-    const formattedList = await this.provideList(document, selection, "simpleList", options, cancellation.token);
+    const formattedList = await this.provideList(document, selection, "simpleList", options);
     if (!formattedList) return;
 
-    textEditor.edit((editBuilder: TextEditorEdit) => {
-      editBuilder.replace(selection, formattedList);
-    });
+    await this.applyListFormattingEdit(formattedList, textEditor, selection);
   }
 
   /**
@@ -119,13 +125,10 @@ export class ListConversionProvider {
    */
   public async provideObjectListFormattingEdit(options: FormattingEditOptions, textEditor: TextEditor) {
     const { document, selection } = textEditor;
-    const cancellation = new CancellationTokenSource();
-    const formattedList = await this.provideList(document, selection, "objectList", options, cancellation.token);
+    const formattedList = await this.provideList(document, selection, "objectList", options);
     if (!formattedList) return;
 
-    textEditor.edit((editBuilder: TextEditorEdit) => {
-      editBuilder.replace(selection, formattedList);
-    });
+    await this.applyListFormattingEdit(formattedList, textEditor, selection);
   }
 
   /**
@@ -176,9 +179,23 @@ export class ListConversionProvider {
 
     switch (listType) {
       case "simpleList":
-        return await formatProvider.formatSimpleList(listData, selectedColumns[0], pretty, indent, formatParameters);
+        return await formatProvider.formatSimpleList(
+          listData,
+          selectedColumns[0],
+          pretty,
+          indent,
+          formatParameters,
+          token,
+        );
       case "objectList":
-        return await formatProvider.formatObjectList(listData, selectedColumns, pretty, indent, formatParameters);
+        return await formatProvider.formatObjectList(
+          listData,
+          selectedColumns,
+          pretty,
+          indent,
+          formatParameters,
+          token,
+        );
     }
   }
 
@@ -191,43 +208,50 @@ export class ListConversionProvider {
    * @param preferredListType The preferred list type to use.
    * @param options Formatting options.
    * @param token A cancellation token.
-   * @returns the converted list as a string or `null` if the list could not be converted.
+   * @returns the converted list as a ConvertedList or `null` if the list could not be converted.
    */
   private async provideList(
     document: TextDocument,
     selection: Selection,
     preferredListType: keyof FormatterListTypes,
-    { forcePretty, customDataProvider, keepLanguage }: FormattingEditOptions = {},
-    token: CancellationToken
-  ): Promise<string | null> {
+    { forcePretty, customDataProvider, keepLanguage }: FormattingEditOptions = {}
+  ): Promise<ConvertedList | null> {
     const {
       columns,
       listData,
       provider: dataProvider,
       parameters: dataParameters,
-    } = (await this.getListData(document, selection, token, customDataProvider)) ?? {};
-    if (!listData || !columns || token.isCancellationRequested) return null;
+    } = (await window.withProgress(
+      {
+        location: ProgressLocation.Notification,
+        title: l10n.t("Loading list data..."),
+        cancellable: true,
+      },
+      (progress, token) => this.getListData(document, selection, token, customDataProvider)
+    )) ?? {};
+    if (!listData || !columns) return null;
 
     const {
       pretty = 0,
       indent = 0,
       listType,
+      languageId,
       provider: formatProvider,
       action,
-    } = (await this.queryListFormatter(document, preferredListType, { forcePretty, keepLanguage }, token)) ?? {};
+    } = (await this.queryListFormatter(document, preferredListType, { forcePretty, keepLanguage })) ?? {};
     if (action === "changeDataProvider")
-      return await this.provideList(document, selection, preferredListType, { customDataProvider: true }, token);
-    if (!formatProvider || !listType || !dataProvider || token.isCancellationRequested) return null;
+      return await this.provideList(document, selection, preferredListType, { customDataProvider: true });
+    if (!formatProvider || !listType || !dataProvider) return null;
 
+    let content: string | null = null;
     switch (listType) {
       case "simpleList":
-        const selectedColumn = await this.querySingleColumn(columns, token);
+        const selectedColumn = await this.querySingleColumn(columns);
         const simpleListParameters = await formatProvider.queryParameters(
           "simpleList",
-          selectedColumn ? [selectedColumn] : [],
-          token
+          selectedColumn ? [selectedColumn] : []
         );
-        if (!selectedColumn || !simpleListParameters || token.isCancellationRequested) return null;
+        if (!selectedColumn || !simpleListParameters) return null;
         this.lastListOptions = {
           dataProvider,
           formatProvider,
@@ -238,12 +262,23 @@ export class ListConversionProvider {
           formatParameters: simpleListParameters,
           dataParameters,
         };
-        return await formatProvider.formatSimpleList(listData, selectedColumn, pretty, indent, simpleListParameters);
+        content = await window.withProgress(
+          {
+            location: ProgressLocation.Notification,
+            title: l10n.t("Formatting list..."),
+            cancellable: false,
+          },
+          (progress, token) =>
+            formatProvider.formatSimpleList(listData, selectedColumn, pretty, indent, simpleListParameters, token)
+        );
+
+        return content ? { languageId, content } : null;
       case "objectList":
-        const selectedColumns = await this.queryMultipleColumns(columns, token);
-        const objectListParameters = await formatProvider.queryParameters("objectList", selectedColumns ?? [], token);
-        if (!selectedColumns || selectedColumns.length <= 0 || !objectListParameters || token.isCancellationRequested)
-          return null;
+        const selectedColumns = await this.queryMultipleColumns(columns);
+        const objectListParameters = await formatProvider.queryParameters("objectList", selectedColumns ?? []);
+
+        if (!selectedColumns || selectedColumns.length <= 0 || !objectListParameters) return null;
+
         this.lastListOptions = {
           dataProvider,
           formatProvider,
@@ -254,7 +289,17 @@ export class ListConversionProvider {
           formatParameters: objectListParameters,
           dataParameters,
         };
-        return await formatProvider.formatObjectList(listData, selectedColumns, pretty, indent, objectListParameters);
+        content = await window.withProgress(
+          {
+            location: ProgressLocation.Notification,
+            title: l10n.t("Formatting list..."),
+            cancellable: false,
+          },
+          (progress, token) =>
+            formatProvider.formatObjectList(listData, selectedColumns, pretty, indent, objectListParameters, token)
+        );
+
+        return content ? { languageId, content } : null;
     }
   }
 
@@ -286,13 +331,22 @@ export class ListConversionProvider {
       return;
     }
 
-    const options = await provider.provideColumns(document, selection, token, dataParameters);
-    if (!options || token.isCancellationRequested) return;
+    try {
+      const options = await provider.provideColumns(document, selection, token, dataParameters);
+      if (!options || token.isCancellationRequested) return;
 
-    const listData = await provider.provideListData(document, selection, options, token);
-    if (!listData || token.isCancellationRequested) return;
+      const listData = await provider.provideListData(document, selection, options, token);
+      if (!listData || token.isCancellationRequested) return;
 
-    return { columns: options.columns, listData, provider, parameters: options.parameters };
+      return { columns: options.columns, listData, provider, parameters: options.parameters };
+    } catch (error) {
+      window
+        .showErrorMessage(l10n.t("An error occurred while retrieving the list data"), l10n.t("Open DevTools"))
+        .then((action) => {
+          if (action === l10n.t("Open DevTools")) commands.executeCommand("workbench.action.toggleDevTools");
+        });
+      throw error;
+    }
   }
 
   /**
@@ -325,15 +379,13 @@ export class ListConversionProvider {
    * @param token A cancellation token.
    * @returns the selected column or `null` if the user cancelled the selection.
    */
-  private async querySingleColumn(columns: { name: string; example?: string }[], token: CancellationToken) {
+  private async querySingleColumn(columns: { name: string; example?: string }[]) {
     const selectedColumns = await window.showQuickPick(
       columns.map((column) => ({ label: column.name, description: column.example })),
       { placeHolder: l10n.t("Select column"), ignoreFocusOut: true }
     );
 
-    if (!selectedColumns || token.isCancellationRequested) return null;
-
-    return selectedColumns.label;
+    return selectedColumns ? selectedColumns.label : null;
   }
 
   /**
@@ -343,15 +395,13 @@ export class ListConversionProvider {
    * @param token A cancellation token.
    * @returns the selected columns or `null` if the user cancelled the selection.
    */
-  private async queryMultipleColumns(columns: { name: string; example?: string }[], token: CancellationToken) {
+  private async queryMultipleColumns(columns: { name: string; example?: string }[]) {
     const selectedColumns = await window.showQuickPick(
       columns.map((column) => ({ label: column.name, description: column.example })),
       { canPickMany: true, ignoreFocusOut: true, placeHolder: l10n.t("Select columns to include") }
     );
 
-    if (!selectedColumns || token.isCancellationRequested) return null;
-
-    return selectedColumns.map((column) => column.label);
+    return selectedColumns ? selectedColumns.map((column) => column.label) : null;
   }
 
   /**
@@ -366,8 +416,7 @@ export class ListConversionProvider {
   private async queryListFormatter(
     document: TextDocument,
     listType: keyof FormatterListTypes,
-    { forcePretty, keepLanguage }: FormattingEditOptions = {},
-    token?: CancellationToken
+    { forcePretty, keepLanguage }: FormattingEditOptions = {}
   ): Promise<
     QueryFormatterResult | (Partial<QueryFormatterResult> & Required<Pick<QueryFormatterResult, "action">>) | null
   > {
@@ -410,14 +459,13 @@ export class ListConversionProvider {
           quickPick.show();
         });
 
-    if (token?.isCancellationRequested) return null;
     if (selectedFormatter instanceof ChangeDataProviderButton) return { action: "changeDataProvider" };
     if (selectedFormatter instanceof SimpleListButton)
-      return await this.queryListFormatter(document, "simpleList", { forcePretty }, token);
+      return await this.queryListFormatter(document, "simpleList", { forcePretty });
     if (selectedFormatter instanceof ObjectListButton)
-      return await this.queryListFormatter(document, "objectList", { forcePretty }, token);
+      return await this.queryListFormatter(document, "objectList", { forcePretty });
     if (selectedFormatter instanceof TogglePrettyButton)
-      return await this.queryListFormatter(document, listType, { forcePretty: !forcePretty }, token);
+      return await this.queryListFormatter(document, listType, { forcePretty: !forcePretty });
     if (!selectedFormatter || !selectedFormatter.provider) return null;
 
     const context = selectedFormatter.languageId ? { languageId: selectedFormatter.languageId } : undefined;
@@ -431,7 +479,7 @@ export class ListConversionProvider {
         ? Infinity
         : (prettyPrint as number);
     const indent = tabSize;
-    return { listType, pretty, indent, provider: selectedFormatter.provider };
+    return { listType, pretty, indent, languageId: selectedFormatter.languageId, provider: selectedFormatter.provider };
   }
 
   /**
@@ -526,5 +574,30 @@ export class ListConversionProvider {
 
     buttons.push(new ChangeDataProviderButton());
     return buttons;
+  }
+
+  /**
+   * Applies the list formatting edit to the given text editor and selection.
+   *
+   * @param formattedList The formatted list to apply.
+   * @param options Formatting options.
+   * @param textEditor The text editor to apply the formatting edit to.
+   * @param selection The selection to apply the formatting edit to.
+   */
+  private async applyListFormattingEdit(formattedList: ConvertedList, textEditor: TextEditor, selection: Selection) {
+    const { document } = textEditor;
+    const { content, languageId } = formattedList;
+
+    const context = document.languageId ? { languageId: document.languageId } : undefined;
+    const newDocument = workspace.getConfiguration("list-tools", context).get<boolean>("newDocument", true);
+
+    if (newDocument) {
+      const newDocument = await workspace.openTextDocument({ content, language: languageId });
+      await window.showTextDocument(newDocument);
+    } else {
+      textEditor.edit((editBuilder: TextEditorEdit) => {
+        editBuilder.replace(selection, content);
+      });
+    }
   }
 }

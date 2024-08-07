@@ -5529,6 +5529,12 @@
               1,
               2
             ]
+          },
+          "list-tools.newDocument": {
+            "description": "Create a new document for all lists",
+            "default": true,
+            "type": "boolean",
+            "scope": "language-overridable"
           }
         }
       }

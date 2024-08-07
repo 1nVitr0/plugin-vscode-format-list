@@ -2,7 +2,7 @@ import { Selection, TextDocument, CancellationToken, window, l10n } from "vscode
 import { ListColumn, ListData, ListDataContext } from "../../types/List";
 import { ListDataProvider } from "../../types/Providers";
 import { showFreeSoloQuickPick } from "../../input/freeSoloQuickPick";
-import { parse } from "csv-parse";
+import { parse, Options as CsvOptions } from "csv-parse";
 
 interface CsvParameters {
   delimiter: string;
@@ -21,6 +21,12 @@ export default class CsvListDataProvider implements ListDataProvider<CsvParamete
     // eslint-disable-next-line @typescript-eslint/naming-convention
     "\\s (space)": " ",
   };
+  protected parserOptions: CsvOptions = {
+    skipEmptyLines: true,
+    relaxColumnCount: true,
+    comment: "#",
+    comment_no_infix: true,
+  };
 
   public async provideColumns(
     document: TextDocument,
@@ -34,10 +40,8 @@ export default class CsvListDataProvider implements ListDataProvider<CsvParamete
     const { delimiter, hasHeader } = _parameters;
 
     const [header, firstEntry] = await new Promise<string[][]>((res, rej) =>
-      parse(
-        document.getText(selection),
-        { delimiter, skipEmptyLines: true, quote: '"', comment: "#" },
-        (err, records) => (err ? rej(err) : res(records))
+      parse(document.getText(selection), { ...this.parserOptions, delimiter }, (err, records) =>
+        err ? rej(err) : res(records)
       )
     );
 
@@ -60,10 +64,8 @@ export default class CsvListDataProvider implements ListDataProvider<CsvParamete
     const { delimiter, hasHeader } = parameters ?? { delimiter: ",", hasHeader: false };
 
     const [header, ...body] = await new Promise<string[][]>((res, rej) =>
-      parse(
-        document.getText(selection),
-        { delimiter, skipEmptyLines: true, quote: '"', comment: "#" },
-        (err, records) => (err ? rej(err) : res(records))
+      parse(document.getText(selection), { ...this.parserOptions, delimiter }, (err, records) =>
+        err ? rej(err) : res(records)
       )
     );
     const csv = hasHeader ? body : [header, ...body];
