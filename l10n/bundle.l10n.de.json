@@ -46,5 +46,9 @@
   "C Array": "C Array",
   "C++ Array": "C++ Array",
   "Java Array": "Java Array",
-  "LaTeX": "LaTeX"
+  "LaTeX": "LaTeX",
+  "Loading list data...": "Listendaten werden geladen...",
+  "Formatting list...": "Liste wird formatiert...",
+  "An error occurred while retrieving the list data": "Beim Abrufen der Listendaten ist ein Fehler aufgetreten",
+  "Open DevTools": "Entwicklertools öffnen"
 }
