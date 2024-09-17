@@ -128,7 +128,7 @@ export default class ListFormatProvider {
     pretty: number = 0,
     indent: number = 0,
     parameters?: ParameterList,
-    token?: CancellationToken,
+    token?: CancellationToken
   ): Promise<string | null> {
     if (!this.options.simpleList) return null;
 
@@ -149,7 +149,9 @@ export default class ListFormatProvider {
       })
     );
 
-    return !token?.isCancellationRequested ? this.joinList(mappedItems, _pretty, _indent, 0, simpleList, _parameters) : null;
+    return !token?.isCancellationRequested
+      ? this.joinList(mappedItems, _pretty, _indent, 0, simpleList, _parameters)
+      : null;
   }
 
   /**
@@ -169,7 +171,7 @@ export default class ListFormatProvider {
     pretty: number = 0,
     indent: number = 0,
     parameters?: ParameterList,
-    token?: CancellationToken,
+    token?: CancellationToken
   ): Promise<string | null> {
     if (!this.options.objectList) return null;
 
@@ -385,10 +387,11 @@ export default class ListFormatProvider {
     escapeOptions: FormatterValueEscape[] = [],
     parameters: ParameterList = {}
   ): string {
+    const type = typeof value === "number"! && !isFinite(value as number) ? "string" : typeof value;
     let enclosure =
       enclosureOptions instanceof Array || typeof enclosureOptions === "string" || "start" in enclosureOptions
         ? enclosureOptions
-        : enclosureOptions?.[typeof value as keyof FormatterValueEnclosure];
+        : enclosureOptions?.[type as keyof FormatterValueEnclosure];
 
     value =
       value === true
