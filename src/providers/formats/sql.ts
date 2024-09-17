@@ -24,6 +24,9 @@ export const formatSqlInsert: FormatterOptions = {
       valueEnclosure: {
         string: '"',
       },
+      valueEscape: [
+        { pattern: /"/g, replace: '\\"' },
+      ],
       assignmentOperator: "",
       noKeys: true,
       indentItems: -1,
@@ -67,6 +70,9 @@ export const formatSqlUpdate: FormatterOptions = {
       valueEnclosure: {
         string: '"',
       },
+      valueEscape: [
+        { pattern: /"/g, replace: '\\"' },
+      ],
       delimiter: ",",
       assignmentOperator: "=",
       assignmentOperatorSpaced: " = ",
