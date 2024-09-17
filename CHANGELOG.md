@@ -1,3 +1,11 @@
+## [1.10.1](https://github.com/1nVitr0/plugin-vscode-format-list/compare/v1.10.0...v1.10.1) (2024-09-17)
+
+
+### Bug Fixes
+
+* enclose Infinity as string ([33683ba](https://github.com/1nVitr0/plugin-vscode-format-list/commit/33683ba909d620533a7d2d1cae8d018bad387149))
+* escape quotes in sql ([a3e77fa](https://github.com/1nVitr0/plugin-vscode-format-list/commit/a3e77fa1c39ca4f1f41f83818641a6e73437c766))
+
 # [1.10.0](https://github.com/1nVitr0/plugin-vscode-format-list/compare/v1.9.3...v1.10.0) (2024-08-07)
 
 
