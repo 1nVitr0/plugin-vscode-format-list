@@ -1,4 +1,4 @@
-import { PartialDeep, RequireAtLeastOne, Simplify } from "type-fest";
+import { PartialDeep, Primitive, RequireAtLeastOne, Simplify } from "type-fest";
 import { ListDataContext } from "./List";
 
 /** Indentation width, true is equivalent to 2 spaces */
@@ -125,7 +125,7 @@ export type FormatterParameter = Simplify<
 
 /** Simple (nested) Object of parameters */
 export interface ParameterList {
-  [key: string]: string | number | boolean | null | ParameterList;
+  [key: string]: Exclude<Primitive, undefined> | ParameterList;
 }
 
 /** Base options for lists */
@@ -148,24 +148,26 @@ export interface FormatterListOptions {
   delimitSameLine?: Indent;
 }
 
-/** Options for values */
-export interface FormatterListValueOptions {
+export interface FormatterListParameterFormatOptions {
   /** Enclosure around each item */
-  valueEnclosure?: FormatterEnclosure;
+  enclosure?: FormatterEnclosure;
   /** Escape options for each item */
-  valueEscape?: FormatterValueEscape[];
+  escape?: FormatterValueEscape[];
   /** Alias options for each item */
-  valueAlias?: FormatterValueAlias;
+  alias?: FormatterValueAlias;
 }
 
+export type FormatterListParameterFormatPrefixedOptions<Prefix extends string> = {
+  [K in keyof FormatterListParameterFormatOptions as K extends string
+    ? `${Prefix}${Capitalize<K>}`
+    : never]?: FormatterListParameterFormatOptions[K];
+};
+
+/** Options for values */
+export interface FormatterListValueOptions extends FormatterListParameterFormatPrefixedOptions<"value"> {}
+
 /** Options for keys */
-export interface FormatterListKeyOptions {
-  /** Enclosure around each key */
-  keyEnclosure?: FormatterEnclosure;
-  /** Escape options for each key */
-  keyEscape?: FormatterValueEscape[];
-  /** Alias options for each key */
-  keyAlias?: FormatterValueAlias;
+export interface FormatterListKeyOptions extends FormatterListParameterFormatPrefixedOptions<"key"> {
   /** If true, don't generate keys for objects */
   noKeys?: boolean;
 }
@@ -231,7 +233,7 @@ export interface FormatterOptions extends FormatterListTypes {
 
 export type ExtendableFormatterListOptions<T extends FormatterSimpleListOptions> = {
   /** Language to use as base config */
-  base: DefaultFormatterLanguages;
+  base: DefaultFormatterLanguage;
 } & PartialDeep<T>;
 
 export interface ExtendFormatterOptions extends PartialDeep<FormatterOptions> {
@@ -240,11 +242,16 @@ export interface ExtendFormatterOptions extends PartialDeep<FormatterOptions> {
   objectList?: FormatterObjectListOptions | ExtendableFormatterListOptions<FormatterObjectListOptions>;
 }
 
+/** Options for parameter expansion */
+export interface FormatterParameterExpansionOptions
+  extends Partial<FormatterListKeyOptions>,
+    Partial<FormatterListValueOptions> {}
+
 export interface CustomFormatters {
   [key: string]: ExtendFormatterOptions;
 }
 
-export type DefaultFormatterLanguages =
+export type DefaultFormatterLanguage =
   | "javascript"
   | "json"
   | "jsonl"
@@ -262,7 +269,7 @@ export type DefaultFormatterLanguages =
   | "sqlUpdate"
   | "latex";
 
-export type DefaultDataLanguages =
+export type DefaultDataLanguage =
   | "javascript"
   | "typescript"
   | "json"
@@ -273,3 +280,5 @@ export type DefaultDataLanguages =
   | "cpp"
   | "csv"
   | "java";
+
+export type FormatterPipe = "key" | "value";

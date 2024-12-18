@@ -132,7 +132,7 @@ Parameters can be accessed using the default javascript template string syntax `
 The `<key>` is a key from a list of supported parameters, or when enclosed in `"` or `'` is used as-is.
 The extension has some additional features, such as numeric modifiers and optional repeats:
 
-Modifiers can be used in the format `${<key> [modifier] <value>}` (spaces are optional). Only a single modifier (except for multiple `.`) is supported. Supported Modifiers:
+Modifiers can be used in the format `${<key> [modifier] <value> | <pipe>}` (spaces are optional). Only a single modifier (except for multiple `.`) is supported. Supported Modifiers:
 
 - `+`: `${<key> + <value>}` => casts both parameter value and the `<value>` to a number and adds them together
 - `-`: `${<key> - <value>}` => casts both parameter value and the `<value>` to a number and subtracts `<value>` from the parameter value
@@ -140,6 +140,11 @@ Modifiers can be used in the format `${<key> [modifier] <value>}` (spaces are op
 - `/`: `${<key> / <value>}` => casts both parameter value and the `<value>` to a number and divides the parameter value by `<value>`
 - `%`: `${<key> % <value>}` => casts both parameter value and the `<value>` to a number and performs a module operation on them
 - `.`: `${<key>.</key>.</key>}` => used to access inner properties. This is the only modifier that can be repeated, though it cannot be combined with other modifiers.
+
+Multiple pipes can be specified and they will be chained. The following pipes are available:
+
+- `key` => enclose the parameter as a key as specified in the format
+- `value` => enclose the parameter as a value as specified in the format
 
 It is possible to repeat a template or render it conditionally using the syntax `$[<repeat>]*{<key> [modifier] <value>}` or `$[<repeat>]?{<key> [modifier] <value>}`.
 Inside `[]` additional modifiers can be used:

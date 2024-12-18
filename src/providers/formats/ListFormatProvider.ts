@@ -1,22 +1,25 @@
-import { CancellationToken, QuickPickItem, l10n, window } from "vscode";
+import * as deepMerge from "deepmerge";
+import { Primitive } from "type-fest";
+import { CancellationToken, QuickPickItem, l10n } from "vscode";
+import { showFreeSoloQuickPick } from "../../input/freeSoloQuickPick";
 import {
   ExtendFormatterOptions,
   FormatterListHeaderOptions,
-  FormatterRegexEnclosure,
+  FormatterListObjectItemOptions,
   FormatterListOptions,
+  FormatterListParameterFormatOptions,
+  FormatterListParameterFormatPrefixedOptions,
   FormatterListTypes,
   FormatterOptions,
+  FormatterParameterExpansionOptions,
+  FormatterPipe,
+  FormatterRegexEnclosure,
   FormatterValueAlias,
   FormatterValueEnclosure,
   FormatterValueEscape,
-  FormatterEnclosure,
-  FormatterListObjectItemOptions,
-  FormatterParameter,
   ParameterList,
 } from "../../types/Formatter";
-import { ListColumn, ListData } from "../../types/List";
-import * as deepMerge from "deepmerge";
-import { showFreeSoloQuickPick } from "../../input/freeSoloQuickPick";
+import { ListData } from "../../types/List";
 
 /**
  * List formatter
@@ -133,7 +136,6 @@ export default class ListFormatProvider {
     if (!this.options.simpleList) return null;
 
     const { simpleList, pretty: maxPretty, indent: overrideIndent } = this.options;
-    const { valueEnclosure, valueAlias, valueEscape } = simpleList;
     const _parameters = parameters ?? (await this.queryParameters("simpleList", [column]));
     const _pretty = Math.min(pretty, maxPretty ?? pretty);
     const _indent = overrideIndent ?? indent;
@@ -141,12 +143,16 @@ export default class ListFormatProvider {
     if (!_parameters || token?.isCancellationRequested) return null;
 
     const mappedItems = items.map((item) =>
-      this.encloseValue(item[column], valueAlias, valueEnclosure, valueEscape, {
-        ..._parameters,
-        item,
-        key: column,
-        value: item[column],
-      })
+      this.encloseValue(
+        item[column],
+        {
+          ..._parameters,
+          item,
+          key: column,
+          value: item[column],
+        },
+        simpleList
+      )
     );
 
     return !token?.isCancellationRequested
@@ -259,10 +265,10 @@ export default class ListFormatProvider {
         if (option === null) return null;
 
         result[key] =
-          typeof option.value === "string" ? this.templateString(option.value, templateParams) : option.value;
+          typeof option.value === "string" ? this.templateString(option.value, templateParams, {}) : option.value;
       } else {
         result[key] =
-          typeof defaultValue === "string" ? this.templateString(defaultValue, templateParams) : defaultValue ?? -1;
+          typeof defaultValue === "string" ? this.templateString(defaultValue, templateParams, {}) : defaultValue ?? -1;
       }
     }
 
@@ -285,7 +291,10 @@ export default class ListFormatProvider {
     pretty: number = 0,
     indent: number = 0,
     level: number = 0,
-    {
+    options: FormatterListOptions & FormatterParameterExpansionOptions,
+    parameters: ParameterList = {}
+  ): string {
+    let {
       delimiter,
       delimitLastItem,
       delimitSameLine,
@@ -293,9 +302,8 @@ export default class ListFormatProvider {
       indentItems,
       indentEnclosure,
       itemPrefix = "",
-    }: FormatterListOptions,
-    parameters: ParameterList = {}
-  ): string {
+    } = options;
+
     indentItems = indentItems && indent * (indentItems === -1 ? level + 1 : indentItems);
     indentEnclosure = indentEnclosure && indent * (indentEnclosure === -1 ? level : indentEnclosure);
     const breakLine = pretty > level && !delimiter?.includes("\n");
@@ -305,24 +313,22 @@ export default class ListFormatProvider {
     const { first, rest } = typeof itemPrefix === "string" ? { first: itemPrefix, rest: itemPrefix } : itemPrefix;
 
     const lines = [];
-    if (enclosure?.start) lines.push(this.templateString(enclosure.start, parameters));
+    if (enclosure?.start) lines.push(this.templateString(enclosure.start, parameters, options));
     lines.push(
       ...items.map(
         (item, index) =>
           `${index === 0 || !delimitSameLine ? itemIndent : sameLineItemIndent}${this.templateString(
             index === 0 ? first : rest,
-            {
-              ...parameters,
-              index,
-            }
+            { ...parameters, index },
+            options
           )}${item}${
             delimitLastItem || index < items.length - 1
-              ? this.templateString(delimiter ?? "", { ...parameters, index })
+              ? this.templateString(delimiter ?? "", { ...parameters, index }, options)
               : ""
           }`
       )
     );
-    if (enclosure?.end) lines.push(`${enclosureIndent}${this.templateString(enclosure.end, parameters)}`);
+    if (enclosure?.end) lines.push(`${enclosureIndent}${this.templateString(enclosure.end, parameters, options)}`);
 
     if (breakLine && delimitSameLine) {
       lines[0] += "\n";
@@ -347,46 +353,43 @@ export default class ListFormatProvider {
    */
   private encloseKeyValue(
     key: string,
-    value: string | number | boolean | null,
-    {
-      assignmentOperator,
-      assignmentOperatorSpaced,
-      keyEnclosure,
-      keyEscape,
-      keyAlias,
-      valueEnclosure,
-      valueEscape,
-      valueAlias,
-      noKeys,
-    }: FormatterListObjectItemOptions,
+    value: Exclude<Primitive, undefined>,
+    options: FormatterListObjectItemOptions,
     spaced?: boolean,
     parameters: ParameterList = {}
   ): string {
-    if (noKeys) return this.encloseValue(value, valueAlias, valueEnclosure, valueEscape, parameters);
+    const { assignmentOperator, assignmentOperatorSpaced, noKeys } = options;
+
+    if (noKeys) return this.encloseValue(value, parameters, options);
 
     const assignment = spaced ? assignmentOperatorSpaced ?? assignmentOperator : assignmentOperator;
-    const enclosedKey = this.encloseValue(key, keyAlias, keyEnclosure, keyEscape, parameters);
-    const enclosedValue = this.encloseValue(value, valueAlias, valueEnclosure, valueEscape, { ...parameters, key });
+    const enclosedKey = this.encloseValue(key, parameters, options, "key");
+    const enclosedValue = this.encloseValue(value, { ...parameters, key }, options);
 
-    return `${enclosedKey}${this.templateString(assignment, parameters)}${enclosedValue}`;
+    return `${enclosedKey}${this.templateString(assignment, parameters, options)}${enclosedValue}`;
   }
 
   /**
    * Enclose values based on the value enclosure options
    *
    * @param value Value to enclose
-   * @param valueAlias Value alias options
-   * @param enclosureOptions Value enclosure options
-   * @param escapeOptions Value escape options
+   * @param valueType Type of value to enclose ("key" or "value")
+   * @param parameters Parameters to inject into templates
+   * @param options Value enclosure options
    * @returns Enclosed value
    */
-  private encloseValue(
-    value: string | number | boolean | null,
-    valueAlias: FormatterValueAlias = {},
-    enclosureOptions: FormatterEnclosure = {},
-    escapeOptions: FormatterValueEscape[] = [],
-    parameters: ParameterList = {}
+  private encloseValue<T extends "key" | "value">(
+    value: Exclude<Primitive, undefined>,
+    parameters: ParameterList = {},
+    options: FormatterParameterExpansionOptions & FormatterListParameterFormatPrefixedOptions<T> = {},
+    valueType: T = "value" as T
   ): string {
+    const {
+      [`${valueType}Alias` as "alias"]: aliasOptions = {} as FormatterValueAlias,
+      [`${valueType}Enclosure` as "enclosure"]: enclosureOptions = {} as FormatterValueEnclosure,
+      [`${valueType}Escape` as "escape"]: escapeOptions = [] as FormatterValueEscape[],
+    } = options as FormatterListParameterFormatOptions;
+
     const type = typeof value === "number"! && !isFinite(value as number) ? "string" : typeof value;
     let enclosure =
       enclosureOptions instanceof Array || typeof enclosureOptions === "string" || "start" in enclosureOptions
@@ -395,24 +398,26 @@ export default class ListFormatProvider {
 
     value =
       value === true
-        ? valueAlias.true ?? "true"
+        ? aliasOptions.true ?? "true"
         : value === false
-        ? valueAlias.false ?? "false"
+        ? aliasOptions.false ?? "false"
         : value === null
-        ? valueAlias.null ?? "null"
+        ? aliasOptions.null ?? "null"
         : value;
     value = this.escapeValue(value.toString(), escapeOptions);
 
     if (enclosure === undefined) return value;
-    else if (enclosure instanceof Array) return this.encloseByRegex(value, enclosure, parameters);
+    else if (enclosure instanceof Array) return this.encloseByRegex(value, enclosure, parameters, options);
 
     const startTemplated = this.templateString(
       typeof enclosure === "string" ? enclosure : enclosure?.start ?? "",
-      parameters
+      parameters,
+      options
     );
     const endTemplated = this.templateString(
       typeof enclosure === "string" ? enclosure : enclosure?.end ?? "",
-      parameters
+      parameters,
+      options
     );
 
     return `${startTemplated}${value}${endTemplated}`;
@@ -428,7 +433,8 @@ export default class ListFormatProvider {
   private encloseByRegex(
     value: string,
     regexEnclosure: FormatterRegexEnclosure[] = [],
-    parameters: ParameterList = {}
+    parameters: ParameterList = {},
+    options: FormatterParameterExpansionOptions = {}
   ): string {
     const activeEnclosures = regexEnclosure.filter((enclosure) => !enclosure.disabled);
 
@@ -437,9 +443,9 @@ export default class ListFormatProvider {
       const { start, end } = typeof enclosure === "string" ? { start: enclosure, end: enclosure } : enclosure;
       const regex = typeof test === "string" ? new RegExp(test.replace(/^\/(.*)\/$/, "$1")) : test;
 
-      const startTemplated = this.templateString(start, parameters);
-      const endTemplated = this.templateString(end, parameters);
-      const replaceTemplated = replace !== undefined && this.templateString(replace, parameters);
+      const startTemplated = this.templateString(start, parameters, options);
+      const endTemplated = this.templateString(end, parameters, options);
+      const replaceTemplated = replace !== undefined && this.templateString(replace, parameters, options);
 
       if (inverse) return regex.test(value) ? value : `${startTemplated}${value}${endTemplated}`;
       else if (replaceTemplated !== false) return value.replace(regex, replaceTemplated);
@@ -468,34 +474,59 @@ export default class ListFormatProvider {
     return escapedValue;
   }
 
-  private templateString(template: string, data: ParameterList): string {
+  private templateString(template: string, data: ParameterList, options: FormatterParameterExpansionOptions): string {
     if (Object.keys(data).length === 0) return template;
 
-    return template.replace(/\$(\[[^\]]+\][*?])?{([^}]+)}/g, (_, repeat, template) => {
+    return template.replace(/\$(\[[^\]]+\][*?])?{([^}]+)}/g, (_, repeat: string = "", content: string = "") => {
       const [, repeatKey, repeatModifier, repeatFactor, repeatType] =
-        /^\[([a-z0-9_]+)\s*([+\-\*\/%><=!\.])?\s*([\$a-z0-9_\.]+)?\]([*?])$/i.exec(repeat ?? "") ?? [];
+        /^\[([a-z0-9_]+)\s*([+\-\*\/%><=!\.])?\s*([\$a-z0-9_\.]+)?\]([*?])$/i.exec(repeat) ?? [];
+      const [param, ...pipes] = content.split(/\s*\|\s*/);
       const [, key, modifier, factor] =
-        /^([a-z0-9_]+|"[^"]+"|'[^']+')\s*([+\-\*\/%><=!\.])?\s*([\$a-z0-9_\.]+)?$/i.exec(template) ?? [];
+        /^([a-z0-9_]+|"[^"]+"|'[^']+')\s*([+\-\*\/%><=!\.])?\s*([\$a-z0-9_\.]+)?$/i.exec(param) ?? [];
       const value = /"[^"]*"|'[^']*'/g.test(key)
         ? key.slice(1, -1)
         : this.getTemplateParameter(data, key, modifier, factor);
+      const pipe = this.buildPipe(pipes as FormatterPipe[], data, options);
 
-      if (!repeat || !value) return value ?? template;
+      if (!repeat || !value) return value !== null ? (pipe(value) ?? "")?.toString() : content;
 
       const repeatValue = this.getTemplateParameter(data, repeatKey, repeatModifier, repeatFactor);
       const repeatNumber = Number(repeatValue);
-      const repeatBoolean = !repeatValue || ["", "null", "false", "0"].includes(repeatValue) ? false : true;
+      const repeatBoolean = !repeatValue || ["", "null", "false", "0"].includes(repeatValue.toString()) ? false : true;
 
       switch (repeatType) {
         case "*":
-          return repeatNumber && repeatNumber > 0 ? value.repeat(repeatNumber) : "";
+          return repeatNumber && repeatNumber > 0 ? (pipe(value.toString().repeat(repeatNumber)) ?? "").toString() : "";
         case "?":
-          return repeatBoolean ? value : "";
+          return repeatBoolean ? (pipe(value) ?? "").toString() : "";
+        default:
+          throw new Error(`Invalid repeat type: ${repeatType}`);
       }
     });
   }
 
-  private getTemplateParameter(data: ParameterList, key: string, modifier?: string, factor?: string): string | null {
+  private buildPipe(pipes: FormatterPipe[], parameters: ParameterList, options: FormatterParameterExpansionOptions) {
+    return pipes.reduce(
+      (fn, pipe) => {
+        switch (pipe) {
+          case "value":
+            return (value) => this.encloseValue(fn(value), parameters, options);
+          case "key":
+            return (value) => this.encloseValue(fn(value), parameters, options, "key");
+          default:
+            return fn;
+        }
+      },
+      (value: Exclude<Primitive, undefined>): Exclude<Primitive, undefined> => value
+    );
+  }
+
+  private getTemplateParameter(
+    data: ParameterList,
+    key: string,
+    modifier?: string,
+    factor?: string
+  ): Exclude<Primitive, undefined> {
     const value = key && data[key];
 
     if (value === undefined || !modifier || !factor) return value?.toString() ?? null;
@@ -505,23 +536,23 @@ export default class ListFormatProvider {
 
     switch (modifier) {
       case "+":
-        return (numericValue + numericFactor).toString();
+        return numericValue + numericFactor;
       case "-":
-        return (numericValue - numericFactor).toString();
+        return numericValue - numericFactor;
       case "*":
-        return (numericValue * numericFactor).toString();
+        return numericValue * numericFactor;
       case "/":
-        return (numericValue / numericFactor).toString();
+        return numericValue / numericFactor;
       case "%":
-        return (numericValue % numericFactor).toString();
+        return numericValue % numericFactor;
       case ">":
-        return numericValue > numericFactor ? "true" : "false";
+        return numericValue > numericFactor;
       case "<":
-        return numericValue < numericFactor ? "true" : "false";
+        return numericValue < numericFactor;
       case "=":
-        return numericValue === numericFactor ? "true" : "false";
+        return numericValue === numericFactor;
       case "!":
-        return numericValue !== numericFactor ? "true" : "false";
+        return numericValue !== numericFactor;
       case ".":
         const path =
           factor.split(".").reduce<ParameterList[string] | null>((value, path) => {
@@ -533,7 +564,7 @@ export default class ListFormatProvider {
             }
             return value[path];
           }, value) ?? null;
-        return typeof path === "object" ? null : path.toString();
+        return typeof path === "object" ? null : path;
     }
 
     return null;
@@ -556,9 +587,8 @@ export default class ListFormatProvider {
     options: FormatterListHeaderOptions,
     parameters?: ParameterList
   ): string {
-    const { keyEnclosure, keyEscape, keyAlias } = options;
     const mappedColumns = columns.map((column) =>
-      this.encloseValue(column, keyAlias, keyEnclosure, keyEscape, { ...parameters, key: column })
+      this.encloseValue(column, { ...parameters, key: column }, options, "key")
     );
     return this.joinList(mappedColumns, pretty, indent, 0, options, parameters);
   }
