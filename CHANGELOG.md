@@ -1,3 +1,17 @@
+# [1.11.0](https://github.com/1nVitr0/plugin-vscode-format-list/compare/v1.10.1...v1.11.0) (2024-12-18)
+
+
+### Bug Fixes
+
+* escape keys and values in sql output ([c01bafb](https://github.com/1nVitr0/plugin-vscode-format-list/commit/c01bafb3aaaebcabfc54a883636a7286832e2ef4))
+* escape quotes in csv strings ([52134df](https://github.com/1nVitr0/plugin-vscode-format-list/commit/52134df3c29ccd4a909f89a2b7c24a71ea711803))
+* return quick pick item for free quick picks ([b48696f](https://github.com/1nVitr0/plugin-vscode-format-list/commit/b48696f420d5eecc254b45dfc5c4969b504cf567))
+
+
+### Features
+
+* support basic pipes in parameters ([c2003d1](https://github.com/1nVitr0/plugin-vscode-format-list/commit/c2003d1ff2fd511c36492728dd073ca82aae3952))
+
 ## [1.10.1](https://github.com/1nVitr0/plugin-vscode-format-list/compare/v1.10.0...v1.10.1) (2024-09-17)
 
 
