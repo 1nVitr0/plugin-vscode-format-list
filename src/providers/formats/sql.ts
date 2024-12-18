@@ -13,7 +13,7 @@ export const formatSqlInsert: FormatterOptions = {
     header: {
       delimiter: ",",
       enclosure: {
-        start: "INSERT${ignore}INTO ${tableName} (",
+        start: "INSERT${ignore}INTO ${tableName | key} (",
         end: ")",
       },
       keyEnclosure: [{ id: "quote-columns", test: "/.*/", enclosure: "`" }],
@@ -54,7 +54,7 @@ export const formatSqlInsert: FormatterOptions = {
         default: "table",
         query: {
           prompt: "Table name",
-          placeholder: "`table`",
+          placeholder: "table",
           allowInput: true,
         },
       },
@@ -67,20 +67,19 @@ export const formatSqlUpdate: FormatterOptions = {
     indentItems: 0,
     indentEnclosure: 0,
     itemFormat: {
+      keyEnclosure: [{ id: "quote-columns", test: "/.*/", enclosure: "`" }],
       valueEnclosure: {
         string: '"',
       },
-      valueEscape: [
-        { pattern: /"/g, replace: '\\"' },
-      ],
+      valueEscape: [{ pattern: /"/g, replace: '\\"' }],
       delimiter: ",",
       assignmentOperator: "=",
       assignmentOperatorSpaced: " = ",
       indentItems: -1,
       indentEnclosure: -1,
       enclosure: {
-        start: "UPDATE ${tableName} SET",
-        end: "WHERE ${primaryKey} = ${item.$primaryKey};",
+        start: "UPDATE ${tableName | key} SET",
+        end: "WHERE ${primaryKey | key} = ${item.$primaryKey | value};",
       },
     },
     parameters: {
@@ -89,7 +88,7 @@ export const formatSqlUpdate: FormatterOptions = {
         default: "table",
         query: {
           prompt: "Table name",
-          placeholder: "`table`",
+          placeholder: "table",
           allowInput: true,
         },
       },
