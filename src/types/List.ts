@@ -1,7 +1,9 @@
+import { Primitive } from "type-fest";
+
 /** Basic list of data */
 export interface ListData {
   /** Key-value pair */
-  [key: string | number]: string | number | boolean | null;
+  [key: string | number]: Exclude<Primitive, undefined>;
 }
 
 /** List column */

@@ -1,5 +1,5 @@
 import { l10n } from "vscode";
-import { DefaultFormatterLanguages } from "../../types/Formatter";
+import { DefaultFormatterLanguage } from "../../types/Formatter";
 import ListFormatProvider from "./ListFormatProvider";
 import { formatC } from "./c";
 import { formatCpp } from "./cpp";
@@ -16,7 +16,7 @@ import { formatSqlInsert, formatSqlUpdate } from "./sql";
 import { formatXml } from "./xml";
 import { formatYaml } from "./yaml";
 
-export const listFormatProviders: Record<DefaultFormatterLanguages, ListFormatProvider> = {
+export const listFormatProviders: Record<DefaultFormatterLanguage, ListFormatProvider> = {
   csv: new ListFormatProvider(l10n.t("CSV (Default Options)"), formatCsvDefault),
   csvCustom: new ListFormatProvider(l10n.t("CSV (Custom Options)"), formatCsvCustom),
   json: new ListFormatProvider(l10n.t("JSON"), formatJson),

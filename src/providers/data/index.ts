@@ -1,4 +1,4 @@
-import { DefaultDataLanguages } from "../../types/Formatter";
+import { DefaultDataLanguage } from "../../types/Formatter";
 import { ListDataContext } from "../../types/List";
 import { ListDataProvider } from "../../types/Providers";
 import CListDataProvider from "./CListDataProvider";
@@ -11,7 +11,7 @@ import TypeScriptListDataProvider from "./TypeScriptListDataProvider";
 import XmlListDataProvider from "./XmlListDataProvider";
 import YamlListDataProvider from "./YamlListDataProvider";
 
-export const listDataProviders: Record<DefaultDataLanguages, ListDataProvider<any, ListDataContext<any>>> = {
+export const listDataProviders: Record<DefaultDataLanguage, ListDataProvider<any, ListDataContext<any>>> = {
   csv: new CsvListDataProvider(),
   json: new JSONListDataProvider(),
   javascript: new JavaScriptListDataProvider(),

@@ -25,7 +25,7 @@ import {
   SimpleListButton,
   TogglePrettyButton,
 } from "../input/buttons";
-import { DefaultFormatterLanguages, FormatterListTypes, ParameterList, Pretty } from "../types/Formatter";
+import { DefaultFormatterLanguage, FormatterListTypes, ParameterList, Pretty } from "../types/Formatter";
 import { workspace } from "vscode";
 
 interface QuickPickProviderItem extends QuickPickItem {
@@ -66,7 +66,7 @@ export interface ConvertedList {
 
 export class ListConversionProvider {
   private listDataProviders: Record<string, ListDataProvider<any>>;
-  private formatProviders: Record<DefaultFormatterLanguages, ListFormatProvider>;
+  private formatProviders: Record<DefaultFormatterLanguage, ListFormatProvider>;
   private customFormatProviders: Record<string, ListFormatProvider>;
   /** @internal Should only be used with `lastListOptions` getter / setter */
   private _lastListOptions: StoredListOptions | null = null;
@@ -91,11 +91,11 @@ export class ListConversionProvider {
       const { simpleList, objectList } = options;
       const simpleListProvider =
         simpleList && "base" in simpleList
-          ? listFormatProviders[simpleList.base as DefaultFormatterLanguages] ?? providers[simpleList.base]
+          ? listFormatProviders[simpleList.base as DefaultFormatterLanguage] ?? providers[simpleList.base]
           : null;
       const objectListProvider =
         objectList && "base" in objectList
-          ? listFormatProviders[objectList.base as DefaultFormatterLanguages] ?? providers[objectList.base]
+          ? listFormatProviders[objectList.base as DefaultFormatterLanguage] ?? providers[objectList.base]
           : null;
 
       providers[name] = ListFormatProvider.extend(name, simpleListProvider, objectListProvider, options);
@@ -185,7 +185,7 @@ export class ListConversionProvider {
           pretty,
           indent,
           formatParameters,
-          token,
+          token
         );
       case "objectList":
         return await formatProvider.formatObjectList(
@@ -194,7 +194,7 @@ export class ListConversionProvider {
           pretty,
           indent,
           formatParameters,
-          token,
+          token
         );
     }
   }
