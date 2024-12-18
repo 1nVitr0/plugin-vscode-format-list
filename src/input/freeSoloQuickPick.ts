@@ -100,7 +100,7 @@ export async function showFreeSoloQuickPick<I extends QuickPickItem | string>(
     });
 
     quickPick.onDidAccept(() => {
-      const onlyStringItems = items.every((item) => typeof item === "string");
+      const onlyStringItems = items.length > 0 && items.every((item) => typeof item === "string");
       if (options.canSelectMany) {
         const selectedItems = (
           onlyStringItems ? quickPick.activeItems.map((item) => item.label) : quickPick.activeItems
