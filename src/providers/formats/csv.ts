@@ -42,6 +42,7 @@ export const csvParameters: Record<string, FormatterParameter> = {
 const csvSimpleListOptions: FormatterSimpleListOptions = {
   delimiter: "\n",
   valueAlias: { null: "" },
+  valueEscape: [{ pattern: /"/g, replace: '""' }],
   header: {
     delimiter: ",",
     keyEnclosure: '"',
